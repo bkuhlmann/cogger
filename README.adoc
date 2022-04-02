@@ -1,14 +1,24 @@
+:pastel_link: link:https://github.com/piotrmurach/pastel[Pastel]
+
 :toc: macro
 :toclevels: 5
 :figure-caption!:
 
 = Cogger
 
+Cogger is a portmanteau for colorized logging (i.e. `[c]olorized + l[ogger] = cogger`) which
+decorates Ruby's native logger with colorized output.
+
 toc::[]
 
 == Features
 
-== Screencasts
+- Decorates Ruby's default `Logger`.
+- Uses color decoration as provided by the {pastel_link} gem.
+
+== Screenshot
+
+image::https://www.alchemists.io/images/projects/cogger/screenshots/console.png[Console,width=552,height=679,role=focal_point]
 
 == Requirements
 
@@ -24,6 +34,184 @@ bin/setup
 ----
 
 == Usage
+
+All colorized logging is provided by the `Cogger::Client` class which can be used as follows:
+
+[source,ruby]
+----
+logger = Cogger::Client.new
+
+logger.debug "test"      # true
+logger.debug { "test" }  # true
+logger.info "test"       # true
+logger.info { "test" }   # true
+logger.warn "test"       # true
+logger.warn { "test" }   # true
+logger.error "test"      # true
+logger.error { "test" }  # true
+logger.fatal "test"      # true
+logger.fatal { "test" }  # true
+logger.any "test"        # true
+logger.any { "test" }    # true
+----
+
+By default, all logging is configured to use `INFO` level and writes to `$stdout`. To see what the
+colorized output from the above looks like, please see the screenshot shown in the _Screenshots_
+section as documented earlier.
+
+Beyond the standard log level methods, the following methods are also available:
+
+[source,ruby]
+----
+logger = Cogger::Client.new
+
+logger.formatter  # #<Proc:0x000000010626ebc8 $HOME/OSS/cogger/lib/cogger/client.rb:37 (lambda)>
+logger.level      # 1
+logger.progname   # nil
+----
+
+=== Customization
+
+Customization of the logger differs, slightly, from what you'd get with the standard `Logger` class.
+The following sections will explain what these differences look like.
+
+==== Initialization
+
+For starters, the first argument is a positional argument that defaults to `Logger.new($stdout)` but
+you could swap out the default logger with something that logs to a string. For example:
+
+[source,ruby]
+----
+logger = Cogger::Client.new Logger.new(StringIO.new)
+----
+
+You can also create a logger which might use custom colors. Example:
+
+[source,ruby]
+----
+logger = Cogger::Client.new color: MyColor.new
+----
+
+More information on how to customize your colors will be provided later.
+
+Lastly, you can provide any _setable_ attribute which would normally be used when constructing a
+normal logger. Example:
+
+[source,ruby]
+----
+logger = Cogger::Client.new formatter: ->(severity, _at, _name, message) { "#{message}\n" },
+                            level: :debug,
+                            progname: "Test",
+                            datetime_format: "%Y-%m-%d"
+----
+
+Alternatively, you can use a block as well:
+
+[source,ruby]
+----
+logger = Cogger::Client.new do |instance|
+  instance.formatter = ->(severity, _at, _name, message) { "#{message}\n" }
+  instance.level = :debug
+  instance.progname = "Test"
+  instance.datetime_format = "%Y-%m-%d"
+end
+----
+
+==== Levels
+
+The default log level is `INFO` but can be customized via your environment. For instance, you could
+set the logging level to any of the following:
+
+[source,bash]
+----
+export LOG_LEVEL=DEBUG
+export LOG_LEVEL=INFO
+export LOG_LEVEL=WARN
+export LOG_LEVEL=ERROR
+export LOG_LEVEL=FATAL
+export LOG_LEVEL=ANY
+----
+
+By default, `Cogger::Client` will automatically use whatever is set via the `LOG_LEVEL` environment
+variable unless overwritten during initialization.
+
+==== Colorization
+
+Default colors are provided by the `Cogger::Color` class which are keyed by log level:
+
+[source,ruby]
+----
+{
+  debug: %i[white],
+  info: %i[green],
+  warn: %i[yellow],
+  error: %i[red],
+  fatal: %i[white bold on_red],
+  any: %i[white bold]
+}
+----
+
+All keys require an array of styles which can then be decorated by {pastel_link}. This means that if
+you wanted to use custom colors, you could create a new instance of the `Color` class and inject it
+into the client as follows:
+
+
+[source,ruby]
+----
+custom_color = Cogger::Color.new(
+  defaults: {
+    debug: %i[white on_black],
+    info: %i[green on_black],
+    warn: %i[yellow on_black],
+    error: %i[red on_black],
+    fatal: %i[red on_black],
+    any: %i[white on_black]
+  }
+)
+
+logger = Cogger::Client.new color: custom_color
+----
+
+The above would ensure all log level colors are displayed on a black background. Basically, any
+style accepted by `Pastel#decorate` method is supported.
+
+==== Testing
+
+When testing the Cogger client, you might find it convenient to use `StringIO`, or a file, for
+logging purposes in order to not pollute your test output but also have a convenient way to see what
+was logged. Example:
+
+[source,ruby]
+----
+class Demo
+  def initialize logger: Cogger::Logger.new
+    @logger = logger
+  end
+
+  def say(text) = logger.info { text }
+
+  private
+
+  attr_reader :logger
+end
+
+RSpec.describe  Demo do
+  subject(:demo) { described_class.new logger: }
+
+  let(:logger) { Cogger::Logger.new Logger.new(StringIO.new) }
+
+  describe "#say" do
+    it "logs text" do
+      demo.say "Hi"
+      expect(logger.reread).to include("Hi")
+    end
+  end
+end
+----
+
+Notice that when testing the instance of `Demo` and injecting a logger which logs to a string I/O
+object, you can conveniently reread that string to see what was logged. This makes your specs easier
+to write while also not adding additional noise to your test suite's output.
 
 == Development
 
