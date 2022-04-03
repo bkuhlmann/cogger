@@ -1,5 +1,13 @@
 = Versions
 
-== 0.0.0 (2022-04-02)
+== 0.0.0 (2022-04-03)
 
-* Added initial implementation.
+* Added Pastel gem - Brooke Kuhlmann
+* Added client - Brooke Kuhlmann
+* Added color - Brooke Kuhlmann
+* Added gem documentation - Brooke Kuhlmann
+* Added gemspec summary - Brooke Kuhlmann
+* Added log devices refinement - Brooke Kuhlmann
+* Added loggers refinement - Brooke Kuhlmann
+* Added project skeleton - Brooke Kuhlmann
+* Refactored Refinements gem to development and test groups - Brooke Kuhlmann
