@@ -3,8 +3,6 @@
 require "spec_helper"
 
 RSpec.describe Cogger::Client do
-  using Refinements::StringIOs
-
   subject(:client) { described_class.new Logger.new(StringIO.new), level: :debug }
 
   let(:undecorated_output) { Pastel.new.undecorate client.reread }
