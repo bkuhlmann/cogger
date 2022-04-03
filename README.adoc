@@ -117,7 +117,7 @@ logger = Cogger::Client.new do |instance|
 end
 ----
 
-==== Levels
+==== Environment
 
 The default log level is `INFO` but can be customized via your environment. For instance, you could
 set the logging level to any of the following:
@@ -184,7 +184,7 @@ was logged. Example:
 [source,ruby]
 ----
 class Demo
-  def initialize logger: Cogger::Logger.new
+  def initialize logger: Cogger::Client.new
     @logger = logger
   end
 
@@ -198,12 +198,12 @@ end
 RSpec.describe  Demo do
   subject(:demo) { described_class.new logger: }
 
-  let(:logger) { Cogger::Logger.new Logger.new(StringIO.new) }
+  let(:logger) { Cogger::Client.new Logger.new(StringIO.new) }
 
   describe "#say" do
     it "logs text" do
-      demo.say "Hi"
-      expect(logger.reread).to include("Hi")
+      demo.say "test"
+      expect(logger.reread).to include("test")
     end
   end
 end
