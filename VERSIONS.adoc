@@ -1,5 +1,14 @@
 = Versions
 
+== 0.0.1 (2022-04-09)
+
+* Fixed README code samples - Brooke Kuhlmann
+* Updated to Caliber 0.4.0 - Brooke Kuhlmann
+* Updated to Caliber 0.5.0 - Brooke Kuhlmann
+* Updated to Debug 1.5.0 - Brooke Kuhlmann
+* Removed DeadEnd gem - Brooke Kuhlmann
+* Removed string I/O refinement from spec - Brooke Kuhlmann
+
 == 0.0.0 (2022-04-03)
 
 * Added Pastel gem - Brooke Kuhlmann
