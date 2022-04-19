@@ -52,7 +52,7 @@ RSpec.describe Cogger::Client do
 
   describe "#progname" do
     it "answers default program name" do
-      expect(client.progname).to be_nil
+      expect(client.progname).to be(nil)
     end
 
     it "answers custom program name" do
