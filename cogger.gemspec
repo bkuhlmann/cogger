@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
     "bug_tracker_uri" => "https://github.com/bkuhlmann/cogger/issues",
     "changelog_uri" => "https://www.alchemists.io/projects/cogger/versions",
     "documentation_uri" => "https://www.alchemists.io/projects/cogger",
+    "funding_uri" => "https://github.com/sponsors/bkuhlmann",
     "label" => "Cogger",
     "rubygems_mfa_required" => "true",
     "source_code_uri" => "https://github.com/bkuhlmann/cogger"
