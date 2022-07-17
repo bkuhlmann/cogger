@@ -2,6 +2,7 @@
 
 require "forwardable"
 require "logger"
+require "refinements/loggers"
 
 module Cogger
   # Provides the primary client for colorized logging.
