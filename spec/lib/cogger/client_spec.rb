@@ -8,7 +8,7 @@ RSpec.describe Cogger::Client do
   let(:undecorated_output) { Pastel.new.undecorate client.reread }
 
   describe "#initialize" do
-    let(:formatter) { ->(_severity, _at, _name, message) { "#{message}\n" } }
+    let(:formatter) { -> _severity, _at, _name, message { "#{message}\n" } }
 
     it "yields logger when block is given" do
       client = described_class.new do |logger|

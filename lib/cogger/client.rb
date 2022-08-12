@@ -42,7 +42,7 @@ module Cogger
     def default_level = logger.class.const_get ENV.fetch("LOG_LEVEL", "INFO")
 
     def default_formatter
-      ->(severity, _at, _name, message) { "#{color.public_send severity.downcase, message}\n" }
+      -> severity, _at, _name, message { "#{color.public_send severity.downcase, message}\n" }
     end
   end
 end
