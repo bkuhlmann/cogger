@@ -1,5 +1,12 @@
 = Versions
 
+== 0.3.0 (2022-08-13)
+
+* Fixed RuboCop Style/StabbyLambdaParentheses issues - Brooke Kuhlmann
+* Added Circle CI SimpleCov artifacts - Brooke Kuhlmann
+* Updated SimpleCov configuration to use filters and minimum coverage - Brooke Kuhlmann
+* Updated to Zeitwerk 2.6.0 - Brooke Kuhlmann
+
 == 0.2.0 (2022-07-17)
 
 * Updated to Caliber 0.11.0 - Brooke Kuhlmann
