@@ -215,6 +215,15 @@ to write while also not adding additional noise to your test suite's output.
 
 == Development
 
+To contribute, run:
+
+[source,bash]
+----
+git clone https://github.com/bkuhlmann/cogger
+cd cogger
+bin/setup
+----
+
 You can also use the IRB console for direct access to all objects:
 
 [source,bash]
