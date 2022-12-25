@@ -1,5 +1,14 @@
 = Versions
 
+== 0.5.0 (2022-12-25)
+
+* Added RSpec binstub - Brooke Kuhlmann
+* Updated to Debug 1.7.0 - Brooke Kuhlmann
+* Updated to RSpec 3.12.0 - Brooke Kuhlmann
+* Updated to Refinements 10.0.0 - Brooke Kuhlmann
+* Updated to Ruby 3.1.3 - Brooke Kuhlmann
+* Updated to Ruby 3.2.0 - Brooke Kuhlmann
+
 == 0.4.0 (2022-10-22)
 
 * Fixed Rakefile RSpec initialization - Brooke Kuhlmann
