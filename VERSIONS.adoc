@@ -1,5 +1,16 @@
 = Versions
 
+== 0.6.0 (2023-03-21)
+
+* Added init method - Brooke Kuhlmann
+* Added unknown client method - Brooke Kuhlmann
+* Added unknown color - Brooke Kuhlmann
+* Updated Reek dependency to not be required - Brooke Kuhlmann
+* Updated site URLs to use bare domain - Brooke Kuhlmann
+* Updated to Caliber 0.25.0 - Brooke Kuhlmann
+* Updated to Ruby 3.2.1 - Brooke Kuhlmann
+* Refactored Pathname require tree refinement to pass single argument - Brooke Kuhlmann
+
 == 0.5.1 (2023-01-22)
 
 * Fixed Guardfile to use RSpec binstub - Brooke Kuhlmann
