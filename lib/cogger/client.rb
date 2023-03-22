@@ -11,7 +11,7 @@ module Cogger
 
     using Refinements::Loggers
 
-    delegate %i[formatter level progname debug info warn error fatal] => :logger
+    delegate %i[formatter level progname debug info warn error fatal unknown] => :logger
 
     def initialize logger = Logger.new($stdout), color: Color.new, **attributes
       @logger = logger

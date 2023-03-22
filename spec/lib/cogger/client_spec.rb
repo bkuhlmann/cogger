@@ -127,6 +127,24 @@ RSpec.describe Cogger::Client do
     end
   end
 
+  describe "#unknown" do
+    it "answers default color without block" do
+      client.unknown "test"
+
+      expect(undecorated_output).to eq(
+        [{foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
+      )
+    end
+
+    it "answers default color with block" do
+      client.unknown { "test" }
+
+      expect(undecorated_output).to eq(
+        [{foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
+      )
+    end
+  end
+
   describe "#any" do
     it "answers default color without block" do
       client.any "test"
