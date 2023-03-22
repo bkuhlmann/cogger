@@ -35,6 +35,12 @@ RSpec.describe Cogger::Color do
     end
   end
 
+  describe "#unknown" do
+    it "answers default color" do
+      expect(color.unknown("test")).to eq("\e[37;1mtest\e[0m")
+    end
+  end
+
   describe "#any" do
     it "answers default color" do
       expect(color.any("test")).to eq("\e[37;1mtest\e[0m")

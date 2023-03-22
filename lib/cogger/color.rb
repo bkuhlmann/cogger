@@ -11,6 +11,7 @@ module Cogger
       warn: %i[yellow],
       error: %i[red],
       fatal: %i[white bold on_red],
+      unknown: %i[white bold],
       any: %i[white bold]
     }.freeze
 
@@ -28,6 +29,8 @@ module Cogger
     def error(text) = decorate text, __method__
 
     def fatal(text) = decorate text, __method__
+
+    def unknown(text) = decorate text, __method__
 
     def any(text) = decorate text, __method__
 
