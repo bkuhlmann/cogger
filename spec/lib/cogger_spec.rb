@@ -38,4 +38,10 @@ RSpec.describe Cogger do
       expect(described_class.init).to be_a(Cogger::Client)
     end
   end
+
+  describe ".new" do
+    it "answers hub instance" do
+      expect(described_class.new).to be_a(Cogger::Hub)
+    end
+  end
 end

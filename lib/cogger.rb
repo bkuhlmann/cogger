@@ -12,4 +12,6 @@ module Cogger
   extend Registry
 
   def self.init(...) = Client.new(...)
+
+  def self.new(...) = Hub.new(...)
 end
