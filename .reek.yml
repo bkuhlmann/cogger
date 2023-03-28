@@ -3,6 +3,14 @@ exclude_paths:
   - vendor
 
 detectors:
+  BooleanParameter:
+    exclude:
+      - "Cogger#initialize"
+  LongParameterList:
+    enabled: false
+  ModuleInitialize:
+    exclude:
+      - "Cogger"
   TooManyStatements:
     exclude:
       - "Cogger::Registry#self.extended"
