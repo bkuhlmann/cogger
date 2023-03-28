@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
   spec.cert_chain = [Gem.default_cert_path]
 
   spec.required_ruby_version = "~> 3.2"
-  spec.add_dependency "pastel", "~> 0.8"
   spec.add_dependency "refinements", "~> 10.0"
   spec.add_dependency "tone", "~> 0.1"
   spec.add_dependency "zeitwerk", "~> 2.6"
