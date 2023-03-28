@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe Cogger::Client do
   subject(:client) { described_class.new Logger.new(StringIO.new), level: :debug }
 
-  let(:undecorated_output) { Pastel.new.undecorate client.reread }
+  let(:decoded_output) { Tone.new.decode client.reread }
 
   describe "#initialize" do
     let(:formatter) { -> _severity, _at, _name, message { "#{message}\n" } }
@@ -64,102 +64,84 @@ RSpec.describe Cogger::Client do
   describe "#debug" do
     it "answers default color without block" do
       client.debug "test"
-      expect(undecorated_output).to eq([{foreground: :white, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :white], ["\n"])
     end
 
     it "answers default color with block" do
       client.debug { "test" }
-      expect(undecorated_output).to eq([{foreground: :white, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :white], ["\n"])
     end
   end
 
   describe "#info" do
     it "answers default color without block" do
       client.info "test"
-      expect(undecorated_output).to eq([{foreground: :green, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :green], ["\n"])
     end
 
     it "answers default color with block" do
       client.info { "test" }
-      expect(undecorated_output).to eq([{foreground: :green, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :green], ["\n"])
     end
   end
 
   describe "#warn" do
     it "answers default color without block" do
       client.warn "test"
-      expect(undecorated_output).to eq([{foreground: :yellow, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :yellow], ["\n"])
     end
 
     it "answers default color with block" do
       client.warn { "test" }
-      expect(undecorated_output).to eq([{foreground: :yellow, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :yellow], ["\n"])
     end
   end
 
   describe "#error" do
     it "answers default color without block" do
       client.error "test"
-      expect(undecorated_output).to eq([{foreground: :red, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :red], ["\n"])
     end
 
     it "answers default color with block" do
       client.error { "test" }
-      expect(undecorated_output).to eq([{foreground: :red, text: "test"}, {text: "\n"}])
+      expect(decoded_output).to contain_exactly(["test", :red], ["\n"])
     end
   end
 
   describe "#fatal" do
     it "answers default color without block" do
       client.fatal "test"
-
-      expect(undecorated_output).to eq(
-        [{background: :on_red, foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
-      )
+      expect(decoded_output).to contain_exactly(["test", :bold, :white, :on_red], ["\n"])
     end
 
     it "answers default color with block" do
       client.fatal { "test" }
-
-      expect(undecorated_output).to eq(
-        [{background: :on_red, foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
-      )
+      expect(decoded_output).to contain_exactly(["test", :bold, :white, :on_red], ["\n"])
     end
   end
 
   describe "#unknown" do
     it "answers default color without block" do
       client.unknown "test"
-
-      expect(undecorated_output).to eq(
-        [{foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
-      )
+      expect(decoded_output).to contain_exactly(["test", :bold, :white], ["\n"])
     end
 
     it "answers default color with block" do
       client.unknown { "test" }
-
-      expect(undecorated_output).to eq(
-        [{foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
-      )
+      expect(decoded_output).to contain_exactly(["test", :bold, :white], ["\n"])
     end
   end
 
   describe "#any" do
     it "answers default color without block" do
       client.any "test"
-
-      expect(undecorated_output).to eq(
-        [{foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
-      )
+      expect(decoded_output).to contain_exactly(["test", :bold, :white], ["\n"])
     end
 
     it "answers default color with block" do
       client.any { "test" }
-
-      expect(undecorated_output).to eq(
-        [{foreground: :white, style: :bold, text: "test"}, {text: "\n"}]
-      )
+      expect(decoded_output).to contain_exactly(["test", :bold, :white], ["\n"])
     end
   end
 

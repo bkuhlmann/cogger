@@ -48,20 +48,20 @@ RSpec.describe Cogger::Color do
   end
 
   context "with missing defaults" do
-    subject(:color) { described_class.new defaults: {} }
+    subject(:color) { described_class.new decorator: Tone.new }
 
-    it "fails with key error" do
+    it "fails with tone error" do
       expectation = proc { color.any "test" }
-      expect(&expectation).to raise_error(KeyError, /any/)
+      expect(&expectation).to raise_error(Tone::Error, /invalid alias or default/i)
     end
   end
 
   context "with invalid default style" do
-    subject(:color) { described_class.new defaults: {debug: %i[bogus]} }
+    subject(:color) { described_class.new decorator: Tone.new.add(debug: :bogus) }
 
-    it "fails with key error" do
+    it "fails with tone error" do
       expectation = proc { color.debug "test" }
-      expect(&expectation).to raise_error(Pastel::InvalidAttributeNameError, /bad style/i)
+      expect(&expectation).to raise_error(Tone::Error, /invalid style/i)
     end
   end
 end

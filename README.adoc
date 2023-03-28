@@ -1,8 +1,8 @@
-:pastel_link: link:https://github.com/piotrmurach/pastel[Pastel]
-
 :toc: macro
 :toclevels: 5
 :figure-caption!:
+
+:tone_link: link:https://alchemists.io/projects/tone[Tone]
 
 = Cogger
 
@@ -14,7 +14,7 @@ toc::[]
 == Features
 
 - Decorates Ruby's default `Logger`.
-- Uses color decoration as provided by the {pastel_link} gem.
+- Uses color decoration as provided by the {tone_link} gem.
 
 == Screenshot
 
@@ -143,40 +143,35 @@ Default colors are provided by the `Cogger::Color` class which are keyed by log 
 [source,ruby]
 ----
 {
-  debug: %i[white],
-  info: %i[green],
-  warn: %i[yellow],
-  error: %i[red],
+  debug: :white,
+  info: :green,
+  warn: :yellow,
+  error: :red,
   fatal: %i[white bold on_red],
   unknown: %i[white bold],
   any: %i[white bold]
 }
 ----
 
-All keys require an array of styles which can then be decorated by {pastel_link}. This means that if
+All keys require an array of styles which can then be decorated by {tone_link}. This means that if
 you wanted to use custom colors, you could create a new instance of the `Color` class and inject it
 into the client as follows:
 
-
 [source,ruby]
 ----
-custom_color = Cogger::Color.new(
-  defaults: {
-    debug: %i[white on_black],
-    info: %i[green on_black],
-    warn: %i[yellow on_black],
-    error: %i[red on_black],
-    fatal: %i[red on_black],
-    unknown: %i[white on_black],
-    any: %i[white on_black]
-  }
-)
-
+tone = Tone.new.add debug: :white,
+                    info: :green,
+                    warn: :yellow,
+                    error: :red,
+                    fatal: %i[white bold on_red],
+                    unknown: %i[white bold],
+                    any: %i[white bold]
+color = Cogger::Color.new decorator: tone
 logger = Cogger.init color: custom_color
 ----
 
 The above would ensure all log level colors are displayed on a black background. Basically, any
-style accepted by `Pastel#decorate` method is supported.
+style accepted by `Tone#add` method is supported.
 
 ==== Testing
 

@@ -1,43 +1,38 @@
 # frozen_string_literal: true
 
-require "pastel"
+require "tone"
 
 module Cogger
   # Provides default colors for all log levels.
   class Color
-    DEFAULTS = {
-      debug: %i[white],
-      info: %i[green],
-      warn: %i[yellow],
-      error: %i[red],
-      fatal: %i[white bold on_red],
-      unknown: %i[white bold],
-      any: %i[white bold]
-    }.freeze
+    DECORATOR = Tone.new.add debug: :white,
+                             info: :green,
+                             warn: :yellow,
+                             error: :red,
+                             fatal: %i[white bold on_red],
+                             unknown: %i[white bold],
+                             any: %i[white bold]
 
-    def initialize defaults: DEFAULTS, decorator: Pastel.new(enabled: $stdout.tty?)
-      @defaults = defaults
+    def initialize decorator: DECORATOR
       @decorator = decorator
     end
 
-    def debug(text) = decorate text, __method__
+    def debug(text) = decorator.call text, __method__
 
-    def info(text) = decorate text, __method__
+    def info(text) = decorator.call text, __method__
 
-    def warn(text) = decorate text, __method__
+    def warn(text) = decorator.call text, __method__
 
-    def error(text) = decorate text, __method__
+    def error(text) = decorator.call text, __method__
 
-    def fatal(text) = decorate text, __method__
+    def fatal(text) = decorator.call text, __method__
 
-    def unknown(text) = decorate text, __method__
+    def unknown(text) = decorator.call text, __method__
 
-    def any(text) = decorate text, __method__
+    def any(text) = decorator.call text, __method__
 
     private
 
-    attr_reader :defaults, :decorator
-
-    def decorate(text, kind) = decorator.decorate text, *defaults.fetch(kind)
+    attr_reader :decorator
   end
 end

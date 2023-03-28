@@ -3,6 +3,7 @@
 require "forwardable"
 require "logger"
 require "refinements/loggers"
+require "tone"
 
 module Cogger
   # Provides the primary client for colorized logging.
@@ -13,7 +14,7 @@ module Cogger
 
     delegate %i[formatter level progname debug info warn error fatal unknown] => :logger
 
-    def initialize logger = Logger.new($stdout), color: Color.new, **attributes
+    def initialize logger = Logger.new($stdout), color: Cogger.color, **attributes
       @logger = logger
       @color = color
       @attributes = attributes
@@ -42,7 +43,7 @@ module Cogger
     def default_level = logger.class.const_get ENV.fetch("LOG_LEVEL", "INFO")
 
     def default_formatter
-      -> severity, _at, _name, message { "#{color.public_send severity.downcase, message}\n" }
+      -> severity, _at, _name, message { "#{color[message, severity.downcase]}\n" }
     end
   end
 end
