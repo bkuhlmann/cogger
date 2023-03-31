@@ -1,5 +1,32 @@
 = Versions
 
+== 0.7.0 (2023-04-10)
+
+* Added JSON formatter - Brooke Kuhlmann
+* Added Tone gem - Brooke Kuhlmann
+* Added benchmark - Brooke Kuhlmann
+* Added color formatter - Brooke Kuhlmann
+* Added color processor - Brooke Kuhlmann
+* Added colorizer utility - Brooke Kuhlmann
+* Added configuration - Brooke Kuhlmann
+* Added constructor - Brooke Kuhlmann
+* Added crash formatter - Brooke Kuhlmann
+* Added dynamic template parser - Brooke Kuhlmann
+* Added hub - Brooke Kuhlmann
+* Added individual template parser - Brooke Kuhlmann
+* Added init deprecation warning - Brooke Kuhlmann
+* Added program - Brooke Kuhlmann
+* Added registry - Brooke Kuhlmann
+* Added sanitizer utility - Brooke Kuhlmann
+* Added simple formatter - Brooke Kuhlmann
+* Added universal template parser - Brooke Kuhlmann
+* Added version release notes - Brooke Kuhlmann
+* Updated to Ruby 3.2.2 - Brooke Kuhlmann
+* Removed color - Brooke Kuhlmann
+* Removed the Pastel gem - Brooke Kuhlmann
+* Refactored Refinements gem to the test group - Brooke Kuhlmann
+* Refactored client to use Tone for color decoration - Brooke Kuhlmann
+
 == 0.6.0 (2023-03-21)
 
 * Added init method - Brooke Kuhlmann

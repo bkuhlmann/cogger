@@ -3,22 +3,29 @@
 :figure-caption!:
 
 :tone_link: link:https://alchemists.io/projects/tone[Tone]
+:logger_link: link:https://rubyapi.org/o/s?q=Logger[Logger]
+:format_link: link:https://ruby-doc.org/3.2.1/format_specifications_rdoc.html[Format Specification]
+:pattern_matching_link: link:https://alchemists.io/articles/ruby_pattern_matching[pattern matching]
+:refinements_link: link:https://alchemists.io/projects/refinements[Refinements]
 
 = Cogger
 
-Cogger is a portmanteau for colorized logging (i.e. `[c]olorized + l[ogger] = cogger`) which
-decorates Ruby's native logger with colorized output.
+Cogger is a portmanteau for custom logging (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native logging functionality with additional features such as dynamic emojis, colorized text, structured JSON, and much more.
 
 toc::[]
 
 == Features
 
 - Decorates Ruby's default `Logger`.
-- Uses color decoration as provided by the {tone_link} gem.
+- Provides dynamic emoji output based on severity.
+- Provides dynamic or specific color decoration via the {tone_link} gem.
+- Provides customizable formatters for simple, color, JSON, and/or custom output.
+- Provides customizable templates which leverage the native {format_link}.
+- Provides filtering of sensitive information.
 
 == Screenshot
 
-image::https://alchemists.io/images/projects/cogger/screenshots/console.png[Console,width=552,height=679,role=focal_point]
+image::https://alchemists.io/images/projects/cogger/screenshots/console.png[Console,width=1139,height=211,role=focal_point]
 
 == Requirements
 
@@ -35,89 +42,77 @@ bin/setup
 
 == Usage
 
-All colorized logging is provided by `Cogger` which can be used as follows:
+All interaction is provided by `Cogger` which can be used as follows:
 
 [source,ruby]
 ----
-logger = Cogger.init
-
-logger.debug "test"        # true
-logger.debug { "test" }    # true
-logger.info "test"         # true
-logger.info { "test" }     # true
-logger.warn "test"         # true
-logger.warn { "test" }     # true
-logger.error "test"        # true
-logger.error { "test" }    # true
-logger.fatal "test"        # true
-logger.fatal { "test" }    # true
-logger.unknown "test"      # true
-logger.unknown { "test" }  # true
-logger.any "test"          # true
-logger.any { "test" }      # true
+logger = Cogger.new
+logger.info "demo"   # "demo"
 ----
 
-By default, all logging is configured to use `INFO` level and writes to `$stdout`. To see what the
-colorized output from the above looks like, please see the screenshot shown in the _Screenshots_
-section as documented earlier.
-
-Beyond the standard log level methods, the following methods are also available:
+If you set your logging level to `debug`, you can walk through each level:
 
 [source,ruby]
 ----
-logger = Cogger.init
+logger = Cogger.new level: :debug
 
-logger.formatter  # #<Proc:0x000000010626ebc8 $HOME/OSS/cogger/lib/cogger/client.rb:37 (lambda)>
-logger.level      # 1
-logger.progname   # nil
+# Without blocks.
+logger.debug "demo"        # "demo"
+logger.info "demo"         # "demo"
+logger.warn "demo"         # "demo"
+logger.error "demo"        # "demo"
+logger.fatal "demo"        # "demo"
+logger.unknown "demo"      # "demo"
+logger.any "demo"          # "demo"
+
+# With blocks.
+logger.debug { "demo" }    # "demo"
+logger.info { "demo" }     # "demo"
+logger.warn { "demo" }     # "demo"
+logger.error { "demo" }    # "demo"
+logger.fatal { "demo" }    # "demo"
+logger.unknown { "demo" }  # "demo"
+logger.any { "demo" }      # "demo"
 ----
 
-=== Customization
-
-Customization of the logger differs, slightly, from what you'd get with the standard `Logger` class.
-The following sections will explain what these differences look like.
-
-==== Initialization
-
-For starters, the first argument is a positional argument that defaults to `Logger.new($stdout)` but
-you could swap out the default logger with something that logs to a string. For example:
+...or, if you'd like to display all severities at once, use:
 
 [source,ruby]
 ----
-logger = Cogger.init Logger.new(StringIO.new)
+%i[debug info warn error fatal unknown any].each { |severity| logger.public_send severity, "demo" }
 ----
 
-You can also create a logger which might use custom colors. Example:
+=== Initialization
 
-[source,ruby]
-----
-logger = Cogger.init color: MyColor.new
-----
+When creating a new logger, you can configure behavior via the following attributes:
 
-More information on how to customize your colors will be provided shortly. Lastly, you can provide any _setable_ attribute which would normally be used when constructing a
-normal logger. Example:
+* `id`: The program/process ID which shows up in the logs as your `id`. Default: `$PROGRAM_NAME`. For example, if initialized within `demo.rb`, the `id` would be `"demo"`,
+* `io`: The input/output stream. This can be `STDOUT/$stdout`, a file/path, or `nil`. Default: `$stdout`.
+* `level`: The severity level you want to log at. Can be `:debug`, `:info`, `:warn`, `:error`, `:fatal`, or `:unknown`. Default: `:info`.
+* `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Color`. See the _Formatters_ section for more info.
+* `mode`: The binary mode which determines if your logs should be written in binary mode or not. Can be `true` or `false` and is identical to the `binmode` functionality found in the {logger_link} class. Default: `false`.
+* `age`: The rotation age of your log. This only applies when logging to a file. This is equivalent to the `shift_age` as found with the {logger_link} class. Default: `0`.
+* `size`: The rotation size of your log. This only applies when logging to a file. This is equivalent to the `shift_size` as found with the {logger_link} class. Default: `1,048,576` (i.e. 1 MB).
+* `suffix`: The rotation suffix. This only applies when logging to a file. This is equivalent to the `shift_period_suffix` as found with the {logger_link} class and is used when creating new rotation files. Default: `%Y-%m-%d`.
 
-[source,ruby]
-----
-logger = Cogger.init formatter: ->(severity, _at, _name, message) { "#{message}\n" },
-                     level: :debug,
-                     progname: "Test",
-                     datetime_format: "%Y-%m-%d"
-----
-
-Alternatively, you can use a block as well:
+Given the above description, here's how'd you create a new logger instance with all attributes:
 
 [source,ruby]
 ----
-logger = Cogger.init do |instance|
-  instance.formatter = ->(severity, _at, _name, message) { "#{message}\n" }
-  instance.level = :debug
-  instance.progname = "Test"
-  instance.datetime_format = "%Y-%m-%d"
-end
+# Default
+logger = Cogger.new
+
+# Custom
+logger = Cogger.new id: :demo,
+                    io: "demo.log",
+                    level: :debug,
+                    mode: false,
+                    age: 5,
+                    size: 1_000,
+                    suffix: "%Y"
 ----
 
-==== Environment
+=== Environment
 
 The default log level is `INFO` but can be customized via your environment. For instance, you could
 set the logging level to any of the following:
@@ -133,47 +128,294 @@ export LOG_LEVEL=UNKNOWN
 export LOG_LEVEL=ANY
 ----
 
-By default, `Cogger::Client` will automatically use whatever is set via the `LOG_LEVEL` environment
-variable unless overwritten during initialization.
+By default, `Cogger` will automatically use whatever is set via the `LOG_LEVEL` environment variable unless overwritten during initialization.
 
-==== Colorization
+=== Templates
 
-Default colors are provided by the `Cogger::Color` class which are keyed by log level:
+Templates are used by all formatters and adhere to {format_link} as used by `Kernel#format`. All specifiers, flags, width, and precision are supported except for the following restrictions:
 
-[source,ruby]
-----
-{
-  debug: :white,
-  info: :green,
-  warn: :yellow,
-  error: :red,
-  fatal: %i[white bold on_red],
-  unknown: %i[white bold],
-  any: %i[white bold]
-}
-----
+- Use of _reference by name_ is required which means `%<demo>s` is allowed but `%{demo}` is not. This is because _reference by name_ is required for regular expressions and/or {pattern_matching_link}.
+- Use of the `n$` flag is prohibited because this isn't compatible with the above.
 
-All keys require an array of styles which can then be decorated by {tone_link}. This means that if
-you wanted to use custom colors, you could create a new instance of the `Color` class and inject it
-into the client as follows:
+In addition to the above, the {format_link} is further enhanced with the use of _universal_ and _individual_ directives which are primarily used by the _color_ formatter but might prove useful for other formatters. Example:
 
 [source,ruby]
 ----
-tone = Tone.new.add debug: :white,
-                    info: :green,
-                    warn: :yellow,
-                    error: :red,
-                    fatal: %i[white bold on_red],
-                    unknown: %i[white bold],
-                    any: %i[white bold]
-color = Cogger::Color.new decorator: tone
-logger = Cogger.init color: custom_color
+# Universal: Dynamic
+"<dynamic>%<severity>s %<at>s %<id>s %<message>s</dynamic>"
+
+# Universal: Specific
+"<green>%<severity>s %<at>s %<id>s %<message>s</green>"
+
+# Individual: Dynamic
+"%<severity:dynamic>s %<at:green>s %<id:green>s %<message:green>s"
+
+# Individual: Specific
+"%<severity:purple>s %<at:yellow>s %<id:cyan>s %<message:green>s"
 ----
 
-The above would ensure all log level colors are displayed on a black background. Basically, any
-style accepted by `Tone#add` method is supported.
+Here's a detailed breakdown of the above:
 
-==== Testing
+* *Universal*: Applies color universally to the _entire_ template and requires you to:
+** Wrap your entire template in a  and start (`<example>`) and end tag (`</example>`).
+** Your tag names must either be `<dynamic></dynamic>`, any default color (i.e. `<green></green>`), or alias (i.e. `<your_alias></your_alias>`) as supported by the {tone_link} gem.
+* *Individual*: Individual templates allow you to apply color to _specific_ attributes and require you to:
+** Format your attributes as `attribute:directive`. The colon delimiter is required to separate your attribute for your color choice.
+** The color value (what follows after the colon) can be `dynamic`, any default color (i.e. `green`), or alias (i.e. `your_alias`) as supported by the {tone_link} gem.
+
+In addition to the general categorization of universal and individual tags, each support the following directives:
+
+* *Dynamic*: A dynamic directive means that color will be determined by severity level only. This means if info level is used, the associated color (alias) for info will be applied. Same goes for warn, error, etc.
+* *Specific*: A specific directive means the color you use will be applied without any further processing regardless of the severity level. This gives you the ability to customize your colors further in situations where dynamic coloring isn't enough.
+
+=== Emojis
+
+In addition to coloring to your log output, you can add emojis as well. Here are the defaults:
+
+[source,ruby]
+----
+Cogger.emojis
+
+# {
+#   :debug => "🔎",
+#    :info => "🟢",
+#    :warn => "⚠️ ",
+#   :error => "🛑",
+#   :fatal => "🔥"
+# }
+----
+
+To add an emoji, use:
+
+[source,ruby]
+----
+Cogger.add_emoji(:tada, "🎉")
+      .add_emoji :favorite, "❇️"
+----
+
+By default, the `:emoji` formatter provides dynamic rendering of emojis based on severity level. Example:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :emoji
+logger.info "demo"
+
+# 🟢 demo
+----
+
+If you wanted to use a specific emoji, you could use the color formatter with a specific template:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: Cogger::Formatters::Color.new("%<emoji:tada>s %<message:dynamic>s")
+logger.info "demo"
+
+# 🎉 demo
+----
+
+Keep in mind that using a specific, non-dynamic, emoji will _always_ display no matter the current severity level.
+
+=== Formatters
+
+Multiple formatters are provided for you which can be further customized as needed. Here's what is provided by default:
+
+[source,ruby]
+----
+Cogger.formatters
+
+# {
+#    :color => [
+#     Cogger::Formatters::Color < Object,
+#     nil
+#   ],
+#   :detail => [
+#     Cogger::Formatters::Simple < Object,
+#     "[%<id>s] [%<severity>s] [%<at>s] %<message>s"
+#   ],
+#    :emoji => [
+#     Cogger::Formatters::Color < Object,
+#     "%<emoji:dynamic>s% <message:dynamic>s"
+#   ],
+#     :json => [
+#     Cogger::Formatters::JSON < Object,
+#     nil
+#   ],
+#   :simple => [
+#     Cogger::Formatters::Simple < Object,
+#     nil
+#   ],
+#     :rack => [
+#     Cogger::Formatters::Simple < Object,
+#     "[%<id>s] [%<severity>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s %<length>s # %<params>s"
+#   ]
+# }
+----
+
+You can add a formatter by providing a unique name, class, and associated template (`nil` can be used if you want to use the formatter's default template):
+
+[source,ruby]
+----
+# Add
+Cogger.add_formatter :basic, Cogger::Formatters::Simple, "%<severity>s %<message>s"
+
+# Get
+Cogger.get_formatter :basic
+# [Cogger::Formatters::Simple, "%<severity>s %<message>s"]
+----
+
+Symbols or strings can be used interchangeably when adding/getting formatters. As mentioned above, a template doesn't have to be supplied if you want to use the formatter's default template which can be inspected by asking for it:
+
+[source,ruby]
+----
+Cogger::Formatters::Simple::TEMPLATE
+# "%<message>s"
+----
+
+💡 When you find yourself customizing any of the default formatters, you can reduce typing by adding your custom configuration to the registry and then referring to it via a symbol when initializing a new logger.
+
+==== Simple
+
+The simple formatter is a bare bones formatter that uses no color information, doesn't support the universal/dynamic template syntax, and only supports the {format_link} as mentioned in the _Templates_ section earlier. This formatter can be used via the following template variations:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :detail
+logger = Cogger.new formatter: :simple
+logger = Cogger.new formatter: :rack
+----
+
+==== Color
+
+The color formatter is enabled by default and is the equivalent of initializing with either of the following:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger = Cogger.new formatter: Cogger::Formatters::Color.new
+logger = Cogger.new formatter: Cogger::Formatters::Color.new("%<message:dynamic>s")
+----
+
+All three of the above examples are identical so you can start to see how different formatters can be used and customized further. Please refer back to the _Templates_ section on how to customize this formatter with more sophisticated templates.
+
+In addition to template customization, you can customize your color aliases as well. Default colors are provided by {tone_link} which are _aliased_ by log level:
+
+[source,ruby]
+----
+Cogger.aliases
+
+# {
+#   debug: :white,
+#   info: :green,
+#   warn: :yellow,
+#   error: :red,
+#   fatal: %i[white bold on_red],
+#   unknown: %i[white bold],
+#   any: %i[white bold]
+# }
+----
+
+This allows a color or combination of color styles (i.e. foreground + background) to be dynamically applied based on log level. You can add additional aliases via:
+
+[source,ruby]
+----
+Cogger.add_alias :mystery, :white, :on_purple
+----
+
+Once an alias is added, it can be immediately applied via the template of your formatter. Example:
+
+[source,ruby]
+----
+# Applies the `mystery` alias universally to your template.
+logger = Cogger.new formatter: Cogger::Formatters::Color.new("<mystery>%<message>s</mystery>")
+----
+
+==== JSON
+
+This formatter is similar in behavior to the _simple_ formatter except the template allows you to order the layout of your keys only. All other information is ignored. To use:
+
+[source,ruby]
+----
+# Default order
+logger = Cogger.new formatter: :json
+logger.info verb: "GET", path: "/"
+
+# {"id":"console","severity":"INFO","at":"2023-04-10 09:03:55 -0600","verb":"GET","path":"/"}
+
+# Custom order
+logger = Cogger.new formatter: Cogger::Formatters::JSON.new("%<severity>s %<verb>s")
+logger.info verb: "GET", path: "/"
+
+# {"severity":"INFO","verb":"GET","id":"console","at":"2023-04-10 09:05:03 -0600","path":"/"}
+----
+
+Your template can be a full or partial match of keys. If no keys match what is defined in the template, then the original order of the keys will be used instead.
+
+==== Custom
+
+Should none of the built-in formatters be to your liking, you can implement, use, and/or register a custom formatter as well. The most minimum, bare bones, skeleton would be:
+
+[source,ruby]
+----
+class MyFormatter
+  TEMPLATE = "%<message>s"
+
+  def initialize template = TEMPLATE, sanitizer: Kit::Sanitizer.new
+    @template = template
+    @sanitizer = sanitizer
+  end
+
+  def call(*entry) = "#{format template, sanitizer.call(*entry)}\n"
+
+  private
+
+  attr_reader :template, :sanitizer
+end
+----
+
+There is no restriction on what dependency you might want to initialize your custom formatter with but -- as a bare minimum -- you'll want to provide a default template and inject the sanitizer which sanitizes the raw log entry into a hash you can interact with in your implementation. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `severity`, `at`, `id`, `message`) and answers back a formatted string. If you need more examples you can either read the link:https://rubyapi.org/o/logger/formatter#method-i-call[Logger::Formatter] or look at any of the formatters provided within this gem.
+
+=== Filters
+
+Filters allow you to mask sensitive information you don't want showing up in your logs. Here are the defaults:
+
+[source,ruby]
+----
+Cogger.filters
+
+# [
+#   :_csrf,
+#   :password,
+#   :password_confirmation
+# ]
+----
+
+To add additional filters, use:
+
+[source,ruby]
+----
+Cogger.add_filter(:login)
+      .add_filter "email"
+
+# [
+#   :_csrf,
+#   :password,
+#   :password_confirmation,
+#   :login,
+#   :email
+# ]
+----
+
+Symbols and strings can be used interchangeably but are stored as symbols since symbols are used when filtering log entries. Once your filters are in place, you can immediately see their effects:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :json
+logger.info login: "jayne", password: "secret"
+
+# {"id":"console","severity":"INFO","at":"2023-04-09 17:33:00 -0600","login":"[FILTERED]","password":"[FILTERED]"}
+----
+
+=== Testing
 
 When testing the Cogger client, you might find it convenient to use `StringIO`, or a file, for
 logging purposes in order to not pollute your test output but also have a convenient way to see what
@@ -182,7 +424,7 @@ was logged. Example:
 [source,ruby]
 ----
 class Demo
-  def initialize logger: Cogger.init
+  def initialize logger: Cogger.new
     @logger = logger
   end
 
@@ -194,22 +436,24 @@ class Demo
 end
 
 RSpec.describe Demo do
+  using Refinements::StringIOs
+
   subject(:demo) { described_class.new logger: }
 
-  let(:logger) { Cogger.init Logger.new(StringIO.new) }
+  let(:logger) { Cogger.new io: }
+  let(:io) { StringIO.new }
 
   describe "#say" do
     it "logs text" do
       demo.say "test"
-      expect(logger.reread).to include("test")
+      expect(io.reread).to include("test")
     end
   end
 end
 ----
 
 Notice that when testing the instance of `Demo` and injecting a logger which logs to a string I/O
-object, you can conveniently reread that string to see what was logged. This makes your specs easier
-to write while also not adding additional noise to your test suite's output.
+object, you can conveniently _reread_ the string -- provided by the {refinements_link} gem -- to see what was logged. This makes your specs easier to write while also not adding additional noise to your test suite's output.
 
 == Development
 
