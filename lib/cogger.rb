@@ -11,7 +11,10 @@ end
 module Cogger
   extend Registry
 
-  def self.init(...) = Client.new(...)
+  def self.init(...)
+    warn "#{self}##{__method__} is deprecated, use `.new` instead.", category: :deprecated
+    Client.new(...)
+  end
 
   def self.new(...) = Hub.new(...)
 end

@@ -4,6 +4,11 @@ require "spec_helper"
 
 RSpec.describe Cogger do
   describe ".init" do
+    it "answers depreciation warning" do
+      expectation = proc { described_class.init }
+      expect(&expectation).to output(/Cogger#init is deprecated, use `.new` instead./).to_stderr
+    end
+
     it "answers client with default configuration" do
       client = described_class.init
 
