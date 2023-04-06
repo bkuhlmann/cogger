@@ -1,2 +1,9 @@
 inherit_gem:
   caliber: config/all.yml
+
+Metrics/AbcSize:
+  Exclude:
+    - "lib/cogger/registry.rb"
+Metrics/MethodLength:
+  Exclude:
+    - "lib/cogger/registry.rb"
