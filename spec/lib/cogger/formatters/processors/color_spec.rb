@@ -9,7 +9,7 @@ RSpec.describe Cogger::Formatters::Processors::Color do
     let(:at) { Time.now }
     let(:colorer) { Cogger.colorer }
 
-    it "answers transformed template and colorized message" do
+    it "answers template and attributes for emoji" do
       result = processor.call "%<emoji:dynamic>s %<message:dynamic>s", "INFO", at, :test, "test"
 
       expect(result).to eq(
@@ -20,7 +20,7 @@ RSpec.describe Cogger::Formatters::Processors::Color do
       )
     end
 
-    it "answers colorized template and attributes when universal and dynamic" do
+    it "answers template and attributes when universal and dynamic" do
       result = processor.call "<dynamic>%<severity>s %<at>s %<id>s %<message>s</dynamic>",
                               "INFO",
                               at,
@@ -35,7 +35,7 @@ RSpec.describe Cogger::Formatters::Processors::Color do
       )
     end
 
-    it "answers colorized template and attributes when universal and specific" do
+    it "answers template and attributes when universal and specific" do
       result = processor.call "<cyan>%<severity>s %<at>s %<id>s %<message>s</cyan>",
                               "INFO",
                               at,
@@ -51,7 +51,7 @@ RSpec.describe Cogger::Formatters::Processors::Color do
       )
     end
 
-    it "answers transformed template and colorized attributes when individual and dynamic" do
+    it "answers template and attributes when individual and dynamic" do
       result = processor.call "%<severity:dynamic>s %<at:dynamic>s %<id:dynamic>s " \
                               "%<message:dynamic>s",
                               "INFO",
@@ -72,7 +72,7 @@ RSpec.describe Cogger::Formatters::Processors::Color do
       )
     end
 
-    it "answers transformed template and colorized attributes when individual and specific" do
+    it "answers template and attributes when individual and specific" do
       result = processor.call "%<severity:cyan>s %<at:cyan>s %<id:cyan>s %<message:cyan>s",
                               "INFO",
                               at,
@@ -92,7 +92,7 @@ RSpec.describe Cogger::Formatters::Processors::Color do
       )
     end
 
-    it "answers transformed template and colorized attributes when individually mixed" do
+    it "answers template and attributes when individually mixed" do
       result = processor.call "%<severity:dynamic>s %<at:yellow>s %<id:cyan>s %<message:purple>s",
                               "INFO",
                               at,
