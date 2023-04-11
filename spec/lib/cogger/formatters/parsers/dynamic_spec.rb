@@ -20,8 +20,8 @@ RSpec.describe Cogger::Formatters::Parsers::Dynamic do
       )
     end
 
-    it "answers template with no matches" do
-      expect(parser.call("test")).to eq("test")
+    it "answers template and empty directives with no matches" do
+      expect(parser.call("test")).to eq(["test", {}])
     end
   end
 end

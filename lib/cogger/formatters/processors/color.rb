@@ -21,7 +21,7 @@ module Cogger
           case parser.call template
             in [String => body, String => style] then universal body, style, **attributes
             in [String => body, Hash => styles] then individual body, attributes, styles
-            else [template, {}]
+            # :nocov:
           end
         end
 

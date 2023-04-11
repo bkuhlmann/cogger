@@ -30,9 +30,10 @@ module Cogger
         end
 
         def call template
-          return template unless template.match? pattern
-
           attributes = {}
+
+          return [template, attributes] unless template.match? pattern
+
           template = sanitize_and_extract template, attributes
           [template, attributes]
         end

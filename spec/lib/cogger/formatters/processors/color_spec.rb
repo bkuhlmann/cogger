@@ -112,9 +112,9 @@ RSpec.describe Cogger::Formatters::Processors::Color do
       )
     end
 
-    it "answers original template and empty attributes with no directives or attributes" do
+    it "answers original template and attributes" do
       result = processor.call "test", "FATAL", at, :test, "test"
-      expect(result).to eq(["test", {}])
+      expect(result).to eq(["test", {at:, id: :test, message: "test", severity: "FATAL"}])
     end
   end
 end

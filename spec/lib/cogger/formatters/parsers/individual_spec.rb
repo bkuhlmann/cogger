@@ -8,15 +8,15 @@ RSpec.describe Cogger::Formatters::Parsers::Individual do
   describe "#call" do
     it "answers template with no matches" do
       template = "<dynamic>test</dynamic>"
-      expect(parser.call(template)).to eq(template)
+      expect(parser.call(template)).to eq([template, {}])
     end
 
-    it "answers template with no directives" do
+    it "answers template and nil valued directives with no directives" do
       template = "<dynamic>%<message>s</dynamic>"
       expect(parser.call(template)).to eq([template, {message: nil}])
     end
 
-    it "parses string type template" do
+    it "answers template with directive hash" do
       template = "%<severity:dynamic>s %<message:white>s"
 
       expect(parser.call(template)).to eq(
@@ -59,7 +59,7 @@ RSpec.describe Cogger::Formatters::Parsers::Individual do
 
     it "does not parse dollar sign flag template" do
       template = "%$<one:green>s"
-      expect(parser.call(template)).to eq("%$<one:green>s")
+      expect(parser.call(template)).to eq(["%$<one:green>s", {}])
     end
 
     it "parses width specifier template" do
