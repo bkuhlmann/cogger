@@ -15,6 +15,18 @@ RSpec.describe Cogger::Registry do
     }
   end
 
+  let :aliases do
+    {
+      debug: [:white],
+      info: [:green],
+      warn: [:yellow],
+      error: [:red],
+      fatal: %i[bold white on_red],
+      unknown: %i[bold white],
+      any: %i[bold white]
+    }
+  end
+
   let :formatters do
     {
       color: [Cogger::Formatters::Color, nil],
@@ -204,14 +216,13 @@ RSpec.describe Cogger::Registry do
 
   describe "#defaults" do
     it "answers defaults" do
-      expect(registry.defaults).to eq(emojis:, formatters:)
-    end
-
-    it "doesn't allow emoji or formatter mutation" do
-      registry.defaults[:emojis][:test] = :test
-      registry.defaults[:formatters][:test] = :test
-
-      expect(registry.defaults).to eq(emojis:, formatters:)
+      expect(registry.defaults).to match(
+        emojis:,
+        aliases:,
+        formatters:,
+        filters: Set[:_csrf, :password, :password_confirmation],
+        color: kind_of(Tone::Client)
+      )
     end
   end
 end

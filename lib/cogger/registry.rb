@@ -74,6 +74,6 @@ module Cogger
 
     def color = @color ||= Tone.new
 
-    def defaults = {emojis: emojis.dup, formatters: formatters.dup}
+    def defaults = {emojis:, aliases:, formatters:, filters:, color:}
   end
 end
