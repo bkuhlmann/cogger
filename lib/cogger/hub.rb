@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
 require "logger"
+require "refinements/loggers"
 
 module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
+  # :reek:TooManyInstanceVariables
   class Hub
+    using Refinements::Loggers
+
     def initialize(registry: Cogger, model: Configuration.new, **attributes)
       @registry = registry
       @configuration = model.with(**transform(attributes))
+      @primary = configuration.to_logger
+      @streams = [@primary]
       @mutex = Mutex.new
-      @streams = [configuration.to_logger]
     end
 
     def add_stream **attributes
@@ -32,13 +37,15 @@ module Cogger
 
     alias any unknown
 
+    def reread = primary.reread
+
     def inspect
       %(#<#{self.class} #{configuration.inspect.delete_prefix! "#<Cogger::Configuration "})
     end
 
     private
 
-    attr_reader :registry, :configuration, :mutex, :streams
+    attr_reader :registry, :configuration, :primary, :streams, :mutex
 
     # :reek:FeatureEnvy
     # :reek:TooManyStatements

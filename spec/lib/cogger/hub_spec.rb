@@ -160,6 +160,13 @@ RSpec.describe Cogger::Hub do
     it_behaves_like "a log", :any
   end
 
+  describe "#reread" do
+    it "answers what was previously written" do
+      logger.info "This is a test."
+      expect(logger.reread).to include("This is a test.")
+    end
+  end
+
   describe "#inspect" do
     it "answers class name configuration attributes prefix" do
       expect(logger.inspect).to include("#<Cogger::Hub @id=rspec")
