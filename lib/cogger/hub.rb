@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "logger"
+require "refinements/hashes"
 require "refinements/loggers"
 
 module Cogger
@@ -8,10 +9,11 @@ module Cogger
   # :reek:TooManyInstanceVariables
   class Hub
     using Refinements::Loggers
+    using Refinements::Hashes
 
     def initialize(registry: Cogger, model: Configuration.new, **attributes)
       @registry = registry
-      @configuration = model.with(**transform(attributes))
+      @configuration = model.with(**find_formatter(attributes))
       @primary = configuration.to_logger
       @streams = [@primary]
       @mutex = Mutex.new
@@ -19,7 +21,7 @@ module Cogger
 
     def add_stream **attributes
       attributes[:id] = configuration.id
-      streams.append configuration.with(**transform(attributes)).to_logger
+      streams.append configuration.with(**find_formatter(attributes)).to_logger
       self
     end
 
@@ -47,16 +49,15 @@ module Cogger
 
     attr_reader :registry, :configuration, :primary, :streams, :mutex
 
-    # :reek:FeatureEnvy
-    # :reek:TooManyStatements
-    def transform attributes
-      value = attributes[:formatter]
+    def find_formatter attributes
+      attributes.transform_with!(
+        formatter: lambda do |value|
+          return value unless value.is_a?(Symbol) || value.is_a?(String)
 
-      return attributes unless value.is_a?(Symbol) || value.is_a?(String)
-
-      formatter, template = registry.get_formatter value
-      attributes[:formatter] = template ? formatter.new(template) : formatter.new
-      attributes
+          formatter, template = registry.get_formatter value
+          template ? formatter.new(template) : formatter.new
+        end
+      )
     end
 
     # :reek:TooManyStatements
