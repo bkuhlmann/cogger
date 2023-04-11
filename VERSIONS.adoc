@@ -1,5 +1,13 @@
 = Versions
 
+== 0.7.1 (2023-04-11)
+
+* Fixed JSON formatter to ignore nil values - Brooke Kuhlmann
+* Fixed individual parser to always answer a tuple - Brooke Kuhlmann
+* Fixed registry defaults - Brooke Kuhlmann
+* Fixed sanitizer to always include message - Brooke Kuhlmann
+* Refactored color processor to use better spec descriptions - Brooke Kuhlmann
+
 == 0.7.0 (2023-04-10)
 
 * Added JSON formatter - Brooke Kuhlmann

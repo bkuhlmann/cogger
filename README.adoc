@@ -10,18 +10,19 @@
 
 = Cogger
 
-Cogger is a portmanteau for custom logging (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native logging functionality with additional features such as dynamic emojis, colorized text, structured JSON, and much more.
+Cogger is a portmanteau for custom logging (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native {logger_link} functionality with additional features such as dynamic emojis, colorized text, structured JSON, multiple outputs, and much more. 🚀
 
 toc::[]
 
 == Features
 
-- Decorates Ruby's default `Logger`.
-- Provides dynamic emoji output based on severity.
-- Provides dynamic or specific color decoration via the {tone_link} gem.
-- Provides customizable formatters for simple, color, JSON, and/or custom output.
-- Provides customizable templates which leverage the native {format_link}.
-- Provides filtering of sensitive information.
+* Enhances Ruby's default {logger_link} with additional functionality and firepower.
+* Provides dynamic/specific emoji output.
+* Provides dynamic/specific colorized output via the {tone_link} gem.
+* Provides customizable templates which leverage the native {format_link}.
+* Provides customizable formatters for simple, color, JSON, and/or custom output.
+* Provides multiple streams so you can log the same information to several outputs at once.
+* Provides filtering of sensitive information.
 
 == Screenshot
 
@@ -33,11 +34,34 @@ image::https://alchemists.io/images/projects/cogger/screenshots/console.png[Cons
 
 == Setup
 
-To set up the project, run:
+To install _with_ security, run:
 
 [source,bash]
 ----
-bin/setup
+# 💡 Skip this line if you already have the public certificate installed.
+gem cert --add <(curl --compressed --location https://alchemists.io/gems.pem)
+gem install cogger --trust-policy HighSecurity
+----
+
+To install _without_ security, run:
+
+[source,bash]
+----
+gem install cogger
+----
+
+You can also add the gem directly to your project:
+
+[source,bash]
+----
+bundle add cogger
+----
+
+Once the gem is installed, you only need to require it:
+
+[source,ruby]
+----
+require "cogger"
 ----
 
 == Usage
@@ -86,7 +110,7 @@ logger.any { "demo" }      # "demo"
 
 When creating a new logger, you can configure behavior via the following attributes:
 
-* `id`: The program/process ID which shows up in the logs as your `id`. Default: `$PROGRAM_NAME`. For example, if initialized within `demo.rb`, the `id` would be `"demo"`,
+* `id`: The program/process ID which shows up in the logs as your `id`. Default: `$PROGRAM_NAME`. For example, if run within a `demo.rb` script, the `id` would be `"demo"`,
 * `io`: The input/output stream. This can be `STDOUT/$stdout`, a file/path, or `nil`. Default: `$stdout`.
 * `level`: The severity level you want to log at. Can be `:debug`, `:info`, `:warn`, `:error`, `:fatal`, or `:unknown`. Default: `:info`.
 * `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Color`. See the _Formatters_ section for more info.
@@ -125,7 +149,6 @@ export LOG_LEVEL=WARN
 export LOG_LEVEL=ERROR
 export LOG_LEVEL=FATAL
 export LOG_LEVEL=UNKNOWN
-export LOG_LEVEL=ANY
 ----
 
 By default, `Cogger` will automatically use whatever is set via the `LOG_LEVEL` environment variable unless overwritten during initialization.
@@ -141,32 +164,56 @@ In addition to the above, the {format_link} is further enhanced with the use of 
 
 [source,ruby]
 ----
-# Universal: Dynamic
+# Universal: Dynamic (color is determined by severity)
 "<dynamic>%<severity>s %<at>s %<id>s %<message>s</dynamic>"
 
-# Universal: Specific
+# Universal: Specific (uses the green color only)
 "<green>%<severity>s %<at>s %<id>s %<message>s</green>"
 
-# Individual: Dynamic
-"%<severity:dynamic>s %<at:green>s %<id:green>s %<message:green>s"
+# Individual: Dynamic (color is determined by severity)
+"%<severity:dynamic>s %<at:dynamic>s %<id:dynamic>s %<message:dynamic>s"
 
-# Individual: Specific
+# Individual: Specific (uses a rainbow of colors)
 "%<severity:purple>s %<at:yellow>s %<id:cyan>s %<message:green>s"
 ----
 
 Here's a detailed breakdown of the above:
 
 * *Universal*: Applies color universally to the _entire_ template and requires you to:
-** Wrap your entire template in a  and start (`<example>`) and end tag (`</example>`).
-** Your tag names must either be `<dynamic></dynamic>`, any default color (i.e. `<green></green>`), or alias (i.e. `<your_alias></your_alias>`) as supported by the {tone_link} gem.
+** Wrap your entire template in a  and start (`<example>`) and end tag (`</example>`) which works much like an HTML tag in this context.
+** Your tag names must either be `<dynamic></dynamic>`, any default color (example: `<green></green>`), or alias (i.e. `<your_alias></your_alias>`) as supported by the {tone_link} gem.
 * *Individual*: Individual templates allow you to apply color to _specific_ attributes and require you to:
 ** Format your attributes as `attribute:directive`. The colon delimiter is required to separate your attribute for your color choice.
-** The color value (what follows after the colon) can be `dynamic`, any default color (i.e. `green`), or alias (i.e. `your_alias`) as supported by the {tone_link} gem.
+** The color value (what follows after the colon) can be `dynamic`, any default color (example: `green`), or alias (i.e. `your_alias`) as supported by the {tone_link} gem.
 
 In addition to the general categorization of universal and individual tags, each support the following directives:
 
 * *Dynamic*: A dynamic directive means that color will be determined by severity level only. This means if info level is used, the associated color (alias) for info will be applied. Same goes for warn, error, etc.
 * *Specific*: A specific directive means the color you use will be applied without any further processing regardless of the severity level. This gives you the ability to customize your colors further in situations where dynamic coloring isn't enough.
+
+At this point, you might have gathered that there are specific keys you can use for the log event metadata in your template and everything else is up to you. This stems from the fact that {logger_link} entries always have the following metadata:
+
+* `id`: This is the program/process ID you created your logger with (i.e. `Cogger.new id: :demo`).
+* `severity`: This is the severity at which you messaged your logger (i.e. `logger.info`).
+* `at`: This is the date/time as which your log event was created.
+
+This also means if you pass in these same keys as a log event (example: `logger.info id: :bad, at: Time.now, severity: :bogus`) they will be ignored.
+
+The last key (or keys) is variable and customizable to your needs which is the log event message. Here a couple of examples to illustrate:
+
+[source,ruby]
+----
+# Available as "%<message>s" in your template.
+logger.info "demo"
+
+# Available as "%<message>s" in your template.
+logger.info message: "demo"
+
+# Available as "%<verb>s" and "%<path>s" in your template.
+logger.info verb: "GET", path: "/"`
+----
+
+💡 In situations where a message hash is logged but the keys of that hash don't match the keys in the template, then an empty message will be logged. This applies to all formatters except the JSON formatter which will log any key/value that doesn't have a `nil` value.
 
 === Emojis
 
@@ -215,6 +262,31 @@ logger.info "demo"
 
 Keep in mind that using a specific, non-dynamic, emoji will _always_ display no matter the current severity level.
 
+=== Aliases
+
+Aliases are specific to the {tone_link} gem which allows you _alias_ specific colors/styles via a new name. Here's how you can use them:
+
+[source,ruby]
+----
+Cogger.add_alias :haze, :bold, :white, :on_purple
+Cogger.aliases
+----
+
+The above would add a `:haze` alias which consists of bold white text on a purple background. Once added, you'd then be able to view a list of all default and custom aliases. You can also override an existing alias if you'd like something else.
+
+Aliases are a powerful way to customize your colors and use short syntax in your templates. Building upon the alias, added above, you'd be able to use it in your templates as follows:
+
+[source,ruby]
+----
+# Universal
+"<haze>%<message></haze>"
+
+# Individual
+"%<message:haze>"
+----
+
+Check out the {tone_link} documentation for further examples.
+
 === Formatters
 
 Multiple formatters are provided for you which can be further customized as needed. Here's what is provided by default:
@@ -251,7 +323,7 @@ Cogger.formatters
 # }
 ----
 
-You can add a formatter by providing a unique name, class, and associated template (`nil` can be used if you want to use the formatter's default template):
+You can add a formatter by providing a key, class, and _optional_ template. If a template isn't supplied, then the formatter's default template will be used instead (more on that shortly). Example:
 
 [source,ruby]
 ----
@@ -263,7 +335,7 @@ Cogger.get_formatter :basic
 # [Cogger::Formatters::Simple, "%<severity>s %<message>s"]
 ----
 
-Symbols or strings can be used interchangeably when adding/getting formatters. As mentioned above, a template doesn't have to be supplied if you want to use the formatter's default template which can be inspected by asking for it:
+Symbols or strings can be used interchangeably when adding/getting formatters. As mentioned above, a template doesn't have to be supplied if you want to use the formatter's default template which can be inspected as follows:
 
 [source,ruby]
 ----
@@ -271,7 +343,7 @@ Cogger::Formatters::Simple::TEMPLATE
 # "%<message>s"
 ----
 
-💡 When you find yourself customizing any of the default formatters, you can reduce typing by adding your custom configuration to the registry and then referring to it via a symbol when initializing a new logger.
+💡 When you find yourself customizing any of the default formatters, you can reduce typing by adding your custom configuration to the registry and then referring to it via it's associated key when initializing a new logger.
 
 ==== Simple
 
@@ -308,13 +380,13 @@ Cogger.aliases
 #   info: :green,
 #   warn: :yellow,
 #   error: :red,
-#   fatal: %i[white bold on_red],
-#   unknown: %i[white bold],
-#   any: %i[white bold]
+#   fatal: %i[bold white on_red],
+#   unknown: %i[bold white],
+#   any: %i[bold white]
 # }
 ----
 
-This allows a color or combination of color styles (i.e. foreground + background) to be dynamically applied based on log level. You can add additional aliases via:
+This allows a color -- or combination of color styles (i.e. foreground + background) -- to be dynamically applied based on log severity. You can add additional aliases via:
 
 [source,ruby]
 ----
@@ -372,7 +444,7 @@ class MyFormatter
 end
 ----
 
-There is no restriction on what dependency you might want to initialize your custom formatter with but -- as a bare minimum -- you'll want to provide a default template and inject the sanitizer which sanitizes the raw log entry into a hash you can interact with in your implementation. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `severity`, `at`, `id`, `message`) and answers back a formatted string. If you need more examples you can either read the link:https://rubyapi.org/o/logger/formatter#method-i-call[Logger::Formatter] or look at any of the formatters provided within this gem.
+There is no restriction on what dependency you might want to initialize your custom formatter with but -- as a bare minimum -- you'll want to provide a default template and inject the sanitizer which sanitizes the raw log entry into a hash you can interact with in your implementation. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `severity`, `at`, `id`, `message`) and answers back a formatted string. If you need more examples you can either read the link:https://rubyapi.org/o/logger/formatter#method-i-call[Logger::Formatter] documentation or look at any of the formatters provided within this gem.
 
 === Filters
 
@@ -415,6 +487,40 @@ logger.info login: "jayne", password: "secret"
 # {"id":"console","severity":"INFO","at":"2023-04-09 17:33:00 -0600","login":"[FILTERED]","password":"[FILTERED]"}
 ----
 
+=== Streams
+
+You can add multiple log streams (outputs) by using:
+
+[source,ruby]
+----
+logger = Cogger.new
+               .add_stream(io: "tmp/demo.log")
+               .add_stream(io: nil)
+
+logger.info "Demo."
+----
+
+The above would log the `"Demo."` message to `$stdout` (i.e. the default stream), to the `tmp/demo.log` file, and to `/dev/null`. All of the attributes you would use to construct your default logger apply to any stream. This also means any custom template/formatter can be applied to your streams. Here's another example:
+
+[source,ruby]
+----
+logger = Cogger.new.add_stream(io: "tmp/demo.log", formatter: :json)
+logger.info "Demo."
+----
+
+In this situation, you'd get colorized output to `$stdout` and JSON output to the `tmp/demo.log` file.
+
+=== Defaults
+
+Should you ever need quick access to the defaults, you can use:
+
+[source,ruby]
+----
+Cogger.defaults
+----
+
+This is primarily meant for display/inspection purposes, though.
+
 === Testing
 
 When testing the Cogger client, you might find it convenient to use `StringIO`, or a file, for
@@ -453,7 +559,7 @@ end
 ----
 
 Notice that when testing the instance of `Demo` and injecting a logger which logs to a string I/O
-object, you can conveniently _reread_ the string -- provided by the {refinements_link} gem -- to see what was logged. This makes your specs easier to write while also not adding additional noise to your test suite's output.
+object, you can conveniently _reread_ the string -- provided by the {refinements_link} gem -- to see what was logged. This makes your specs easier to write while avoiding additional noise in your test suite's output.
 
 == Development
 
