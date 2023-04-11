@@ -22,6 +22,7 @@ RSpec.describe Cogger::Formatters::Kit::Sanitizer do
         id: :test,
         severity: "INFO",
         at:,
+        message: nil,
         verb: "GET",
         path: "/"
       )
@@ -31,7 +32,8 @@ RSpec.describe Cogger::Formatters::Kit::Sanitizer do
       expect(sanitizer.call("INFO", at, :test, id: :bad, severity: :bad, at: :bad)).to eq(
         id: :test,
         severity: "INFO",
-        at:
+        at:,
+        message: nil
       )
     end
 
@@ -42,6 +44,7 @@ RSpec.describe Cogger::Formatters::Kit::Sanitizer do
         id: :test,
         severity: "INFO",
         at:,
+        message: nil,
         login: "test",
         password: "[FILTERED]"
       )

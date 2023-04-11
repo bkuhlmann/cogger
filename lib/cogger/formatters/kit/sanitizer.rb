@@ -14,7 +14,7 @@ module Cogger
           severity, at, id, message = entry
 
           attributes = if message.is_a? Hash
-                         {id:, severity:, at:, **message.except(:id, :severity, :at)}
+                         {id:, severity:, at:, message: nil, **message.except(:id, :severity, :at)}
                        else
                          {id:, severity:, at:, message:}
                        end
