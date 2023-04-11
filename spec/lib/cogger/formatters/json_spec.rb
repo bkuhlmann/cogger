@@ -22,7 +22,7 @@ RSpec.describe Cogger::Formatters::JSON do
 
     it "answers JSON with default template and no message" do
       expect(formatter.call("INFO", at, :test)).to eq(
-        %(#{{id: "test", severity: "INFO", at:, message: nil}.to_json}\n)
+        %(#{{id: "test", severity: "INFO", at:}.to_json}\n)
       )
     end
 
