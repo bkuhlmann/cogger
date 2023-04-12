@@ -14,7 +14,11 @@ module Cogger
 
     delegate %i[formatter level progname debug info warn error fatal unknown] => :logger
 
+    # :reek:TooManyStatements
     def initialize logger = Logger.new($stdout), color: Cogger.color, **attributes
+      warn "#{self.class}##{__method__} is deprecated, use `Cogger.new` instead.",
+           category: :deprecated
+
       @logger = logger
       @color = color
       @attributes = attributes

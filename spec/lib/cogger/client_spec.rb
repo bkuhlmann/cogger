@@ -10,6 +10,14 @@ RSpec.describe Cogger::Client do
   describe "#initialize" do
     let(:formatter) { -> _severity, _at, _name, message { "#{message}\n" } }
 
+    it "prints depreation warning" do
+      expectation = proc { described_class.new }
+
+      expect(&expectation).to output(
+        /Cogger::Client#initialize is deprecated, use `Cogger.new` instead/
+      ).to_stderr
+    end
+
     it "yields logger when block is given" do
       client = described_class.new do |logger|
         logger.formatter = formatter
