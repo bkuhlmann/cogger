@@ -13,7 +13,7 @@ module Cogger
 
       def call(*entry)
         updated_template, attributes = processor.call(template, *entry)
-        "#{format(updated_template, **attributes)}\n"
+        "#{format(updated_template, **attributes).tap(&:strip!)}\n"
       end
 
       private
