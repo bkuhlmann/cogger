@@ -15,6 +15,15 @@ RSpec.describe Cogger::Formatters::Simple do
       expect(result).to eq("test\n")
     end
 
+    context "with template using optional attributes" do
+      let(:template) { "%<one>s %<two>s %<three>s" }
+
+      it "answers string where leading and trailing spaces are removed" do
+        result = formatter.call "INFO", at, :test, one: nil, two: "Two", three: nil
+        expect(result).to eq("Two\n")
+      end
+    end
+
     context "with Rack template" do
       let(:template) { Cogger.get_formatter(:rack).last }
 
