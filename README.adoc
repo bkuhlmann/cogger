@@ -6,11 +6,10 @@
 :logger_link: link:https://rubyapi.org/o/s?q=Logger[Logger]
 :format_link: link:https://ruby-doc.org/3.2.1/format_specifications_rdoc.html[Format Specification]
 :pattern_matching_link: link:https://alchemists.io/articles/ruby_pattern_matching[pattern matching]
-:refinements_link: link:https://alchemists.io/projects/refinements[Refinements]
 
 = Cogger
 
-Cogger is a portmanteau for custom logging (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native {logger_link} functionality with additional features such as dynamic emojis, colorized text, structured JSON, multiple outputs, and much more. 🚀
+Cogger is a portmanteau for custom logger (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native {logger_link} functionality with additional features such as dynamic emojis, colorized text, structured JSON, multiple outputs, and much more. 🚀
 
 toc::[]
 
@@ -26,7 +25,7 @@ toc::[]
 
 == Screenshot
 
-image::https://alchemists.io/images/projects/cogger/screenshots/console.png[Console,width=1139,height=211,role=focal_point]
+image::https://alchemists.io/images/projects/cogger/screenshots/console.png[Console,width=1115,height=716,role=focal_point]
 
 == Requirements
 
@@ -97,13 +96,6 @@ logger.error { "demo" }    # "demo"
 logger.fatal { "demo" }    # "demo"
 logger.unknown { "demo" }  # "demo"
 logger.any { "demo" }      # "demo"
-----
-
-...or, if you'd like to display all severities at once, use:
-
-[source,ruby]
-----
-%i[debug info warn error fatal unknown any].each { |severity| logger.public_send severity, "demo" }
 ----
 
 === Initialization
@@ -356,6 +348,8 @@ logger = Cogger.new formatter: :simple
 logger = Cogger.new formatter: :rack
 ----
 
+ℹ️ Any leading or trailing whitespace is automatically removed after the template has been formatted in order to account for template attributes that might be `nil` or empty strings so you don't have visual indentation in your output.
+
 ==== Color
 
 The color formatter is enabled by default and is the equivalent of initializing with either of the following:
@@ -401,6 +395,8 @@ Once an alias is added, it can be immediately applied via the template of your f
 logger = Cogger.new formatter: Cogger::Formatters::Color.new("<mystery>%<message>s</mystery>")
 ----
 
+ℹ️ Much like the simple formatter, any leading or trailing whitespace is automatically after the template has been formatted.
+
 ==== JSON
 
 This formatter is similar in behavior to the _simple_ formatter except the template allows you to order the layout of your keys only. All other information is ignored. To use:
@@ -421,6 +417,20 @@ logger.info verb: "GET", path: "/"
 ----
 
 Your template can be a full or partial match of keys. If no keys match what is defined in the template, then the original order of the keys will be used instead.
+
+==== Original
+
+Should you wish to use the original formatter as provided by original/native {logger_link}, you can get that behavior by specifying it as your preferred formatter. Example:
+
+[source,ruby]
+----
+require "logger"
+
+logger = Cogger.new formatter: Logger::Formatter.new
+logger.info "demo"
+
+# I, [2023-04-11T19:35:51.175733 #84790]  INFO -- console: demo
+----
 
 ==== Custom
 
@@ -523,9 +533,7 @@ This is primarily meant for display/inspection purposes, though.
 
 === Testing
 
-When testing the Cogger client, you might find it convenient to use `StringIO`, or a file, for
-logging purposes in order to not pollute your test output but also have a convenient way to see what
-was logged. Example:
+When testing, you might find it convenient to rewind and read from the stream you are writing too (i.e. `IO`, `StringIO`, `File`). For instance, here is an example where I inject the default logger into my `Demo` class and then, for testing purposes, create a new logger to be injected which only logs to `StringIO` so I can buffer and read for test verification:
 
 [source,ruby]
 ----
@@ -542,24 +550,20 @@ class Demo
 end
 
 RSpec.describe Demo do
-  using Refinements::StringIOs
-
   subject(:demo) { described_class.new logger: }
 
-  let(:logger) { Cogger.new io: }
-  let(:io) { StringIO.new }
+  let(:logger) { Cogger.new io: StringIO.new }
 
   describe "#say" do
     it "logs text" do
       demo.say "test"
-      expect(io.reread).to include("test")
+      expect(logger.reread).to include("test")
     end
   end
 end
 ----
 
-Notice that when testing the instance of `Demo` and injecting a logger which logs to a string I/O
-object, you can conveniently _reread_ the string -- provided by the {refinements_link} gem -- to see what was logged. This makes your specs easier to write while avoiding additional noise in your test suite's output.
+The ability to `#reread` is only available for the default (first) stream and doesn't work with any additional streams that you add to your logger. That said, this does make it easy to test the `Demo` implementation while also keeping your test suite output clean at the same time. 🎉
 
 == Development
 

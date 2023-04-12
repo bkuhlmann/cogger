@@ -1,5 +1,15 @@
 = Versions
 
+== 0.8.0 (2023-04-12)
+
+* Fixed color formatter stripping of leading/trailing spaces - Brooke Kuhlmann
+* Fixed simple formatter to remove leading and trailing white space - Brooke Kuhlmann
+* Added Refinements gem for rereading of logger - Brooke Kuhlmann
+* Added client deprecation warning - Brooke Kuhlmann
+* Added hub primary logger reread - Brooke Kuhlmann
+* Updated to Caliber 0.30.0 - Brooke Kuhlmann
+* Refactored hub finding of formatter - Brooke Kuhlmann
+
 == 0.7.1 (2023-04-11)
 
 * Fixed JSON formatter to ignore nil values - Brooke Kuhlmann
