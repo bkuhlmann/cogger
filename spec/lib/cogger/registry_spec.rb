@@ -11,7 +11,8 @@ RSpec.describe Cogger::Registry do
       info: "🟢",
       warn: "⚠️ ",
       error: "🛑",
-      fatal: "🔥"
+      fatal: "🔥",
+      any: "⚫️"
     }
   end
 
@@ -22,8 +23,7 @@ RSpec.describe Cogger::Registry do
       warn: [:yellow],
       error: [:red],
       fatal: %i[bold white on_red],
-      unknown: %i[bold white],
-      any: %i[bold white]
+      any: %i[dim bright_white]
     }
   end
 
@@ -56,8 +56,7 @@ RSpec.describe Cogger::Registry do
         warn: [:yellow],
         error: [:red],
         fatal: %i[bold white on_red],
-        unknown: %i[bold white],
-        any: %i[bold white]
+        any: %i[dim bright_white]
       )
     end
 
@@ -70,7 +69,14 @@ RSpec.describe Cogger::Registry do
     end
 
     it "answers default emojis" do
-      expect(registry.emojis).to eq(debug: "🔎", error: "🛑", fatal: "🔥", info: "🟢", warn: "⚠️ ")
+      expect(registry.emojis).to eq(
+        debug: "🔎",
+        info: "🟢",
+        warn: "⚠️ ",
+        error: "🛑",
+        fatal: "🔥",
+        any: "⚫️"
+      )
     end
   end
 
@@ -93,8 +99,7 @@ RSpec.describe Cogger::Registry do
         warn: [:yellow],
         error: [:red],
         fatal: %i[bold white on_red],
-        unknown: %i[bold white],
-        any: %i[bold white]
+        any: %i[dim bright_white]
       )
     end
   end

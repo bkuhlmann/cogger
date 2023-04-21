@@ -105,7 +105,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers string without leading space" do
         result = formatter.call "ANY", at, :test, "test"
-        expect(result).to have_color(color, ["test", :bold, :white], ["\n"])
+        expect(result).to have_color(color, ["⚫️ "], ["test", :dim, :bright_white], ["\n"])
       end
     end
 

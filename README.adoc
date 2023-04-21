@@ -220,7 +220,8 @@ Cogger.emojis
 #    :info => "🟢",
 #    :warn => "⚠️ ",
 #   :error => "🛑",
-#   :fatal => "🔥"
+#   :fatal => "🔥",
+#     :any => "⚫️"
 # }
 ----
 
@@ -375,8 +376,7 @@ Cogger.aliases
 #   warn: :yellow,
 #   error: :red,
 #   fatal: %i[bold white on_red],
-#   unknown: %i[bold white],
-#   any: %i[bold white]
+#   any: %i[dim bright_white]
 # }
 ----
 

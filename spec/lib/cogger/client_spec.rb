@@ -132,24 +132,24 @@ RSpec.describe Cogger::Client do
   describe "#unknown" do
     it "answers default color without block" do
       client.unknown "test"
-      expect(client.reread).to have_color(color, ["test", :bold, :white], ["\n"])
+      expect(client.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
     end
 
     it "answers default color with block" do
       client.unknown { "test" }
-      expect(client.reread).to have_color(color, ["test", :bold, :white], ["\n"])
+      expect(client.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
     end
   end
 
   describe "#any" do
     it "answers default color without block" do
       client.any "test"
-      expect(client.reread).to have_color(color, ["test", :bold, :white], ["\n"])
+      expect(client.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
     end
 
     it "answers default color with block" do
       client.any { "test" }
-      expect(client.reread).to have_color(color, ["test", :bold, :white], ["\n"])
+      expect(client.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
     end
   end
 
