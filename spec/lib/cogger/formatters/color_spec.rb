@@ -13,7 +13,7 @@ RSpec.describe Cogger::Formatters::Color do
       formatter = described_class.new
       result = formatter.call "INFO", at, :test, "test"
 
-      expect(color.decode(result)).to eq([["test", :green], ["\n"]])
+      expect(result).to have_color(color, ["test", :green], ["\n"])
     end
 
     context "when universal and dynamic" do
@@ -21,7 +21,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers colorized string" do
         result = formatter.call "INFO", at, :test, "test"
-        expect(color.decode(result)).to eq([["INFO #{at} test test", :green], ["\n"]])
+        expect(result).to have_color(color, ["INFO #{at} test test", :green], ["\n"])
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers colorized string" do
         result = formatter.call "INFO", at, :test, "test"
-        expect(color.decode(result)).to eq([["INFO #{at} test test", :cyan], ["\n"]])
+        expect(result).to have_color(color, ["INFO #{at} test test", :cyan], ["\n"])
       end
     end
 
@@ -52,7 +52,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers colorized string" do
         result = formatter.call "INFO", at, :test, "test"
-        expect(color.decode(result)).to eq(proof)
+        expect(result).to have_color(color, *proof)
       end
     end
 
@@ -74,7 +74,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers colorized string" do
         result = formatter.call "INFO", at, :test, "test"
-        expect(color.decode(result)).to eq(proof)
+        expect(result).to have_color(color, *proof)
       end
     end
 
@@ -96,7 +96,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers colorized string" do
         result = formatter.call "FATAL", at, :test, "test"
-        expect(color.decode(result)).to eq(proof)
+        expect(result).to have_color(color, *proof)
       end
     end
 
@@ -105,7 +105,7 @@ RSpec.describe Cogger::Formatters::Color do
 
       it "answers string without leading space" do
         result = formatter.call "ANY", at, :test, "test"
-        expect(color.decode(result)).to eq([["test", :bold, :white], ["\n"]])
+        expect(result).to have_color(color, ["test", :bold, :white], ["\n"])
       end
     end
 

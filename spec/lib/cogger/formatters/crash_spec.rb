@@ -19,16 +19,15 @@ RSpec.describe Cogger::Formatters::Crash do
                               error_class: KeyError,
                               backtrace: %w[one two three]
 
-      expect(color.decode(result)).to eq(
+      expect(result).to have_color(
+        color,
         [
-          [
-            "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  one\n  two\n  three\n",
-            :bold,
-            :white,
-            :on_red
-          ],
-          ["\n"]
-        ]
+          "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  one\n  two\n  three\n",
+          :bold,
+          :white,
+          :on_red
+        ],
+        ["\n"]
       )
     end
 
@@ -53,15 +52,14 @@ RSpec.describe Cogger::Formatters::Crash do
                                 error_class: KeyError,
                                 backtrace: %w[one two three]
 
-        expect(color.decode(result)).to eq(
+        expect(result).to have_color(
+          color,
           [
-            [
-              "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  " \
-              "one\n  two\n  three\n",
-              :red
-            ],
-            ["\n"]
-          ]
+            "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  " \
+            "one\n  two\n  three\n",
+            :red
+          ],
+          ["\n"]
         )
       end
     end
