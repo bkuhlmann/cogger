@@ -23,9 +23,31 @@ toc::[]
 * Provides multiple streams so you can log the same information to several outputs at once.
 * Provides filtering of sensitive information.
 
-== Screenshot
+== Screenshots
 
-image::https://alchemists.io/images/projects/cogger/screenshots/console.png[Console,width=1115,height=716,role=focal_point]
+*Emoji*
+
+image::https://alchemists.io/images/projects/cogger/screenshots/emoji.png[Emoji,width=150,height=130]
+
+*Color*
+
+image::https://alchemists.io/images/projects/cogger/screenshots/color.png[Color,width=150,height=125]
+
+*Simple*
+
+image::https://alchemists.io/images/projects/cogger/screenshots/simple.png[Simple,width=150,height=125]
+
+*Detail*
+
+image::https://alchemists.io/images/projects/cogger/screenshots/detail.png[Detail,width=350,height=130]
+
+*JSON*
+
+image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=803,height=130]
+
+*Rack*
+
+image::https://alchemists.io/images/projects/cogger/screenshots/rack.png[Rack,width=534,height=130]
 
 == Requirements
 
@@ -582,6 +604,8 @@ You can also use the IRB console for direct access to all objects:
 ----
 bin/console
 ----
+
+Lastly, there is a `bin/show` script which displays multiple log formats for quick visual reference. This is the same script used to generate the screenshots shown at the top of this document.
 
 == Tests
 

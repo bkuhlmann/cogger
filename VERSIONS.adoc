@@ -1,5 +1,12 @@
 = Versions
 
+== 0.9.0 (2023-04-22)
+
+* Added show script - Brooke Kuhlmann
+* Updated default colors and aliases - Brooke Kuhlmann
+* Updated to Tone 0.2.0 - Brooke Kuhlmann
+* Refactored specs to use Tone RSpec matcher - Brooke Kuhlmann
+
 == 0.8.0 (2023-04-12)
 
 * Fixed color formatter stripping of leading/trailing spaces - Brooke Kuhlmann
