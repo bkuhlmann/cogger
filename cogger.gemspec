@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |spec|
   spec.name = "cogger"
-  spec.version = "0.9.0"
+  spec.version = "0.10.0"
   spec.authors = ["Brooke Kuhlmann"]
   spec.email = ["brooke@alchemists.io"]
   spec.homepage = "https://alchemists.io/projects/cogger"
-  spec.summary = "A customizable logger."
+  spec.summary = "A customizable and feature rich logger."
   spec.license = "Hippocratic-2.1"
 
   spec.metadata = {

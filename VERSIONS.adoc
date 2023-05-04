@@ -1,5 +1,11 @@
 = Versions
 
+== 0.10.0 (2023-06-13)
+
+* Updated to Debug 1.8.0 - Brooke Kuhlmann
+* Updated to Refinements 11.0.0 - Brooke Kuhlmann
+* Updated to Tone 0.3.0 - Brooke Kuhlmann
+
 == 0.9.0 (2023-04-22)
 
 * Added show script - Brooke Kuhlmann
