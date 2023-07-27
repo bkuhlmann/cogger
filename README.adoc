@@ -27,27 +27,27 @@ toc::[]
 
 *Emoji*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/emoji.png[Emoji,width=150,height=130]
+image::https://alchemists.io/images/projects/cogger/screenshots/emoji.png[Emoji,width=204,height=251]
 
 *Color*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/color.png[Color,width=150,height=125]
+image::https://alchemists.io/images/projects/cogger/screenshots/color.png[Color,width=181,height=247]
 
 *Simple*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/simple.png[Simple,width=150,height=125]
+image::https://alchemists.io/images/projects/cogger/screenshots/simple.png[Simple,width=274,height=253]
 
 *Detail*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/detail.png[Detail,width=350,height=130]
+image::https://alchemists.io/images/projects/cogger/screenshots/detail.png[Detail,width=476,height=256]
 
 *JSON*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=803,height=130]
+image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=929,height=256]
 
 *Rack*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/rack.png[Rack,width=534,height=130]
+image::https://alchemists.io/images/projects/cogger/screenshots/rack.png[Rack,width=656,height=252]
 
 == Requirements
 
