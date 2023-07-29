@@ -1,5 +1,12 @@
 = Versions
 
+== 0.10.2 (2023-07-29)
+
+* Fixed RuboCop Packaging/BundlerSetupInTests issues - Brooke Kuhlmann
+* Updated Rake RSpec task configuration to not be verbose - Brooke Kuhlmann
+* Updated screenshot dimensions - Brooke Kuhlmann
+* Refactored module extended terminology to use descendant - Brooke Kuhlmann
+
 == 0.10.1 (2023-06-19)
 
 * Updated to Caliber 0.35.0 - Brooke Kuhlmann
