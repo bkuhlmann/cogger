@@ -13,6 +13,8 @@ end
 module Cogger
   extend Registry
 
+  def self.loader(registry = Zeitwerk::Registry) = registry.loader_for __FILE__
+
   def self.init(...)
     warn "#{self}##{__method__} is deprecated, use `.new` instead.", category: :deprecated
     Client.new(...)
