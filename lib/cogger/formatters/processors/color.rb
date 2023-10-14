@@ -8,7 +8,7 @@ module Cogger
       # Processes emojis and colors.
       class Color
         def initialize parser: Parsers::Dynamic.new,
-                       kit: {sanitizer: Kit::Sanitizer.new, colorizer: Kit::Colorizer},
+                       kit: {sanitizer: Kit::Sanitizer, colorizer: Kit::Colorizer},
                        registry: Cogger
           @parser = parser
           @kit = kit

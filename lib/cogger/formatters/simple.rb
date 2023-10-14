@@ -6,7 +6,7 @@ module Cogger
     class Simple
       TEMPLATE = "%<message>s"
 
-      def initialize template = TEMPLATE, sanitizer: Kit::Sanitizer.new
+      def initialize template = TEMPLATE, sanitizer: Kit::Sanitizer
         @template = template
         @sanitizer = sanitizer
       end

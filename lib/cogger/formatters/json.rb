@@ -10,7 +10,7 @@ module Cogger
 
       def initialize template = TEMPLATE,
                      parser: Parsers::Individual.new,
-                     sanitizer: Kit::Sanitizer.new
+                     sanitizer: Kit::Sanitizer
         @template = template
         @parser = parser
         @sanitizer = sanitizer

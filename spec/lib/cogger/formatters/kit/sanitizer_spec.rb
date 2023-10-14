@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Cogger::Formatters::Kit::Sanitizer do
-  subject(:sanitizer) { described_class.new }
+  subject(:sanitizer) { described_class }
 
   describe "#call" do
     let(:at) { Time.now }
