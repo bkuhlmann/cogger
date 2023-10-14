@@ -45,7 +45,7 @@ module Cogger
         # :reek:FeatureEnvy
         # :reek:TooManyStatements
         def sanitize_and_extract template, attributes
-          template.dup.gsub pattern do
+          template.gsub pattern do
             captures = Regexp.last_match.named_captures
             attributes[captures["key"].to_sym] = captures["directive"]
 
