@@ -9,11 +9,11 @@ require "cogger"
 severities = %i[debug info warn error fatal unknown any]
 
 puts "EMOJI\n\n"
-logger = Cogger.new id: :demo, level: :debug, formatter: :emoji
+logger = Cogger.new id: :demo, level: :debug
 severities.each { |severity| logger.public_send severity, severity.capitalize }
 
 puts "\nCOLOR\n\n"
-logger = Cogger.new id: :demo, level: :debug
+logger = Cogger.new id: :demo, level: :debug, formatter: :color
 severities.each { |severity| logger.public_send severity, severity.capitalize }
 
 puts "\nSIMPLE\n\n"

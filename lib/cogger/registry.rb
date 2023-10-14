@@ -27,11 +27,7 @@ module Cogger
                   Cogger::Formatters::Simple,
                   "[%<id>s] [%<severity>s] [%<at>s] %<message>s"
                 )
-                .add_formatter(
-                  :emoji,
-                  Cogger::Formatters::Color,
-                  "%<emoji:dynamic>s %<message:dynamic>s"
-                )
+                .add_formatter(:emoji, Cogger::Formatters::Emoji)
                 .add_formatter(:json, Cogger::Formatters::JSON)
                 .add_formatter(:simple, Cogger::Formatters::Simple)
                 .add_formatter :rack,

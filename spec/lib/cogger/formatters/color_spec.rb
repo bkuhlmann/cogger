@@ -101,7 +101,7 @@ RSpec.describe Cogger::Formatters::Color do
     end
 
     context "with dynamic emoji template" do
-      let(:template) { Cogger.get_formatter(:emoji).last }
+      let(:template) { Cogger::Formatters::Emoji::TEMPLATE }
 
       it "answers string without leading space" do
         result = formatter.call "ANY", at, :test, "test"

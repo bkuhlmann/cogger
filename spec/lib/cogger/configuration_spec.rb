@@ -11,7 +11,7 @@ RSpec.describe Cogger::Configuration do
         id: "rspec",
         io: $stdout,
         level: Logger::INFO,
-        formatter: kind_of(Cogger::Formatters::Color),
+        formatter: instance_of(Cogger::Formatters::Emoji),
         mode: false,
         age: 0,
         size: 1_048_576,
@@ -26,7 +26,7 @@ RSpec.describe Cogger::Configuration do
       expect(configuration.to_logger).to have_attributes(
         progname: "rspec",
         level: Logger::INFO,
-        formatter: kind_of(Cogger::Formatters::Color)
+        formatter: instance_of(Cogger::Formatters::Emoji)
       )
     end
   end
@@ -36,7 +36,7 @@ RSpec.describe Cogger::Configuration do
       expect(configuration.inspect).to match(
         /
           #<Cogger::Configuration @id=rspec, @io=IO, @level=1,
-          @formatter=Cogger::Formatters::Color,\s@mode=false,
+          @formatter=Cogger::Formatters::Emoji,\s@mode=false,
           \s@age=0,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@logger=Logger>
         /x
       )

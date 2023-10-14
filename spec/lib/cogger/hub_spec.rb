@@ -13,7 +13,7 @@ RSpec.describe Cogger::Hub do
   describe "#initialize" do
     it "answers logger with default formatter" do
       logger = described_class.new
-      expect(logger.inspect).to include(Cogger::Formatters::Color.to_s)
+      expect(logger.inspect).to include(Cogger::Formatters::Emoji.to_s)
     end
 
     it "answers logger with formatter found by symbol using default template" do
@@ -22,8 +22,8 @@ RSpec.describe Cogger::Hub do
     end
 
     it "answers logger with formatter found by symbol using custom template" do
-      logger = described_class.new formatter: :emoji
-      expect(logger.inspect).to include(Cogger::Formatters::Color.to_s)
+      logger = described_class.new formatter: :detail
+      expect(logger.inspect).to include(Cogger::Formatters::Simple.to_s)
     end
 
     it "answers logger with formatter found by string using default template" do
@@ -65,12 +65,12 @@ RSpec.describe Cogger::Hub do
   describe "#debug" do
     it "logs entry with block" do
       logger.debug { "test" }
-      expect(io.reread).to have_color(color, ["test", :white], ["\n"])
+      expect(io.reread).to have_color(color, ["🔎 "], ["test", :white], ["\n"])
     end
 
     it "logs entry without block" do
       logger.debug "test"
-      expect(io.reread).to have_color(color, ["test", :white], ["\n"])
+      expect(io.reread).to have_color(color, ["🔎 "], ["test", :white], ["\n"])
     end
 
     it_behaves_like "a log", :debug
@@ -79,12 +79,12 @@ RSpec.describe Cogger::Hub do
   describe "#info" do
     it "logs entry with block" do
       logger.info { "test" }
-      expect(io.reread).to have_color(color, ["test", :green], ["\n"])
+      expect(io.reread).to have_color(color, ["🟢 "], ["test", :green], ["\n"])
     end
 
     it "logs entry without block" do
       logger.info "test"
-      expect(io.reread).to have_color(color, ["test", :green], ["\n"])
+      expect(io.reread).to have_color(color, ["🟢 "], ["test", :green], ["\n"])
     end
 
     it_behaves_like "a log", :info
@@ -93,12 +93,12 @@ RSpec.describe Cogger::Hub do
   describe "#warn" do
     it "logs entry with block" do
       logger.warn { "test" }
-      expect(io.reread).to have_color(color, ["test", :yellow], ["\n"])
+      expect(io.reread).to have_color(color, ["⚠️  "], ["test", :yellow], ["\n"])
     end
 
     it "logs entry without block" do
       logger.warn "test"
-      expect(io.reread).to have_color(color, ["test", :yellow], ["\n"])
+      expect(io.reread).to have_color(color, ["⚠️  "], ["test", :yellow], ["\n"])
     end
 
     it_behaves_like "a log", :warn
@@ -107,12 +107,12 @@ RSpec.describe Cogger::Hub do
   describe "#error" do
     it "logs entry with block" do
       logger.error { "test" }
-      expect(io.reread).to have_color(color, ["test", :red], ["\n"])
+      expect(io.reread).to have_color(color, ["🛑 "], ["test", :red], ["\n"])
     end
 
     it "logs entry without block" do
       logger.error "test"
-      expect(io.reread).to have_color(color, ["test", :red], ["\n"])
+      expect(io.reread).to have_color(color, ["🛑 "], ["test", :red], ["\n"])
     end
 
     it_behaves_like "a log", :error
@@ -121,12 +121,12 @@ RSpec.describe Cogger::Hub do
   describe "#fatal" do
     it "logs entry with block" do
       logger.fatal { "test" }
-      expect(io.reread).to have_color(color, ["test", :bold, :white, :on_red], ["\n"])
+      expect(io.reread).to have_color(color, ["🔥 "], ["test", :bold, :white, :on_red], ["\n"])
     end
 
     it "logs entry without block" do
       logger.fatal "test"
-      expect(io.reread).to have_color(color, ["test", :bold, :white, :on_red], ["\n"])
+      expect(io.reread).to have_color(color, ["🔥 "], ["test", :bold, :white, :on_red], ["\n"])
     end
 
     it_behaves_like "a log", :fatal
@@ -135,12 +135,12 @@ RSpec.describe Cogger::Hub do
   describe "#unknown" do
     it "logs entry with block" do
       logger.unknown { "test" }
-      expect(io.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
+      expect(io.reread).to have_color(color, ["⚫️ "], ["test", :dim, :bright_white], ["\n"])
     end
 
     it "logs entry without block" do
       logger.unknown "test"
-      expect(io.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
+      expect(io.reread).to have_color(color, ["⚫️ "], ["test", :dim, :bright_white], ["\n"])
     end
 
     it_behaves_like "a log", :unknown
@@ -149,12 +149,12 @@ RSpec.describe Cogger::Hub do
   describe "#any" do
     it "logs entry with block" do
       logger.any { "test" }
-      expect(io.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
+      expect(io.reread).to have_color(color, ["⚫️ "], ["test", :dim, :bright_white], ["\n"])
     end
 
     it "logs entry without block" do
       logger.any "test"
-      expect(io.reread).to have_color(color, ["test", :dim, :bright_white], ["\n"])
+      expect(io.reread).to have_color(color, ["⚫️ "], ["test", :dim, :bright_white], ["\n"])
     end
 
     it_behaves_like "a log", :any

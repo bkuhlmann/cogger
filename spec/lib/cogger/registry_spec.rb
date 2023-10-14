@@ -30,14 +30,8 @@ RSpec.describe Cogger::Registry do
   let :formatters do
     {
       color: [Cogger::Formatters::Color, nil],
-      detail: [
-        Cogger::Formatters::Simple,
-        "[%<id>s] [%<severity>s] [%<at>s] %<message>s"
-      ],
-      emoji: [
-        Cogger::Formatters::Color,
-        "%<emoji:dynamic>s %<message:dynamic>s"
-      ],
+      detail: [Cogger::Formatters::Simple, "[%<id>s] [%<severity>s] [%<at>s] %<message>s"],
+      emoji: [Cogger::Formatters::Emoji, nil],
       json: [Cogger::Formatters::JSON, nil],
       simple: [Cogger::Formatters::Simple, nil],
       rack: [
@@ -201,7 +195,7 @@ RSpec.describe Cogger::Registry do
       expect(registry.formatters).to include(
         color: [Cogger::Formatters::Color, nil],
         detail: [Cogger::Formatters::Simple, "[%<id>s] [%<severity>s] [%<at>s] %<message>s"],
-        emoji: [Cogger::Formatters::Color, "%<emoji:dynamic>s %<message:dynamic>s"],
+        emoji: [Cogger::Formatters::Emoji, nil],
         json: [Cogger::Formatters::JSON, nil],
         rack: [
           Cogger::Formatters::Simple,

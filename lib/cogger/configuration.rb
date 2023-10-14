@@ -18,7 +18,7 @@ module Cogger
     def initialize id: Program.call,
                    io: $stdout,
                    level: Logger.const_get(ENV.fetch("LOG_LEVEL", "INFO")),
-                   formatter: Formatters::Color.new,
+                   formatter: Formatters::Emoji.new,
                    mode: false,
                    age: 0,
                    size: 1_048_576,
