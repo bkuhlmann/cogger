@@ -11,9 +11,9 @@ module Cogger
     using Refinements::Loggers
     using Refinements::Hashes
 
-    def initialize(registry: Cogger, model: Configuration.new, **attributes)
+    def initialize(registry: Cogger, model: Configuration, **attributes)
       @registry = registry
-      @configuration = model.with(**find_formatter(attributes))
+      @configuration = model[**find_formatter(attributes)]
       @primary = configuration.to_logger
       @streams = [@primary]
       @mutex = Mutex.new
