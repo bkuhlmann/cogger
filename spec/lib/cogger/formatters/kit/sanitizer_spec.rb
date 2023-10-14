@@ -8,46 +8,21 @@ RSpec.describe Cogger::Formatters::Kit::Sanitizer do
   describe "#call" do
     let(:at) { Time.now }
 
-    it "answers standard hash" do
-      expect(sanitizer.call("INFO", at, :test, "test")).to eq(
-        id: :test,
-        severity: "INFO",
-        at:,
-        message: "test"
-      )
+    it "answers empty payload by default" do
+      entry = sanitizer.call Cogger::Entry.for("test")
+      expect(entry).to have_attributes(message: "test", payload: {})
     end
 
-    it "answers expanded hash" do
-      expect(sanitizer.call("INFO", at, :test, verb: "GET", path: "/")).to eq(
-        id: :test,
-        severity: "INFO",
-        at:,
-        message: nil,
-        verb: "GET",
-        path: "/"
-      )
-    end
-
-    it "doesn't override log entry metadata when given duplicate keys" do
-      expect(sanitizer.call("INFO", at, :test, id: :bad, severity: :bad, at: :bad)).to eq(
-        id: :test,
-        severity: "INFO",
-        at:,
-        message: nil
-      )
+    it "answers custom payload" do
+      entry = sanitizer.call Cogger::Entry.for(verb: "GET", path: "/")
+      expect(entry).to have_attributes(payload: {verb: "GET", path: "/"})
     end
 
     it "filters sensitive keys" do
       Cogger.add_filter :password
+      entry = sanitizer.call Cogger::Entry.for(login: "test", password: "secret")
 
-      expect(sanitizer.call("INFO", at, :test, login: "test", password: "secret")).to eq(
-        id: :test,
-        severity: "INFO",
-        at:,
-        message: nil,
-        login: "test",
-        password: "[FILTERED]"
-      )
+      expect(entry).to have_attributes(payload: {login: "test", password: "[FILTERED]"})
     end
   end
 end

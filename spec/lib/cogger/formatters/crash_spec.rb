@@ -10,14 +10,13 @@ RSpec.describe Cogger::Formatters::Crash do
   describe "#call" do
     let(:at) { Time.now }
 
+    let :entry do
+      error = KeyError.new("Danger!").tap { |instance| instance.set_backtrace %w[one two three] }
+      Cogger::Entry.for_crash "test", error, id: :test
+    end
+
     it "answers string with default template" do
-      result = formatter.call "FATAL",
-                              at,
-                              :test,
-                              message: "test",
-                              error_message: "Danger!",
-                              error_class: KeyError,
-                              backtrace: %w[one two three]
+      result = formatter.call entry
 
       expect(result).to have_color(
         color,
@@ -44,13 +43,7 @@ RSpec.describe Cogger::Formatters::Crash do
       end
 
       it "answers string" do
-        result = formatter.call "FATAL",
-                                at,
-                                :test,
-                                message: "test",
-                                error_message: "Danger!",
-                                error_class: KeyError,
-                                backtrace: %w[one two three]
+        result = formatter.call entry
 
         expect(result).to have_color(
           color,

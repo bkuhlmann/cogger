@@ -16,8 +16,8 @@ module Cogger
         @processor = processor
       end
 
-      def call(*entry)
-        updated_template, attributes = processor.call(template, *entry)
+      def call(*input)
+        updated_template, attributes = processor.call(template, *input)
         attributes[:backtrace] = %(  #{attributes[:backtrace].join "\n  "})
         "#{format(updated_template, **attributes)}\n"
       end

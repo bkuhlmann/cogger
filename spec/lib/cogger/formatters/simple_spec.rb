@@ -10,7 +10,7 @@ RSpec.describe Cogger::Formatters::Simple do
 
     it "answers simple string" do
       formatter = described_class.new
-      result = formatter.call "INFO", at, :test, "test"
+      result = formatter.call Cogger::Entry.for("test")
 
       expect(result).to eq("test\n")
     end
@@ -19,7 +19,7 @@ RSpec.describe Cogger::Formatters::Simple do
       let(:template) { "%<one>s %<two>s %<three>s" }
 
       it "answers string where leading and trailing spaces are removed" do
-        result = formatter.call "INFO", at, :test, one: nil, two: "Two", three: nil
+        result = formatter.call Cogger::Entry.for(one: nil, two: "Two", three: nil)
         expect(result).to eq("Two\n")
       end
     end
@@ -28,18 +28,17 @@ RSpec.describe Cogger::Formatters::Simple do
       let(:template) { Cogger.get_formatter(:rack).last }
 
       it "answers detailed string" do
-        result = formatter.call "INFO",
-                                at,
-                                :test,
-                                verb: "GET",
-                                path: "/up",
-                                duration: "8ms",
-                                ip: "localhost",
-                                status: 200,
-                                length: 50,
-                                params: {}
+        result = formatter.call Cogger::Entry.for(
+          verb: "GET",
+          path: "/up",
+          duration: "8ms",
+          ip: "localhost",
+          status: 200,
+          length: 50,
+          params: {}
+        )
 
-        expect(result).to eq("[test] [INFO] [#{at}] GET 200 8ms localhost /up 50 {}\n")
+        expect(result).to eq("[rspec] [INFO] [#{at}] GET 200 8ms localhost /up 50 {}\n")
       end
     end
   end

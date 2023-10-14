@@ -10,27 +10,17 @@ module Cogger
         end
 
         # :reek:FeatureEnvy
-        def call(*entry)
-          severity, at, id, message = entry
+        def call(*data)
+          *, entry = data
+          payload = entry.payload
 
-          attributes = if message.is_a? Hash
-                         {id:, severity:, at:, message: nil, **message.except(:id, :severity, :at)}
-                       else
-                         {id:, severity:, at:, message:}
-                       end
-
-          filter attributes
+          filters.each { |key| payload[key] = "[FILTERED]" if payload.key? key }
+          entry
         end
 
         private
 
         attr_reader :filters
-
-        # :reek:FeatureEnvy
-        def filter attributes
-          filters.each { |key| attributes[key] = "[FILTERED]" if attributes.key? key }
-          attributes
-        end
       end
     end
   end

@@ -11,8 +11,8 @@ module Cogger
         @processor = processor
       end
 
-      def call(*entry)
-        updated_template, attributes = processor.call(template, *entry)
+      def call(*input)
+        updated_template, attributes = processor.call(template, *input)
         "#{format(updated_template, **attributes).tap(&:strip!)}\n"
       end
 

@@ -6,11 +6,11 @@ detectors:
   BooleanParameter:
     exclude:
       - "Cogger#initialize"
+  DataClump:
+    exclude:
+      - "Cogger::Hub"
   LongParameterList:
     enabled: false
   ModuleInitialize:
     exclude:
       - "Cogger"
-  TooManyStatements:
-    exclude:
-      - "Cogger::Registry#self.extended"

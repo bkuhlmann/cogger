@@ -16,9 +16,9 @@ module Cogger
         @sanitizer = sanitizer
       end
 
-      def call(*entry)
+      def call(*input)
         positions = parser.call(template).last.keys
-        attributes = sanitizer.call(*entry).tap(&:compact!)
+        attributes = sanitizer.call(*input).attributes.tap(&:compact!)
         "#{attributes.slice(*positions).merge!(attributes.except(*positions)).to_json}\n"
       end
 

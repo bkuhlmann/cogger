@@ -47,19 +47,19 @@ module Cogger
       self
     end
 
-    def debug(...) = log(__method__, ...)
+    def debug(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
-    def info(...) = log(__method__, ...)
+    def info(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
-    def warn(...) = log(__method__, ...)
+    def warn(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
-    def error(...) = log(__method__, ...)
+    def error(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
-    def fatal(...) = log(__method__, ...)
+    def fatal(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
-    def unknown(...) = log(__method__, ...)
+    def any(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
-    alias any unknown
+    alias unknown any
 
     def reread = primary.reread
 
@@ -82,17 +82,22 @@ module Cogger
       )
     end
 
-    # :reek:TooManyStatements
-    def log(severity, message = nil, &)
-      mutex.synchronize { streams.each { |logger| logger.public_send(severity, message, &) } }
-      true
+    def log(severity, message, **payload, &)
+      dispatch(severity, message, **payload, &)
     rescue StandardError => error
-      configuration.with(id: "Cogger", io: $stdout, formatter: Formatters::Crash.new)
+      crash message, error
+    end
+
+    def dispatch(severity, message, **payload, &)
+      entry = configuration.entry.for(message, id: configuration.id, severity:, **payload, &)
+      mutex.synchronize { streams.each { |logger| logger.public_send severity, entry } }
+      true
+    end
+
+    def crash message, error
+      configuration.with(id: :cogger, io: $stdout, formatter: Formatters::Crash.new)
                    .to_logger
-                   .fatal message:,
-                          error_message: error.message,
-                          error_class: error.class,
-                          backtrace: error.backtrace
+                   .fatal configuration.entry.for_crash(message, error, id: configuration.id)
       true
     end
   end

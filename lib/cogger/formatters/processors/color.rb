@@ -15,8 +15,8 @@ module Cogger
           @registry = registry
         end
 
-        def call(template, *entry)
-          attributes = sanitizer.call(*entry)
+        def call(template, *input)
+          attributes = sanitizer.call(*input).attributes
 
           case parser.call template
             in [String => body, String => style] then universal body, style, **attributes
