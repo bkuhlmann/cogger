@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "forwardable"
 require "logger"
 require "refinements/hashes"
 require "refinements/loggers"
@@ -8,8 +9,29 @@ module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
   # :reek:TooManyInstanceVariables
   class Hub
+    extend Forwardable
+
     using Refinements::Loggers
     using Refinements::Hashes
+
+    delegate %i[
+      close
+      reopen
+      debug!
+      debug?
+      info!
+      info?
+      warn!
+      warn?
+      error!
+      error?
+      fatal!
+      fatal?
+      formatter
+      formatter=
+      level
+      level=
+    ] => :primary
 
     def initialize(registry: Cogger, model: Configuration, **attributes)
       @registry = registry
