@@ -10,3 +10,4 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Exclude:
     - "lib/cogger/configuration.rb"
+    - "lib/cogger/entry.rb"
