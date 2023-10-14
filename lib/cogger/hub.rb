@@ -89,7 +89,15 @@ module Cogger
     end
 
     def dispatch(severity, message, **payload, &)
-      entry = configuration.entry.for(message, id: configuration.id, severity:, **payload, &)
+      entry = configuration.entry.for(
+        message,
+        id: configuration.id,
+        severity:,
+        tags: configuration.tags + Array(payload.delete(:tags)),
+        **payload,
+        &
+      )
+
       mutex.synchronize { streams.each { |logger| logger.public_send severity, entry } }
       true
     end

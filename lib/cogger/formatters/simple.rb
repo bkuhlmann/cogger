@@ -11,7 +11,7 @@ module Cogger
         @sanitizer = sanitizer
       end
 
-      def call(*input) = "#{format(template, sanitizer.call(*input).attributes).tap(&:strip!)}\n"
+      def call(*input) = "#{format(template, sanitizer.call(*input).tagged).tap(&:strip!)}\n"
 
       private
 

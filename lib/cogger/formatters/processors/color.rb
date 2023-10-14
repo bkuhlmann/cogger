@@ -16,7 +16,7 @@ module Cogger
         end
 
         def call(template, *input)
-          attributes = sanitizer.call(*input).attributes
+          attributes = sanitizer.call(*input).tagged
 
           case parser.call template
             in [String => body, String => style] then universal body, style, **attributes
