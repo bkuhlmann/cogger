@@ -12,10 +12,12 @@ RSpec.describe Cogger::Configuration do
         io: $stdout,
         level: Logger::INFO,
         formatter: instance_of(Cogger::Formatters::Emoji),
+        tags: [],
         mode: false,
         age: 0,
         size: 1_048_576,
         suffix: "%Y-%m-%d",
+        entry: Cogger::Entry,
         logger: Logger
       )
     end
@@ -36,8 +38,8 @@ RSpec.describe Cogger::Configuration do
       expect(configuration.inspect).to match(
         /
           #<Cogger::Configuration @id=rspec, @io=IO, @level=1,
-          @formatter=Cogger::Formatters::Emoji,\s@mode=false,
-          \s@age=0,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@logger=Logger>
+          @formatter=Cogger::Formatters::Emoji,\s@tags=\[\],\s@mode=false,
+          \s@age=0,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@entry=Cogger::Entry,\s@logger=Logger>
         /x
       )
     end

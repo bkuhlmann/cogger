@@ -9,20 +9,24 @@ module Cogger
     :io,
     :level,
     :formatter,
+    :tags,
     :mode,
     :age,
     :size,
     :suffix,
+    :entry,
     :logger
   ) do
     def initialize id: Program.call,
                    io: $stdout,
                    level: Logger.const_get(ENV.fetch("LOG_LEVEL", "INFO")),
                    formatter: Formatters::Emoji.new,
+                   tags: [],
                    mode: false,
                    age: 0,
                    size: 1_048_576,
                    suffix: "%Y-%m-%d",
+                   entry: Entry,
                    logger: Logger
       super
     end
@@ -40,9 +44,9 @@ module Cogger
 
     def inspect
       "#<#{self.class} @id=#{id}, @io=#{io.class}, @level=#{level}, " \
-      "@formatter=#{formatter.class}, " \
+      "@formatter=#{formatter.class}, @tags=#{tags.inspect}, " \
       "@mode=#{mode}, @age=#{age}, @size=#{size}, @suffix=#{suffix.inspect}, " \
-      "@logger=#{logger}>"
+      "@entry=#{entry}, @logger=#{logger}>"
     end
   end
 end
