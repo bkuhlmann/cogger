@@ -10,60 +10,110 @@ gemfile true do
   gem "debug"
   gem "cogger", path: ".."
   gem "dry-logger"
+  gem "logging"
   gem "tty-logger"
 end
 
-puts "INITIALIZATION"
+puts "INITIALIZATION\n\n"
 
 Benchmark.ips do |benchmark|
   benchmark.config time: 5, warmup: 2
 
-  benchmark.report "Dry Logger" do
-    Dry.Logger :demo,
-               template: "%<severity>s %<message>s",
-               colorize: true,
-               severity_colors: {info: :green, unknown: :gray}
-  end
-
   benchmark.report("Cogger") { Cogger.new }
+  benchmark.report("Dry Logger") { Dry.Logger :demo }
+  benchmark.report("Logging") { Logging.logger STDOUT }
   benchmark.report("TTY Logger") { TTY::Logger.new }
 
   benchmark.compare!
 end
 
-puts "COLOR"
+puts "PLAIN\n\n"
 
 Benchmark.ips do |benchmark|
-  dry = Dry.Logger :demo,
-                   stream: StringIO.new,
-                   template: "%<severity>s %<message>s",
-                   colorize: true,
-                   severity_colors: {info: :green, unknown: :gray}
-  cogger = Cogger.new io: StringIO.new
-  tty = TTY::Logger.new output: StringIO.new
+  cogger = Cogger.new io: StringIO.new, formatter: :simple
+  dry = Dry.Logger :demo, stream: StringIO.new
+
+  Logging.appenders.string_io "string_io"
+  logging = Logging.logger StringIO.new
+  logging.add_appenders "string_io"
+
+  tty = TTY::Logger.new output: StringIO.new do |config|
+    config.handlers = [[:console, {enable_color: false}]]
+  end
+
   message = "test"
 
   benchmark.config time: 5, warmup: 2
 
-  benchmark.report("Dry Logger") { dry.info message }
   benchmark.report("Cogger") { cogger.info message }
+  benchmark.report("Dry Logger") { dry.info message }
+  benchmark.report("Logging") { logging.info message }
   benchmark.report("TTY Logger") { tty.info message }
 
   benchmark.compare!
 end
 
-puts "JSON"
+puts "COLOR\n\n"
 
 Benchmark.ips do |benchmark|
-  dry = Dry.Logger :demo, stream: StringIO.new, formatter: :json
+  cogger = Cogger.new io: StringIO.new
+
+  dry = Dry.Logger :demo,
+                   stream: StringIO.new,
+                   template: "%<severity>s %<message>s",
+                   colorize: true,
+                   severity_colors: {info: :green, unknown: :gray}
+
+  Logging.color_scheme "bright",
+                       levels: {
+                         info: :green,
+                         warn: :yellow,
+                         error: :red,
+                         fatal: %i[white on_red]
+                       },
+                       date: :blue,
+                       logger: :cyan,
+                       message: :magenta
+  Logging.appenders.string_io "string_io",
+                              layout: Logging.layouts.pattern(
+                                pattern: "[%d] %-5l %c: %m\n",
+                                color_scheme: "bright"
+                              )
+  logging = Logging.logger StringIO.new
+  logging.add_appenders "string_io"
+
+  tty = TTY::Logger.new output: StringIO.new
+
+  message = "test"
+
+  benchmark.config time: 5, warmup: 2
+
+  benchmark.report("Cogger") { cogger.info message }
+  benchmark.report("Dry Logger") { dry.info message }
+  benchmark.report("Logging") { logging.info message }
+  benchmark.report("TTY Logger") { tty.info message }
+
+  benchmark.compare!
+end
+
+puts "JSON\n\n"
+
+Benchmark.ips do |benchmark|
   cogger = Cogger.new io: StringIO.new, formatter: :json
+  dry = Dry.Logger :demo, stream: StringIO.new, formatter: :json
+
+  Logging.appenders.stdout "string_io", layout: Logging.layouts.json
+  logging = Logging.logger StringIO.new
+
   tty = TTY::Logger.new(output: StringIO.new) { |config| config.formatter = :json }
+
   payload = {one: 1, two: 2, three: 3}
 
   benchmark.config time: 5, warmup: 2
 
-  benchmark.report("Dry Logger") { dry.info payload }
   benchmark.report("Cogger") { cogger.info payload }
+  benchmark.report("Dry Logger") { dry.info payload }
+  benchmark.report("Logging") { logging.info payload }
   benchmark.report("TTY Logger") { tty.info payload }
 
   benchmark.compare!
@@ -74,47 +124,75 @@ __END__
 INITIALIZATION
 
 Warming up --------------------------------------
-          Dry Logger    15.921k i/100ms
-              Cogger    19.755k i/100ms
-          TTY Logger    15.919k i/100ms
+              Cogger    18.525k i/100ms
+          Dry Logger    18.008k i/100ms
+             Logging   299.201k i/100ms
+          TTY Logger    15.801k i/100ms
 Calculating -------------------------------------
-          Dry Logger    161.549k (± 3.4%) i/s -    811.971k in   5.031165s
-              Cogger    198.570k (± 2.9%) i/s -      1.008M in   5.077813s
-          TTY Logger    155.696k (± 3.1%) i/s -    780.031k in   5.014892s
+              Cogger    184.708k (± 2.3%) i/s -    926.250k in   5.017113s
+          Dry Logger    181.453k (± 3.3%) i/s -    918.408k in   5.066156s
+             Logging      3.259M (± 1.9%) i/s -     16.456M in   5.051705s
+          TTY Logger    159.506k (± 1.7%) i/s -    805.851k in   5.053612s
 
 Comparison:
-              Cogger:   198569.5 i/s
-          Dry Logger:   161549.5 i/s - 1.23x  slower
-          TTY Logger:   155696.1 i/s - 1.28x  slower
+             Logging:  3258621.3 i/s
+              Cogger:   184707.7 i/s - 17.64x  slower
+          Dry Logger:   181452.7 i/s - 17.96x  slower
+          TTY Logger:   159506.3 i/s - 20.43x  slower
+
+PLAIN
+
+Warming up --------------------------------------
+              Cogger    31.461k i/100ms
+          Dry Logger    23.369k i/100ms
+             Logging    37.432k i/100ms
+          TTY Logger    18.772k i/100ms
+Calculating -------------------------------------
+              Cogger    316.756k (± 2.0%) i/s -      1.605M in   5.067212s
+          Dry Logger    226.082k (± 1.8%) i/s -      1.145M in   5.066495s
+             Logging    375.789k (± 5.7%) i/s -      1.872M in   4.999962s
+          TTY Logger    189.744k (± 2.0%) i/s -    957.372k in   5.047505s
+
+Comparison:
+             Logging:   375789.1 i/s
+              Cogger:   316756.3 i/s - 1.19x  slower
+          Dry Logger:   226081.8 i/s - 1.66x  slower
+          TTY Logger:   189743.6 i/s - 1.98x  slower
 
 COLOR
 
 Warming up --------------------------------------
-          Dry Logger    21.446k i/100ms
-              Cogger     9.677k i/100ms
-          TTY Logger    14.486k i/100ms
+              Cogger     6.471k i/100ms
+          Dry Logger    21.417k i/100ms
+             Logging    27.102k i/100ms
+          TTY Logger    14.018k i/100ms
 Calculating -------------------------------------
-          Dry Logger    218.412k (± 2.2%) i/s -      1.094M in   5.010135s
-              Cogger     97.623k (± 1.6%) i/s -    493.527k in   5.056717s
-          TTY Logger    145.688k (± 2.0%) i/s -    738.786k in   5.072917s
+              Cogger     64.963k (± 1.8%) i/s -    330.021k in   5.081705s
+          Dry Logger    209.475k (± 2.2%) i/s -      1.049M in   5.012140s
+             Logging    271.235k (± 6.1%) i/s -      1.355M in   5.019159s
+          TTY Logger    141.017k (± 2.1%) i/s -    714.918k in   5.071898s
 
 Comparison:
-          Dry Logger:   218412.5 i/s
-          TTY Logger:   145688.0 i/s - 1.50x  slower
-              Cogger:    97622.7 i/s - 2.24x  slower
+             Logging:   271235.3 i/s
+          Dry Logger:   209474.7 i/s - 1.29x  slower
+          TTY Logger:   141017.1 i/s - 1.92x  slower
+              Cogger:    64963.0 i/s - 4.18x  slower
 
 JSON
 
 Warming up --------------------------------------
-          Dry Logger    15.785k i/100ms
-              Cogger     7.621k i/100ms
-          TTY Logger     6.850k i/100ms
+              Cogger    16.140k i/100ms
+          Dry Logger    14.941k i/100ms
+             Logging    28.996k i/100ms
+          TTY Logger     6.626k i/100ms
 Calculating -------------------------------------
-          Dry Logger    155.654k (± 4.4%) i/s -    789.250k in   5.082844s
-              Cogger     76.693k (± 2.1%) i/s -    388.671k in   5.070076s
-          TTY Logger     68.620k (± 2.9%) i/s -    349.350k in   5.095059s
+              Cogger    161.893k (± 2.9%) i/s -    823.140k in   5.088670s
+          Dry Logger    150.580k (± 2.2%) i/s -    761.991k in   5.062482s
+             Logging    291.470k (± 4.8%) i/s -      1.479M in   5.088168s
+          TTY Logger     66.460k (± 3.1%) i/s -    337.926k in   5.088947s
 
 Comparison:
-          Dry Logger:   155654.1 i/s
-              Cogger:    76693.1 i/s - 2.03x  slower
-          TTY Logger:    68620.3 i/s - 2.27x  slower
+             Logging:   291469.8 i/s
+              Cogger:   161893.0 i/s - 1.80x  slower
+          Dry Logger:   150580.3 i/s - 1.94x  slower
+          TTY Logger:    66460.4 i/s - 4.39x  slower
