@@ -21,6 +21,7 @@ toc::[]
 * Provides customizable templates which leverage the native {format_link}.
 * Provides customizable formatters for simple, color, JSON, and/or custom output.
 * Provides multiple streams so you can log the same information to several outputs at once.
+* Provides global and individual log entry tagging.
 * Provides filtering of sensitive information.
 
 == Screenshots
@@ -128,6 +129,7 @@ When creating a new logger, you can configure behavior via the following attribu
 * `io`: The input/output stream. This can be `STDOUT/$stdout`, a file/path, or `nil`. Default: `$stdout`.
 * `level`: The severity level you want to log at. Can be `:debug`, `:info`, `:warn`, `:error`, `:fatal`, or `:unknown`. Default: `:info`.
 * `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Color`. See the _Formatters_ section for more info.
+* `tags`: Global tagging for _every_ log entry which _must_ be an array of objects you wish to use for tagging purposes.
 * `mode`: The binary mode which determines if your logs should be written in binary mode or not. Can be `true` or `false` and is identical to the `binmode` functionality found in the {logger_link} class. Default: `false`.
 * `age`: The rotation age of your log. This only applies when logging to a file. This is equivalent to the `shift_age` as found with the {logger_link} class. Default: `0`.
 * `size`: The rotation size of your log. This only applies when logging to a file. This is equivalent to the `shift_size` as found with the {logger_link} class. Default: `1,048,576` (i.e. 1 MB).
@@ -144,6 +146,8 @@ logger = Cogger.new
 logger = Cogger.new id: :demo,
                     io: "demo.log",
                     level: :debug,
+                    formatter: :json,
+                    tags: %w[DEMO DB],
                     mode: false,
                     age: 5,
                     size: 1_000,
@@ -174,7 +178,7 @@ Templates are used by all formatters and adhere to {format_link} as used by `Ker
 - Use of _reference by name_ is required which means `%<demo>s` is allowed but `%{demo}` is not. This is because _reference by name_ is required for regular expressions and/or {pattern_matching_link}.
 - Use of the `n$` flag is prohibited because this isn't compatible with the above.
 
-In addition to the above, the {format_link} is further enhanced with the use of _universal_ and _individual_ directives which are primarily used by the _color_ formatter but might prove useful for other formatters. Example:
+In addition to the above, the {format_link} is further enhanced with the use of _universal_ and _individual_ directives which are primarily used by the _color_ formatter but can prove useful for other formatters. Example:
 
 [source,ruby]
 ----
@@ -213,7 +217,7 @@ At this point, you might have gathered that there are specific keys you can use 
 
 This also means if you pass in these same keys as a log event (example: `logger.info id: :bad, at: Time.now, severity: :bogus`) they will be ignored.
 
-The last key (or keys) is variable and customizable to your needs which is the log event message. Here a couple of examples to illustrate:
+The last key (or keys) is variable and customizable to your needs which is the log event message. The only special key is the `tags` key which is explained later. Here a couple of examples to illustrate:
 
 [source,ruby]
 ----
@@ -247,7 +251,17 @@ Cogger.emojis
 # }
 ----
 
-To add an emoji, use:
+The `:emoji` formatter is the default formatter which provides dynamic rendering of emojis based on severity level. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger.info "Demo"
+
+# 🟢 Demo
+----
+
+To add one or more emojis, you can chain messages together when registering them:
 
 [source,ruby]
 ----
@@ -255,27 +269,20 @@ Cogger.add_emoji(:tada, "🎉")
       .add_emoji :favorite, "❇️"
 ----
 
-By default, the `:emoji` formatter provides dynamic rendering of emojis based on severity level. Example:
+If you always want to use the _same_ emoji, you could use the emoji formatter with a specific template:
 
 [source,ruby]
 ----
-logger = Cogger.new formatter: :emoji
-logger.info "demo"
+logger = Cogger.new formatter: Cogger::Formatters::Emoji.new("%<emoji:tada>s %<message:dynamic>s")
 
-# 🟢 demo
+logger.info "Demo"
+logger.warn "Demo"
+
+# 🎉 Demo
+# 🎉 Demo
 ----
 
-If you wanted to use a specific emoji, you could use the color formatter with a specific template:
-
-[source,ruby]
-----
-logger = Cogger.new formatter: Cogger::Formatters::Color.new("%<emoji:tada>s %<message:dynamic>s")
-logger.info "demo"
-
-# 🎉 demo
-----
-
-Keep in mind that using a specific, non-dynamic, emoji will _always_ display no matter the current severity level.
+As you can see, using a specific and non-dynamic emoji will _always_ display regardless of the current severity level.
 
 === Aliases
 
@@ -300,7 +307,7 @@ Aliases are a powerful way to customize your colors and use short syntax in your
 "%<message:haze>"
 ----
 
-Check out the {tone_link} documentation for further examples.
+💡 These aliases are used by the color and emoji formatters but check out the {tone_link} documentation and _Formatters_ section below for further examples.
 
 === Formatters
 
@@ -320,8 +327,8 @@ Cogger.formatters
 #     "[%<id>s] [%<severity>s] [%<at>s] %<message>s"
 #   ],
 #    :emoji => [
-#     Cogger::Formatters::Color < Object,
-#     "%<emoji:dynamic>s% <message:dynamic>s"
+#     Cogger::Formatters::Emoji < Cogger::Formatters::Color,
+#     nil
 #   ],
 #     :json => [
 #     Cogger::Formatters::JSON < Object,
@@ -342,10 +349,10 @@ You can add a formatter by providing a key, class, and _optional_ template. If a
 
 [source,ruby]
 ----
-# Add
+# Registration
 Cogger.add_formatter :basic, Cogger::Formatters::Simple, "%<severity>s %<message>s"
 
-# Get
+# Usage
 Cogger.get_formatter :basic
 # [Cogger::Formatters::Simple, "%<severity>s %<message>s"]
 ----
@@ -375,18 +382,14 @@ logger = Cogger.new formatter: :rack
 
 ==== Color
 
-The color formatter is enabled by default and is the equivalent of initializing with either of the following:
+The color formatter allows you to have color coded logs and can be configured as follows:
 
 [source,ruby]
 ----
-logger = Cogger.new
-logger = Cogger.new formatter: Cogger::Formatters::Color.new
-logger = Cogger.new formatter: Cogger::Formatters::Color.new("%<message:dynamic>s")
+logger = Cogger.new formatter: :color
 ----
 
-All three of the above examples are identical so you can start to see how different formatters can be used and customized further. Please refer back to the _Templates_ section on how to customize this formatter with more sophisticated templates.
-
-In addition to template customization, you can customize your color aliases as well. Default colors are provided by {tone_link} which are _aliased_ by log level:
+Please refer back to the _Templates_ section on how to customize this formatter with more sophisticated templates. In addition to template customization, you can customize your color aliases as well. Default colors are provided by {tone_link} which are _aliased_ by log level:
 
 [source,ruby]
 ----
@@ -417,11 +420,56 @@ Once an alias is added, it can be immediately applied via the template of your f
 logger = Cogger.new formatter: Cogger::Formatters::Color.new("<mystery>%<message>s</mystery>")
 ----
 
-ℹ️ Much like the simple formatter, any leading or trailing whitespace is automatically after the template has been formatted.
+ℹ️ Much like the simple formatter, any leading or trailing whitespace is automatically removed after the template has been formatted.
+
+==== Emoji
+
+The emoji formatter is enabled by default and is the equivalent of initializing with either of the following:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger = Cogger.new formatter: :emoji
+logger = Cogger.new formatter: Cogger::Formatters::Emoji.new("%<emoji:dynamic>s %<message:dynamic>s")
+----
+
+All of the above examples are identical so you can see how different formatters can be used and customized further. The default emojis are registered as follows:
+
+[source,ruby]
+----
+Cogger.emojis
+
+# {
+#   :debug => "🔎",
+#    :info => "🟢",
+#    :warn => "⚠️ ",
+#   :error => "🛑",
+#   :fatal => "🔥",
+#     :any => "⚫️"
+# }
+----
+
+This allows an emoji to be dynamically applied based on log severity. You can add or modify aliases as follows:
+
+[source,ruby]
+----
+Cogger.add_emoji :warn, "🟡"
+----
+
+Once an alias is added/updated, it can be immediately applied via the template of your formatter. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger.warn "Demo"
+# 🟡 Demo
+----
+
+ℹ️ Much like the simple and color formatters, any leading or trailing whitespace is automatically removed after the template has been formatted.
 
 ==== JSON
 
-This formatter is similar in behavior to the _simple_ formatter except the template allows you to order the layout of your keys only. All other information is ignored. To use:
+This formatter is similar in behavior to the _simple_ formatter except the template allows you to _order_ the layout of your keys. All other information is ignored. To use:
 
 [source,ruby]
 ----
@@ -440,18 +488,31 @@ logger.info verb: "GET", path: "/"
 
 Your template can be a full or partial match of keys. If no keys match what is defined in the template, then the original order of the keys will be used instead.
 
-==== Original
+==== Native
 
-Should you wish to use the original formatter as provided by original/native {logger_link}, you can get that behavior by specifying it as your preferred formatter. Example:
+Should you wish to use the native formatter as provided by original/native {logger_link}, it will work but not in the manner expected. Example:
 
 [source,ruby]
 ----
 require "logger"
 
 logger = Cogger.new formatter: Logger::Formatter.new
-logger.info "demo"
+logger.info "Demo"
 
-# I, [2023-04-11T19:35:51.175733 #84790]  INFO -- console: demo
+# I, [2023-10-15T14:32:55.061777 #72801]  INFO -- console: #<data Cogger::Entry id="console", severity=:info, at=2023-10-15 14:32:55.061734 -0600, message="Demo", tags=[], payload={}>
+----
+
+While the above doesn't cause an error, you only get a dump of the `Cogger::Entry` which is not what you want. To replicate native {logger_link} functionality, you can do use the simple formatter as follows to produce the rough equivalent:
+
+[source,ruby]
+----
+formatter = Cogger::Formatters::Simple.new(
+  "%<severity>s, [%<at>s]  %<severity>s -- %<id>s: %<message>s"
+)
+logger = Cogger.new(formatter:)
+logger.info "Demo"
+
+# INFO, [2023-10-15 15:07:13 -0600]  INFO -- console: Demo
 ----
 
 ==== Custom
@@ -468,7 +529,7 @@ class MyFormatter
     @sanitizer = sanitizer
   end
 
-  def call(*entry) = "#{format template, sanitizer.call(*entry)}\n"
+  def call(*input) = "#{format template, sanitizer.call(*input)}\n"
 
   private
 
@@ -476,7 +537,70 @@ class MyFormatter
 end
 ----
 
-There is no restriction on what dependency you might want to initialize your custom formatter with but -- as a bare minimum -- you'll want to provide a default template and inject the sanitizer which sanitizes the raw log entry into a hash you can interact with in your implementation. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `severity`, `at`, `id`, `message`) and answers back a formatted string. If you need more examples you can either read the link:https://rubyapi.org/o/logger/formatter#method-i-call[Logger::Formatter] documentation or look at any of the formatters provided within this gem.
+There is no restriction on what dependency you might want to initialize your custom formatter with but -- as a bare minimum -- you'll want to provide a default template and inject the sanitizer which sanitizes the raw input into a `Cogger::Entry` object you can interact with in your implementation. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `severity`, `at`, `id`, `entry`) and answers back a formatted string. If you need more examples you can look at any of the formatters provided within this gem.
+
+=== Tags
+
+Tags allow you to tag your messages at both a global and local (i.e. per message) level. For example, here's what tagging looks like when used globally:
+
+[source,ruby]
+----
+logger = Cogger.new tags: %w[WEB]
+logger.info "Demo"
+
+# 🟢 [WEB] Demo
+----
+
+Each tag is wrapped in brackets (i.e. `[]`) and you can use multiple tags:
+
+[source,ruby]
+----
+logger = Cogger.new tags: %w[WEB EXAMPLE]
+logger.info "Demo"
+
+# 🟢 [WEB] [EXAMPLE] Demo
+----
+
+You are not limited to string-based tags. Any object will work:
+
+
+[source,ruby]
+----
+logger = Cogger.new tags: ["ONE", :two, 3, {four: "FOUR"}, proc { "FIVE" }]
+logger.info "Demo"
+
+🟢 [ONE] [two] [3] [FIVE] [four=FOUR] Demo
+----
+
+With the above, we have string, symbol, integer, hash, and proc tags. With hashes, you'll always get a the key/value pair formatted as: `key=value`. Procs/lambdas allow you to lazy evaluate your tag at time of logging which provides a powerful way to acquire the current thread ID, request ID, etc.
+
+In addition to global tags, you can use local tags per log message. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger.info "Demo", tags: ["ONE", :two, 3, {four: "FOUR"}, proc { "FIVE" }]
+
+🟢 [ONE] [two] [3] [FIVE] [four=FOUR] Demo
+----
+
+You can also combine global and local tags:
+
+[source,ruby]
+----
+logger = Cogger.new tags: ["ONE", :two]
+logger.info "Demo", tags: [3, proc { "FOUR" }]
+
+# 🟢 [ONE] [two] [3] [FOUR] Demo
+----
+
+As you can see, tags are highly versatile. That said, the following guidelines are worth consideration when using them:
+
+* Prefer uppercase tag names to make them visually stand out.
+* Prefer short names, ideally 1-4 characters since long tags defeat the purpose of brevity.
+* Prefer consistent tag names by using tags that are not synonymous or ambiguous.
+* Prefer using tags by feature rather than things like environments. Examples: API, DB, MAILER.
+* Prefer the JSON formatter for structured metadata instead of tags. Logging JSON formatted messages with tags will work but sticking with a traditional hash, instead of tags, will probably serve you better.
 
 === Filters
 
@@ -532,7 +656,7 @@ logger = Cogger.new
 logger.info "Demo."
 ----
 
-The above would log the `"Demo."` message to `$stdout` (i.e. the default stream), to the `tmp/demo.log` file, and to `/dev/null`. All of the attributes you would use to construct your default logger apply to any stream. This also means any custom template/formatter can be applied to your streams. Here's another example:
+The above would log the `"Demo."` message to `$stdout` -- the default stream -- to the `tmp/demo.log` file, and to `/dev/null`. All attributes used to construct your default logger apply to all additional streams unless customized further. This means any custom template/formatter can be applied to your streams. Example:
 
 [source,ruby]
 ----
@@ -541,6 +665,25 @@ logger.info "Demo."
 ----
 
 In this situation, you'd get colorized output to `$stdout` and JSON output to the `tmp/demo.log` file.
+
+There is a lot you can do with streams. For example, if you wanted to experiment with the same message formatted by multiple formatters, you could add a stream per format. Example:
+
+[source,ruby]
+----
+cogger = Cogger.new
+               .add_stream(formatter: :color)
+               .add_stream(formatter: :detail)
+               .add_stream(formatter: :json)
+               .add_stream(formatter: :simple)
+
+cogger.info "Demo"
+
+# 🟢 Demo
+# Demo
+# [console] [INFO] [2023-10-15 15:17:27 -0600] Demo
+# {"id":"console","severity":"INFO","at":"2023-10-15 15:17:27 -0600","message":"Demo"}
+# Demo
+----
 
 === Defaults
 

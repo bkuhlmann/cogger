@@ -1,5 +1,24 @@
 = Versions
 
+== 0.12.0 (2023-10-15)
+
+* Fixed JSON formatter performance - Brooke Kuhlmann
+* Fixed individual formatter parser to not duplicate template - Brooke Kuhlmann
+* Added configuration tags and entry - Brooke Kuhlmann
+* Added emoji formatter - Brooke Kuhlmann
+* Added entry - Brooke Kuhlmann
+* Added logging gem benchmarks - Brooke Kuhlmann
+* Added primary stream delegation - Brooke Kuhlmann
+* Added tag - Brooke Kuhlmann
+* Added tagged logging - Brooke Kuhlmann
+* Updated formatters to consume log entry - Brooke Kuhlmann
+* Updated hub to initialize with configuration model - Brooke Kuhlmann
+* Updated implementation to default to emoji formatter - Brooke Kuhlmann
+* Updated to Caliber 0.42.0 - Brooke Kuhlmann
+* Removed legacy client - Brooke Kuhlmann
+* Refactored Gemfile to use ruby file syntax - Brooke Kuhlmann
+* Refactored sanitizer as function - Brooke Kuhlmann
+
 == 0.11.0 (2023-09-30)
 
 * Fixed Zeitwerk loader - Brooke Kuhlmann
