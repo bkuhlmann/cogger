@@ -11,20 +11,18 @@ module Cogger
       def initialize template = TEMPLATE,
                      parser: Parsers::Individual.new,
                      sanitizer: Kit::Sanitizer
-        @template = template
-        @parser = parser
+        @positions = parser.call(template).last.keys
         @sanitizer = sanitizer
       end
 
       def call(*input)
-        positions = parser.call(template).last.keys
         attributes = sanitizer.call(*input).tagged_attributes.tap(&:compact!)
         "#{attributes.slice(*positions).merge!(attributes.except(*positions)).to_json}\n"
       end
 
       private
 
-      attr_reader :template, :parser, :sanitizer
+      attr_reader :positions, :sanitizer
     end
   end
 end
