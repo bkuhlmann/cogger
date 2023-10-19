@@ -40,7 +40,7 @@ module Cogger
 
       return attributes if computed_tags.empty?
 
-      {id:, severity:, at:, message:, tags: computed_tags.to_a, **payload}
+      {id:, severity:, at:, message:, **computed_tags.to_h, **payload}
     end
 
     def tagged tagger: Tag

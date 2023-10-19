@@ -144,14 +144,16 @@ RSpec.describe Cogger::Entry do
     let(:at) { Time.now }
 
     it "answers tagged message" do
-      entry = described_class.new at:, message: "test", tags: %w[ONE TWO THREE]
+      entry = described_class.new at:, message: "test", tags: ["ONE", "TWO", {three: 3, four: 4}]
 
       expect(entry.tagged_attributes).to eq(
         id: "rspec",
         severity: "INFO",
         at:,
         message: "test",
-        tags: %w[ONE TWO THREE]
+        tags: %w[ONE TWO],
+        three: 3,
+        four: 4
       )
     end
 
