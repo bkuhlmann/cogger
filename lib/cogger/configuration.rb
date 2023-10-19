@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "core"
 require "logger"
 
 module Cogger
@@ -21,7 +22,7 @@ module Cogger
                    io: $stdout,
                    level: Logger.const_get(ENV.fetch("LOG_LEVEL", "INFO")),
                    formatter: Formatters::Emoji.new,
-                   tags: [],
+                   tags: Core::EMPTY_ARRAY,
                    mode: false,
                    age: 0,
                    size: 1_048_576,

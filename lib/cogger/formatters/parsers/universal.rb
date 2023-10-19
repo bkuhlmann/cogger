@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "core"
+
 module Cogger
   module Formatters
     module Parsers
@@ -32,7 +34,7 @@ module Cogger
         def call template
           return template unless template.match? pattern
 
-          [template.gsub(pattern, ""), template.match(pattern)[key]]
+          [template.gsub(pattern, Core::EMPTY_STRING), template.match(pattern)[key]]
         end
 
         private

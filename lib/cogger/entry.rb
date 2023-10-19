@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "core"
+
 module Cogger
   # Defines a log entry which can be formatted for output.
   Entry = Data.define :id, :severity, :at, :message, :tags, :payload do
@@ -27,7 +29,7 @@ module Cogger
                    at: Time.now,
                    message: nil,
                    tags: [],
-                   payload: {}
+                   payload: Core::EMPTY_HASH
       super
     end
 

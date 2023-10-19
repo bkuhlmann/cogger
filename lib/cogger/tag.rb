@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "core"
+
 module Cogger
   # Models a tag which may consist of an array and/or hash.
   Tag = Data.define :singles, :pairs do
@@ -23,7 +25,7 @@ module Cogger
            .prepend(*singles.map(&:to_s))
     end
 
-    def to_s = empty? ? "" : "#{format_singles} #{format_pairs}".tap(&:strip!)
+    def to_s = empty? ? Core::EMPTY_STRING : "#{format_singles} #{format_pairs}".tap(&:strip!)
 
     private
 
