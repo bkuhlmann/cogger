@@ -6,11 +6,13 @@ require "bundler/inline"
 gemfile true do
   source "https://rubygems.org"
 
+  gem "amazing_print"
   gem "benchmark-ips"
   gem "debug"
   gem "cogger", path: ".."
   gem "dry-logger"
   gem "logging"
+  gem "ougai"
   gem "tty-logger"
 end
 
@@ -22,12 +24,13 @@ Benchmark.ips do |benchmark|
   benchmark.report("Cogger") { Cogger.new }
   benchmark.report("Dry Logger") { Dry.Logger :demo }
   benchmark.report("Logging") { Logging.logger STDOUT }
+  benchmark.report("Ougai") { Ougai::Logger.new STDOUT }
   benchmark.report("TTY Logger") { TTY::Logger.new }
 
   benchmark.compare!
 end
 
-puts "PLAIN\n\n"
+puts "DEFAULT\n\n"
 
 Benchmark.ips do |benchmark|
   cogger = Cogger.new io: StringIO.new, formatter: :simple
@@ -36,6 +39,8 @@ Benchmark.ips do |benchmark|
   Logging.appenders.string_io "string_io"
   logging = Logging.logger StringIO.new
   logging.add_appenders "string_io"
+
+  ougai = Ougai::Logger.new StringIO.new
 
   tty = TTY::Logger.new output: StringIO.new do |config|
     config.handlers = [[:console, {enable_color: false}]]
@@ -48,6 +53,7 @@ Benchmark.ips do |benchmark|
   benchmark.report("Cogger") { cogger.info message }
   benchmark.report("Dry Logger") { dry.info message }
   benchmark.report("Logging") { logging.info message }
+  benchmark.report("Ougai") { ougai.info message }
   benchmark.report("TTY Logger") { tty.info message }
 
   benchmark.compare!
@@ -82,6 +88,9 @@ Benchmark.ips do |benchmark|
   logging = Logging.logger StringIO.new
   logging.add_appenders "string_io"
 
+  ougai = Ougai::Logger.new StringIO.new
+  ougai.formatter = Ougai::Formatters::Readable.new
+
   tty = TTY::Logger.new output: StringIO.new
 
   message = "test"
@@ -91,6 +100,7 @@ Benchmark.ips do |benchmark|
   benchmark.report("Cogger") { cogger.info message }
   benchmark.report("Dry Logger") { dry.info message }
   benchmark.report("Logging") { logging.info message }
+  benchmark.report("Ougai") { ougai.info message }
   benchmark.report("TTY Logger") { tty.info message }
 
   benchmark.compare!
@@ -105,6 +115,7 @@ Benchmark.ips do |benchmark|
   Logging.appenders.stdout "string_io", layout: Logging.layouts.json
   logging = Logging.logger StringIO.new
 
+  ougai = Ougai::Logger.new StringIO.new
   tty = TTY::Logger.new(output: StringIO.new) { |config| config.formatter = :json }
 
   payload = {one: 1, two: 2, three: 3}
@@ -114,6 +125,7 @@ Benchmark.ips do |benchmark|
   benchmark.report("Cogger") { cogger.info payload }
   benchmark.report("Dry Logger") { dry.info payload }
   benchmark.report("Logging") { logging.info payload }
+  benchmark.report("Ougai") { ougai.info payload }
   benchmark.report("TTY Logger") { tty.info payload }
 
   benchmark.compare!
@@ -124,75 +136,87 @@ __END__
 INITIALIZATION
 
 Warming up --------------------------------------
-              Cogger    18.525k i/100ms
-          Dry Logger    18.008k i/100ms
-             Logging   299.201k i/100ms
-          TTY Logger    15.801k i/100ms
+              Cogger    18.988k i/100ms
+          Dry Logger    16.714k i/100ms
+             Logging   114.985k i/100ms
+               Ougai    23.207k i/100ms
+          TTY Logger    15.504k i/100ms
 Calculating -------------------------------------
-              Cogger    184.708k (± 2.3%) i/s -    926.250k in   5.017113s
-          Dry Logger    181.453k (± 3.3%) i/s -    918.408k in   5.066156s
-             Logging      3.259M (± 1.9%) i/s -     16.456M in   5.051705s
-          TTY Logger    159.506k (± 1.7%) i/s -    805.851k in   5.053612s
+              Cogger    178.052k (± 3.3%) i/s -    892.436k in   5.017566s
+          Dry Logger    177.487k (± 3.7%) i/s -    902.556k in   5.091339s
+             Logging      3.212M (± 4.3%) i/s -     16.098M in   5.021795s
+               Ougai    240.580k (± 3.0%) i/s -      1.207M in   5.020310s
+          TTY Logger    157.590k (± 1.7%) i/s -    790.704k in   5.018861s
 
 Comparison:
-             Logging:  3258621.3 i/s
-              Cogger:   184707.7 i/s - 17.64x  slower
-          Dry Logger:   181452.7 i/s - 17.96x  slower
-          TTY Logger:   159506.3 i/s - 20.43x  slower
+             Logging:  3211550.2 i/s
+               Ougai:   240579.8 i/s - 13.35x  slower
+              Cogger:   178052.1 i/s - 18.04x  slower
+          Dry Logger:   177487.4 i/s - 18.09x  slower
+          TTY Logger:   157589.9 i/s - 20.38x  slower
 
-PLAIN
+DEFAULT
 
 Warming up --------------------------------------
-              Cogger    31.461k i/100ms
-          Dry Logger    23.369k i/100ms
-             Logging    37.432k i/100ms
-          TTY Logger    18.772k i/100ms
+              Cogger    31.748k i/100ms
+          Dry Logger    24.031k i/100ms
+             Logging    37.514k i/100ms
+               Ougai    38.210k i/100ms
+          TTY Logger    18.705k i/100ms
 Calculating -------------------------------------
-              Cogger    316.756k (± 2.0%) i/s -      1.605M in   5.067212s
-          Dry Logger    226.082k (± 1.8%) i/s -      1.145M in   5.066495s
-             Logging    375.789k (± 5.7%) i/s -      1.872M in   4.999962s
-          TTY Logger    189.744k (± 2.0%) i/s -    957.372k in   5.047505s
+              Cogger    314.679k (± 2.1%) i/s -      1.587M in   5.046620s
+          Dry Logger    233.609k (± 2.4%) i/s -      1.178M in   5.043368s
+             Logging    372.444k (± 5.9%) i/s -      1.876M in   5.057254s
+               Ougai    375.718k (± 6.0%) i/s -      1.872M in   5.004552s
+          TTY Logger    187.454k (± 2.6%) i/s -    953.955k in   5.092396s
 
 Comparison:
-             Logging:   375789.1 i/s
-              Cogger:   316756.3 i/s - 1.19x  slower
-          Dry Logger:   226081.8 i/s - 1.66x  slower
-          TTY Logger:   189743.6 i/s - 1.98x  slower
+               Ougai:   375717.7 i/s
+             Logging:   372443.8 i/s - same-ish: difference falls within error
+              Cogger:   314679.4 i/s - 1.19x  slower
+          Dry Logger:   233608.8 i/s - 1.61x  slower
+          TTY Logger:   187454.0 i/s - 2.00x  slower
 
 COLOR
 
 Warming up --------------------------------------
-              Cogger     6.471k i/100ms
-          Dry Logger    21.417k i/100ms
-             Logging    27.102k i/100ms
-          TTY Logger    14.018k i/100ms
+              Cogger     6.441k i/100ms
+          Dry Logger    21.690k i/100ms
+             Logging    26.952k i/100ms
+               Ougai    43.171k i/100ms
+          TTY Logger    13.955k i/100ms
 Calculating -------------------------------------
-              Cogger     64.963k (± 1.8%) i/s -    330.021k in   5.081705s
-          Dry Logger    209.475k (± 2.2%) i/s -      1.049M in   5.012140s
-             Logging    271.235k (± 6.1%) i/s -      1.355M in   5.019159s
-          TTY Logger    141.017k (± 2.1%) i/s -    714.918k in   5.071898s
+              Cogger     64.837k (± 2.0%) i/s -    328.491k in   5.068305s
+          Dry Logger    212.295k (± 3.3%) i/s -      1.063M in   5.011630s
+             Logging    270.868k (± 6.7%) i/s -      1.348M in   5.002217s
+               Ougai    443.630k (± 4.6%) i/s -      2.245M in   5.073228s
+          TTY Logger    139.768k (± 2.4%) i/s -    711.705k in   5.094872s
 
 Comparison:
-             Logging:   271235.3 i/s
-          Dry Logger:   209474.7 i/s - 1.29x  slower
-          TTY Logger:   141017.1 i/s - 1.92x  slower
-              Cogger:    64963.0 i/s - 4.18x  slower
+               Ougai:   443629.5 i/s
+             Logging:   270868.1 i/s - 1.64x  slower
+          Dry Logger:   212295.4 i/s - 2.09x  slower
+          TTY Logger:   139768.1 i/s - 3.17x  slower
+              Cogger:    64836.5 i/s - 6.84x  slower
 
 JSON
 
 Warming up --------------------------------------
-              Cogger    16.140k i/100ms
-          Dry Logger    14.941k i/100ms
-             Logging    28.996k i/100ms
-          TTY Logger     6.626k i/100ms
+              Cogger    17.139k i/100ms
+          Dry Logger    15.152k i/100ms
+             Logging    29.172k i/100ms
+               Ougai    30.436k i/100ms
+          TTY Logger     6.521k i/100ms
 Calculating -------------------------------------
-              Cogger    161.893k (± 2.9%) i/s -    823.140k in   5.088670s
-          Dry Logger    150.580k (± 2.2%) i/s -    761.991k in   5.062482s
-             Logging    291.470k (± 4.8%) i/s -      1.479M in   5.088168s
-          TTY Logger     66.460k (± 3.1%) i/s -    337.926k in   5.088947s
+              Cogger    170.911k (± 3.2%) i/s -    856.950k in   5.018972s
+          Dry Logger    151.331k (± 2.7%) i/s -    757.600k in   5.009457s
+             Logging    292.254k (± 5.7%) i/s -      1.459M in   5.010710s
+               Ougai    303.247k (± 6.9%) i/s -      1.522M in   5.046771s
+          TTY Logger     65.482k (± 3.7%) i/s -    332.571k in   5.085191s
 
 Comparison:
-             Logging:   291469.8 i/s
-              Cogger:   161893.0 i/s - 1.80x  slower
-          Dry Logger:   150580.3 i/s - 1.94x  slower
-          TTY Logger:    66460.4 i/s - 4.39x  slower
+               Ougai:   303246.6 i/s
+             Logging:   292254.4 i/s - same-ish: difference falls within error
+              Cogger:   170911.0 i/s - 1.77x  slower
+          Dry Logger:   151330.5 i/s - 2.00x  slower
+          TTY Logger:    65482.0 i/s - 4.63x  slower
