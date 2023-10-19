@@ -1,5 +1,18 @@
 = Versions
 
+== 0.13.0 (2023-10-18)
+
+* Added Core gem - Brooke Kuhlmann
+* Added Ougai benchmarks - Brooke Kuhlmann
+* Added logger attributes for id, io, tags, mode, age, size, and suffix - Brooke Kuhlmann
+* Added public method for any kind of severity logging - Brooke Kuhlmann
+* Added tag hash conversion and removed array conversion - Brooke Kuhlmann
+* Updated entry tagged attributes format - Brooke Kuhlmann
+* Updated registry filters to be empty by default - Brooke Kuhlmann
+* Updated show script to mimic same information as other formatters - Brooke Kuhlmann
+* Refactored JSON formatter to not use a template by default - Brooke Kuhlmann
+* Refactored implementation to use empty Core objects - Brooke Kuhlmann
+
 == 0.12.0 (2023-10-15)
 
 * Fixed JSON formatter performance - Brooke Kuhlmann

@@ -28,27 +28,27 @@ toc::[]
 
 *Emoji*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/emoji.png[Emoji,width=204,height=251]
+image::https://alchemists.io/images/projects/cogger/screenshots/emoji.png[Emoji,width=234,height=293]
 
 *Color*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/color.png[Color,width=181,height=247]
+image::https://alchemists.io/images/projects/cogger/screenshots/color.png[Color,width=202,height=288]
 
 *Simple*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/simple.png[Simple,width=274,height=253]
+image::https://alchemists.io/images/projects/cogger/screenshots/simple.png[Simple,width=288,height=253]
 
 *Detail*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/detail.png[Detail,width=476,height=256]
+image::https://alchemists.io/images/projects/cogger/screenshots/detail.png[Detail,width=611,height=284]
 
 *JSON*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=929,height=256]
+image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=962,height=297]
 
 *Rack*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/rack.png[Rack,width=656,height=252]
+image::https://alchemists.io/images/projects/cogger/screenshots/rack.png[Rack,width=883,height=282]
 
 == Requirements
 
@@ -93,7 +93,7 @@ All interaction is provided by `Cogger` which can be used as follows:
 [source,ruby]
 ----
 logger = Cogger.new
-logger.info "demo"   # "demo"
+logger.info "Demo"  # "Demo"
 ----
 
 If you set your logging level to `debug`, you can walk through each level:
@@ -103,22 +103,24 @@ If you set your logging level to `debug`, you can walk through each level:
 logger = Cogger.new level: :debug
 
 # Without blocks.
-logger.debug "demo"        # "demo"
-logger.info "demo"         # "demo"
-logger.warn "demo"         # "demo"
-logger.error "demo"        # "demo"
-logger.fatal "demo"        # "demo"
-logger.unknown "demo"      # "demo"
-logger.any "demo"          # "demo"
+logger.debug "Demo"                  # "🔎 Demo"
+logger.info "Demo"                   # "🟢 Demo"
+logger.warn "Demo"                   # "⚠️ Demo"
+logger.error "Demo"                  # "🛑 Demo"
+logger.fatal "Demo"                  # "🔥 Demo"
+logger.unknown "Demo"                # "⚫️ Demo"
+logger.any "Demo"                    # "⚫️ Demo"
+logger.add Logger::INFO, "Demo"      # "🟢 Demo"
 
 # With blocks.
-logger.debug { "demo" }    # "demo"
-logger.info { "demo" }     # "demo"
-logger.warn { "demo" }     # "demo"
-logger.error { "demo" }    # "demo"
-logger.fatal { "demo" }    # "demo"
-logger.unknown { "demo" }  # "demo"
-logger.any { "demo" }      # "demo"
+logger.debug { "Demo" }              # "🔎 Demo"
+logger.info { "Demo" }               # "🟢 Demo"
+logger.warn { "Demo" }               # "⚠️ Demo"
+logger.error { "Demo" }              # "🛑 Demo"
+logger.fatal { "Demo" }              # "🔥 Demo"
+logger.unknown { "Demo" }            # "⚫️ Demo"
+logger.any { "Demo" }                # "⚫️ Demo"
+logger.add(Logger::INFO) { "Demo" }  # "🟢 Demo"
 ----
 
 === Initialization
@@ -153,6 +155,72 @@ logger = Cogger.new id: :demo,
                     size: 1_000,
                     suffix: "%Y"
 ----
+
+=== Inspection
+
+Each instance can be inspected via the `#inspect` message:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger.inspect
+
+# "#<Cogger::Hub @id=console,
+#                @io=IO,
+#                @level=1,
+#                @formatter=Cogger::Formatters::Emoji,
+#                @tags=[],
+#                @mode=false,
+#                @age=0,
+#                @size=1048576,
+#                @suffix=\"%Y-%m-%d\",
+#                @entry=Cogger::Entry,
+#                @logger=Logger>"
+----
+
+You can also look at individual attributes:
+
+[source,ruby]
+----
+logger = Cogger.new
+
+logger.id      # "console"
+logger.io      # #<IO:<STDOUT>>
+logger.tags    # []
+logger.mode    # false
+logger.age     # 0
+logger.size    # 1048576
+logger.suffix  # "%Y-%m-%d"
+
+logger.level      # 1
+logger.formatter  # Cogger::Formatters::Emoji
+logger.debug?     # false
+logger.info?      # true
+logger.warn?      # true
+logger.error?     # true
+logger.fatal?     # true
+----
+
+=== Mutations
+
+Each instance can be mutated using the following messages:
+
+[source,ruby]
+----
+logger = Cogger.new io: StringIO.new
+
+logger.close                                       # nil
+logger.reopen                                      # Logger
+logger.debug!                                      # 0
+logger.info!                                       # 1
+logger.warn!                                       # 2
+logger.error!                                      # 3
+logger.fatal!                                      # 4
+logger.formatter = Cogger::Formatters::Simple.new  # Cogger::Formatters::Simple
+logger.level = Logger::WARN                        # 2
+----
+
+Please see the {logger_link} documentation for more information.
 
 === Environment
 
@@ -361,8 +429,10 @@ Symbols or strings can be used interchangeably when adding/getting formatters. A
 
 [source,ruby]
 ----
-Cogger::Formatters::Simple::TEMPLATE
-# "%<message>s"
+Cogger::Formatters::Color::TEMPLATE   # "%<message:dynamic>s"
+Cogger::Formatters::Emoji::TEMPLATE   # "%<emoji:dynamic>s %<message:dynamic>s"
+Cogger::Formatters::JSON::TEMPLATE    # nil
+Cogger::Formatters::Simple::TEMPLATE  # "%<message>s"
 ----
 
 💡 When you find yourself customizing any of the default formatters, you can reduce typing by adding your custom configuration to the registry and then referring to it via it's associated key when initializing a new logger.
@@ -469,17 +539,22 @@ logger.warn "Demo"
 
 ==== JSON
 
-This formatter is similar in behavior to the _simple_ formatter except the template allows you to _order_ the layout of your keys. All other information is ignored. To use:
+This formatter is similar in behavior to the _simple_ formatter except the template allows you to _order_ the layout of your keys. All other template information is ignored, only the order of your template keys matters. Example:
+
+*Default Order*
 
 [source,ruby]
 ----
-# Default order
 logger = Cogger.new formatter: :json
 logger.info verb: "GET", path: "/"
 
 # {"id":"console","severity":"INFO","at":"2023-04-10 09:03:55 -0600","verb":"GET","path":"/"}
+----
 
-# Custom order
+*Custom Order*
+
+[source,ruby]
+----
 logger = Cogger.new formatter: Cogger::Formatters::JSON.new("%<severity>s %<verb>s")
 logger.info verb: "GET", path: "/"
 
@@ -488,9 +563,43 @@ logger.info verb: "GET", path: "/"
 
 Your template can be a full or partial match of keys. If no keys match what is defined in the template, then the original order of the keys will be used instead.
 
+You can always supply a message as your first argument -- or specify it by using the `:message` key -- but is removed if not supplied which is why the above doesn't print a message in the output. To illustrate, the following are equivalent:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: json
+
+logger.info "Demo"
+# {"id":"console","severity":"INFO","at":"2023-10-18 19:38:55 -0600","message":"Demo"}
+
+logger.info messsage: "Demo"
+{"id":"console","severity":"INFO","at":"2023-10-18 19:39:19 -0600","messsage":"Demo"}
+----
+
+When tags are provided, the `:tags` key will appear in the output depending on whether you are using _single tags_. If hash tags are used, they'll show up as additional attributes in the outout. Here's an example where a mix of single and hash keys are used:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :json
+
+logger.info "Demo", tags: ["WEB", "PRIMARY", {service: :api, demo: true}]
+
+# {
+#   "id":"console",
+#   "severity":"INFO",
+#   "at":"2023-10-18 19:47:11 -0600",
+#   "message":"Demo",
+#   "tags":["WEB","PRIMARY"],
+#   "service":"api",
+#   "demo":true
+# }
+----
+
+Notice, with the above, that the single tags of `WEB` and `PRIMARY` show up in the `tags` array while the `:service` and `:demo` keys show up at the top level of the hash. Since the `:tags`, `:service`, `:demo` keys are normal keys, like any key in your JSON output, this means you can use a custom template to arrange the order of these keys if you don't like the default.
+
 ==== Native
 
-Should you wish to use the native formatter as provided by original/native {logger_link}, it will work but not in the manner expected. Example:
+Should you wish to use the native formatter as provided by original/native {logger_link}, it will work but not in the manner you might expect. Example:
 
 [source,ruby]
 ----
@@ -569,10 +678,10 @@ You are not limited to string-based tags. Any object will work:
 logger = Cogger.new tags: ["ONE", :two, 3, {four: "FOUR"}, proc { "FIVE" }]
 logger.info "Demo"
 
-🟢 [ONE] [two] [3] [FIVE] [four=FOUR] Demo
+# 🟢 [ONE] [two] [3] [FIVE] [four=FOUR] Demo
 ----
 
-With the above, we have string, symbol, integer, hash, and proc tags. With hashes, you'll always get a the key/value pair formatted as: `key=value`. Procs/lambdas allow you to lazy evaluate your tag at time of logging which provides a powerful way to acquire the current thread ID, request ID, etc.
+With the above, we have string, symbol, integer, hash, and proc tags. With hashes, you'll always get a the key/value pair formatted as: `key=value`. Procs/lambdas allow you to lazy evaluate your tag at time of logging which provides a powerful way to acquire the current process ID, thread ID, and so forth.
 
 In addition to global tags, you can use local tags per log message. Example:
 
@@ -581,7 +690,7 @@ In addition to global tags, you can use local tags per log message. Example:
 logger = Cogger.new
 logger.info "Demo", tags: ["ONE", :two, 3, {four: "FOUR"}, proc { "FIVE" }]
 
-🟢 [ONE] [two] [3] [FIVE] [four=FOUR] Demo
+# 🟢 [ONE] [two] [3] [FIVE] [four=FOUR] Demo
 ----
 
 You can also combine global and local tags:
@@ -604,43 +713,38 @@ As you can see, tags are highly versatile. That said, the following guidelines a
 
 === Filters
 
-Filters allow you to mask sensitive information you don't want showing up in your logs. Here are the defaults:
+Filters allow you to mask sensitive information you don't want showing up in your logs. The default is an empty set:
 
 [source,ruby]
 ----
-Cogger.filters
-
-# [
-#   :_csrf,
-#   :password,
-#   :password_confirmation
-# ]
+Cogger.filters  # #<Set: {}>
 ----
 
-To add additional filters, use:
+To add filters, use:
 
 [source,ruby]
 ----
 Cogger.add_filter(:login)
       .add_filter "email"
 
-# [
-#   :_csrf,
-#   :password,
-#   :password_confirmation,
-#   :login,
-#   :email
-# ]
+Cogger.filters  # #<Set: {:login, :email}>
 ----
 
 Symbols and strings can be used interchangeably but are stored as symbols since symbols are used when filtering log entries. Once your filters are in place, you can immediately see their effects:
 
 [source,ruby]
 ----
+Cogger.add_filter :password
 logger = Cogger.new formatter: :json
 logger.info login: "jayne", password: "secret"
 
-# {"id":"console","severity":"INFO","at":"2023-04-09 17:33:00 -0600","login":"[FILTERED]","password":"[FILTERED]"}
+# {
+#   "id":"console",
+#   "severity":"INFO",
+#   "at":"2023-10-18 19:21:40 -0600",
+#   "login":"jayne",
+#   "password":"[FILTERED]"
+# }
 ----
 
 === Streams
@@ -670,13 +774,13 @@ There is a lot you can do with streams. For example, if you wanted to experiment
 
 [source,ruby]
 ----
-cogger = Cogger.new
+logger = Cogger.new
                .add_stream(formatter: :color)
                .add_stream(formatter: :detail)
                .add_stream(formatter: :json)
                .add_stream(formatter: :simple)
 
-cogger.info "Demo"
+logger.info "Demo"
 
 # 🟢 Demo
 # Demo
