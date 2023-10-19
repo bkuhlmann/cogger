@@ -33,6 +33,8 @@ module Cogger
       level=
     ] => :primary
 
+    delegate %i[id io tags mode age size suffix] => :configuration
+
     def initialize(registry: Cogger, model: Configuration, **attributes)
       @registry = registry
       @configuration = model[**find_formatter(attributes)]
