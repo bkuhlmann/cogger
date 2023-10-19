@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Cogger::Tag do
-  subject(:tag) { described_class[singles: ["ONE", :TWO], pairs: {X: 1, Y: 2}] }
+  subject(:tag) { described_class[singles: ["ONE", :TWO], pairs: {x: 1, y: 2}] }
 
   describe ".for" do
     it "answers simple singles" do
@@ -55,35 +55,35 @@ RSpec.describe Cogger::Tag do
     end
   end
 
-  describe "#to_a" do
+  describe "#to_h" do
     it "answers tags for singles and pairs" do
-      expect(tag.to_a).to eq(["ONE", "TWO", "X=1", "Y=2"])
+      expect(tag.to_h).to eq(tags: ["ONE", :TWO], x: 1, y: 2)
     end
 
     it "answers only pairs" do
       modification = tag.with singles: []
-      expect(modification.to_a).to eq(["X=1", "Y=2"])
+      expect(modification.to_h).to eq(x: 1, y: 2)
     end
 
     it "answers only singles" do
       modification = tag.with pairs: {}
-      expect(modification.to_a).to eq(%w[ONE TWO])
+      expect(modification.to_h).to eq(tags: ["ONE", :TWO])
     end
 
-    it "answers empty array for empty singles and pairs" do
+    it "answers empty hash for empty singles and pairs" do
       tag = described_class.new
-      expect(tag.to_a).to eq([])
+      expect(tag.to_h).to eq({})
     end
   end
 
   describe "#to_s" do
     it "answers tags for singles and pairs" do
-      expect(tag.to_s).to eq("[ONE] [TWO] [X=1] [Y=2]")
+      expect(tag.to_s).to eq("[ONE] [TWO] [x=1] [y=2]")
     end
 
     it "answers only pairs" do
       modification = tag.with singles: []
-      expect(modification.to_s).to eq("[X=1] [Y=2]")
+      expect(modification.to_s).to eq("[x=1] [y=2]")
     end
 
     it "answers only singles" do
