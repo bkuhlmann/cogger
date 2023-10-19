@@ -146,7 +146,7 @@ RSpec.describe Cogger::Registry do
 
   describe "#filters" do
     it "answers default filters" do
-      expect(registry.filters).to eq(Set[:_csrf, :password, :password_confirmation])
+      expect(registry.filters).to eq(Set.new)
     end
 
     it "answers filters when they exist" do
@@ -219,7 +219,7 @@ RSpec.describe Cogger::Registry do
         emojis:,
         aliases:,
         formatters:,
-        filters: Set[:_csrf, :password, :password_confirmation],
+        filters: Set.new,
         color: kind_of(Tone::Client)
       )
     end

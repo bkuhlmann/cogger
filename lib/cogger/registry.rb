@@ -18,9 +18,6 @@ module Cogger
                 .add_emoji(:error, "🛑")
                 .add_emoji(:fatal, "🔥")
                 .add_emoji(:any, "⚫️")
-                .add_filter(:_csrf)
-                .add_filter(:password)
-                .add_filter(:password_confirmation)
                 .add_formatter(:color, Cogger::Formatters::Color)
                 .add_formatter(
                   :detail,
