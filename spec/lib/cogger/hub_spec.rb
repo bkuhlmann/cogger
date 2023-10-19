@@ -160,6 +160,23 @@ RSpec.describe Cogger::Hub do
     it_behaves_like "a log", :any
   end
 
+  describe "#add" do
+    it "adds entry with block" do
+      logger.add(Logger::INFO) { "test" }
+      expect(io.reread).to have_color(color, ["🟢 "], ["test", :green], ["\n"])
+    end
+
+    it "adds entry without block" do
+      logger.add Logger::INFO, "test"
+      expect(io.reread).to have_color(color, ["🟢 "], ["test", :green], ["\n"])
+    end
+
+    it "adds any entry with invalid severity" do
+      logger.add 13, "test"
+      expect(io.reread).to have_color(color, ["⚫️ "], ["test", :dim, :bright_white], ["\n"])
+    end
+  end
+
   describe "#reread" do
     it "answers what was previously written" do
       logger.info "This is a test."

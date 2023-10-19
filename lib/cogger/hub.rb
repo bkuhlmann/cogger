@@ -59,6 +59,10 @@ module Cogger
 
     def any(message = nil, **payload, &) = log(__method__, message, **payload, &)
 
+    def add(severity, message = nil, **payload, &)
+      log(Logger::SEV_LABEL.fetch(severity, "ANY").downcase, message, **payload, &)
+    end
+
     alias unknown any
 
     def reread = primary.reread
@@ -82,7 +86,7 @@ module Cogger
       )
     end
 
-    def log(severity, message, **payload, &)
+    def log(severity, message = nil, **payload, &)
       dispatch(severity, message, **payload, &)
     rescue StandardError => error
       crash message, error
