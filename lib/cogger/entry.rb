@@ -6,7 +6,7 @@ module Cogger
   # Defines a log entry which can be formatted for output.
   Entry = Data.define :id, :severity, :at, :message, :tags, :payload do
     def self.for(message = nil, **payload)
-      new id: (payload.delete(:id) || Program.call),
+      new id: payload.delete(:id) || Program.call,
           severity: (payload.delete(:severity) || "INFO").upcase,
           message: (block_given? ? yield : message),
           tags: Array(payload.delete(:tags)),
