@@ -3,7 +3,7 @@
 require "zeitwerk"
 
 Zeitwerk::Loader.new.then do |loader|
-  loader.inflector.inflect "json" => "JSON"
+  loader.inflector.inflect "json" => "JSON", "range" => "RANGE"
   loader.tag = File.basename __FILE__, ".rb"
   loader.push_dir __dir__
   loader.setup
