@@ -8,6 +8,7 @@ module Cogger
     def self.for(message = nil, **payload)
       new id: payload.delete(:id) || Program.call,
           severity: (payload.delete(:severity) || "INFO").upcase,
+          at: payload.delete(:at) || ::Time.now,
           message: (block_given? ? yield : message),
           tags: Array(payload.delete(:tags)),
           payload:
@@ -26,7 +27,7 @@ module Cogger
 
     def initialize id: Program.call,
                    severity: "INFO",
-                   at: Time.now,
+                   at: ::Time.now,
                    message: nil,
                    tags: [],
                    payload: Core::EMPTY_HASH

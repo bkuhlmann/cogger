@@ -12,6 +12,7 @@ RSpec.describe Cogger::Entry do
       expect(entry).to have_attributes(
         id: "rspec",
         severity: "INFO",
+        at: be_a(Time),
         message: nil,
         tags: [],
         payload: {}
