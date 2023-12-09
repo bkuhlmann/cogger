@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "cogger"
-  spec.version = "0.13.1"
+  spec.version = "0.14.0"
   spec.authors = ["Brooke Kuhlmann"]
   spec.email = ["brooke@alchemists.io"]
   spec.homepage = "https://alchemists.io/projects/cogger"

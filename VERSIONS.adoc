@@ -1,5 +1,22 @@
 = Versions
 
+== 0.14.0 (2023-12-10)
+
+* Fixed RuboCop Style/RedundantParentheses issue - Brooke Kuhlmann
+* Added Rack gem - Brooke Kuhlmann
+* Added Rack logger - Brooke Kuhlmann
+* Added level - Brooke Kuhlmann
+* Added levels - Brooke Kuhlmann
+* Added time clock - Brooke Kuhlmann
+* Added time range - Brooke Kuhlmann
+* Added time span - Brooke Kuhlmann
+* Added time unit - Brooke Kuhlmann
+* Updated Circle CI step names - Brooke Kuhlmann
+* Updated JSON formatter to use UTC and RFC 3339 format - Brooke Kuhlmann
+* Updated configuration to use level - Brooke Kuhlmann
+* Updated entry to default to current time if not provided - Brooke Kuhlmann
+* Updated show script as demo script - Brooke Kuhlmann
+
 == 0.13.1 (2023-11-15)
 
 * Fixed gem loader to find by tag and cache instance - Brooke Kuhlmann

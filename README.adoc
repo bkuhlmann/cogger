@@ -2,10 +2,11 @@
 :toclevels: 5
 :figure-caption!:
 
-:tone_link: link:https://alchemists.io/projects/tone[Tone]
+:format_link: link:https://ruby-doc.org/3.2.2/format_specifications_rdoc.html[String Format Specification]
 :logger_link: link:https://rubyapi.org/o/s?q=Logger[Logger]
-:format_link: link:https://ruby-doc.org/3.2.1/format_specifications_rdoc.html[Format Specification]
 :pattern_matching_link: link:https://alchemists.io/articles/ruby_pattern_matching[pattern matching]
+:rack_link: link:https://github.com/rack/rack[Rack]
+:tone_link: link:https://alchemists.io/projects/tone[Tone]
 
 = Cogger
 
@@ -23,6 +24,7 @@ toc::[]
 * Provides multiple streams so you can log the same information to several outputs at once.
 * Provides global and individual log entry tagging.
 * Provides filtering of sensitive information.
+* Provides {rack_link} middleware for HTTP request logging.
 
 == Screenshots
 
@@ -44,7 +46,7 @@ image::https://alchemists.io/images/projects/cogger/screenshots/detail.png[Detai
 
 *JSON*
 
-image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=962,height=297]
+image::https://alchemists.io/images/projects/cogger/screenshots/json.png[JSON,width=1002,height=290]
 
 *Rack*
 
@@ -156,50 +158,31 @@ logger = Cogger.new id: :demo,
                     suffix: "%Y"
 ----
 
-=== Inspection
+=== Levels
 
-Each instance can be inspected via the `#inspect` message:
-
-[source,ruby]
-----
-logger = Cogger.new
-logger.inspect
-
-# "#<Cogger::Hub @id=console,
-#                @io=IO,
-#                @level=1,
-#                @formatter=Cogger::Formatters::Emoji,
-#                @tags=[],
-#                @mode=false,
-#                @age=0,
-#                @size=1048576,
-#                @suffix=\"%Y-%m-%d\",
-#                @entry=Cogger::Entry,
-#                @logger=Logger>"
-----
-
-You can also look at individual attributes:
+Supported levels can be obtained via `Cogger::LEVELS`. Example:
 
 [source,ruby]
 ----
-logger = Cogger.new
-
-logger.id      # "console"
-logger.io      # #<IO:<STDOUT>>
-logger.tags    # []
-logger.mode    # false
-logger.age     # 0
-logger.size    # 1048576
-logger.suffix  # "%Y-%m-%d"
-
-logger.level      # 1
-logger.formatter  # Cogger::Formatters::Emoji
-logger.debug?     # false
-logger.info?      # true
-logger.warn?      # true
-logger.error?     # true
-logger.fatal?     # true
+Cogger::LEVELS
+# ["debug", "info", "warn", "error", "fatal", "unknown"]
 ----
+
+=== Environment
+
+You can use your environment to define the desired default log level. The default log level is: `"info"`. Although, you can set the log level to any of the following:
+
+[source,bash]
+----
+export LOG_LEVEL=debug
+export LOG_LEVEL=info
+export LOG_LEVEL=warn
+export LOG_LEVEL=error
+export LOG_LEVEL=fatal
+export LOG_LEVEL=unknown
+----
+
+While downcase is preferred for the log level, you can use upcased values as well. If the `LOG_LEVEL` environment variable is not set, `Cogger` will fall back to `"info"` unless overwritten during initialization. Example: `Cogger.new level: :debug`. Otherwise, an invalid log level will result in an `ArgumentError`.
 
 === Mutations
 
@@ -222,26 +205,9 @@ logger.level = Logger::WARN                        # 2
 
 Please see the {logger_link} documentation for more information.
 
-=== Environment
-
-The default log level is `INFO` but can be customized via your environment. For instance, you could
-set the logging level to any of the following:
-
-[source,bash]
-----
-export LOG_LEVEL=DEBUG
-export LOG_LEVEL=INFO
-export LOG_LEVEL=WARN
-export LOG_LEVEL=ERROR
-export LOG_LEVEL=FATAL
-export LOG_LEVEL=UNKNOWN
-----
-
-By default, `Cogger` will automatically use whatever is set via the `LOG_LEVEL` environment variable unless overwritten during initialization.
-
 === Templates
 
-Templates are used by all formatters and adhere to {format_link} as used by `Kernel#format`. All specifiers, flags, width, and precision are supported except for the following restrictions:
+Templates are used by all formatters and adhere to the {format_link} as used by `Kernel#format`. All specifiers, flags, width, and precision are supported except for the following restrictions:
 
 - Use of _reference by name_ is required which means `%<demo>s` is allowed but `%{demo}` is not. This is because _reference by name_ is required for regular expressions and/or {pattern_matching_link}.
 - Use of the `n$` flag is prohibited because this isn't compatible with the above.
@@ -539,16 +505,16 @@ logger.warn "Demo"
 
 ==== JSON
 
-This formatter is similar in behavior to the _simple_ formatter except the template allows you to _order_ the layout of your keys. All other template information is ignored, only the order of your template keys matters. Example:
+This formatter is similar in behavior to the _simple_ formatter except that date/time defaults to UTC, is formattted according to link:https://datatracker.ietf.org/doc/html/rfc3339[RFC 3339] using millisecond precision, and the template allows you to _order_ the layout of your keys. All other template information is ignored, only the order of your template keys matters. Example:
 
 *Default Order*
 
 [source,ruby]
 ----
 logger = Cogger.new formatter: :json
-logger.info verb: "GET", path: "/"
 
-# {"id":"console","severity":"INFO","at":"2023-04-10 09:03:55 -0600","verb":"GET","path":"/"}
+logger.info verb: "GET", path: "/"
+# {"id":"console","severity":"INFO","at":"2023-12-10T18:42:32.844+00:00","verb":"GET","path":"/"}
 ----
 
 *Custom Order*
@@ -556,9 +522,9 @@ logger.info verb: "GET", path: "/"
 [source,ruby]
 ----
 logger = Cogger.new formatter: Cogger::Formatters::JSON.new("%<severity>s %<verb>s")
-logger.info verb: "GET", path: "/"
 
-# {"severity":"INFO","verb":"GET","id":"console","at":"2023-04-10 09:05:03 -0600","path":"/"}
+logger.info verb: "GET", path: "/"
+# {"severity":"INFO","verb":"GET","id":"console","at":"2023-12-10T18:43:03.805+00:00","path":"/"}
 ----
 
 Your template can be a full or partial match of keys. If no keys match what is defined in the template, then the original order of the keys will be used instead.
@@ -567,29 +533,29 @@ You can always supply a message as your first argument -- or specify it by using
 
 [source,ruby]
 ----
-logger = Cogger.new formatter: json
+logger = Cogger.new formatter: :json
 
 logger.info "Demo"
-# {"id":"console","severity":"INFO","at":"2023-10-18 19:38:55 -0600","message":"Demo"}
+# {"id":"console","severity":"INFO","at":"2023-12-10T18:43:42.029+00:00","message":"Demo"}
 
-logger.info messsage: "Demo"
-{"id":"console","severity":"INFO","at":"2023-10-18 19:39:19 -0600","messsage":"Demo"}
+logger.info message: "Demo"
+# {"id":"console","severity":"INFO","at":"2023-12-10T18:44:14.568+00:00","message":"Demo"}
 ----
 
-When tags are provided, the `:tags` key will appear in the output depending on whether you are using _single tags_. If hash tags are used, they'll show up as additional attributes in the outout. Here's an example where a mix of single and hash keys are used:
+When tags are provided, the `:tags` key will appear in the output depending on whether you are using _single tags_. If hash tags are used, they'll show up as additional attributes in the output. Here's an example where a mix of single and hash keys are used:
 
 [source,ruby]
 ----
 logger = Cogger.new formatter: :json
 
 logger.info "Demo", tags: ["WEB", "PRIMARY", {service: :api, demo: true}]
-
 # {
 #   "id":"console",
 #   "severity":"INFO",
-#   "at":"2023-10-18 19:47:11 -0600",
+#   "at":"2023-12-10T18:44:32.723+00:00",
 #   "message":"Demo",
-#   "tags":["WEB","PRIMARY"],
+#   "tags":["WEB",
+#   "PRIMARY"],
 #   "service":"api",
 #   "demo":true
 # }
@@ -789,6 +755,89 @@ logger.info "Demo"
 # Demo
 ----
 
+=== Rack
+
+{rack_link} is _implicitly_ supported which means your middleware _must be_ Rack-based and _must require_ the Rack gem since `Cogger::Rack::Logger` doesn't _explicitly_ require Rack by default. If these requirements are met then, to add HTTP request logging, you only need to use it. Example:
+
+[source,ruby]
+----
+use Rails::Rack::Logger
+----
+
+Like any other {rack_link} middleware, `Rails::Rack::Logger` is initialized with your current application along with any custom options. Example:
+
+[source,ruby]
+----
+middleware = Cogger::Rack::Logger.new application
+middleware.call environment
+----
+
+The following defaults are supported:
+
+[source,ruby]
+----
+Cogger::Rack::Logger::DEFAULTS
+
+# {
+#   logger: Cogger.new(formatter: :json),
+#   timer: Cogger::Time::Span.new,
+#   :key_map => {
+#       :verb => "REQUEST_METHOD",
+#         :ip => "REMOTE_ADDR",
+#       :path => "PATH_INFO",
+#     :params => "QUERY_STRING",
+#     :length => "CONTENT_LENGTH"
+#   }
+# }
+----
+
+The defaults can be customized. Example:
+
+[source,]
+----
+Cogger::Rack::Logger.new application, {logger: Cogger.new}
+----
+
+In the above example, we see `Cogger.new` overrides the default `Cogger.new(formatter: :json)`. In practice, you'll want to customize the logger and key map. Here's how each default is configured to be used:
+
+* `logger`: Defaults to JSON formatted logging but you'll want to pass in the same logger as globally configured for your application in order to reduce duplication and save on memory.
+* `timer`: The timer calculates the total duration of the request and defaults to nanosecond precision but you can swap this out with your own timer if desired. When providing your own timer, the only requirement is that the timer respond to the `#call` message with a block.
+* `key_map`: The key map is used to map the HTTP Headers to keys (i.e. tags) used in the log output. You can use the existing key map, provide your own, or use a hybrid.
+
+Once this middleware is configured and used within your application, you'll start seeing the following kinds of log entries (depending on your specific settings and tags used):
+
+[source,json]
+----
+{
+  "id":"demo",
+  "severity":"INFO",
+  "at":"2023-12-10T22:37:06.341+00:00",
+  "verb":"GET",
+  "ip":"127.0.0.1",
+  "path":"/dashboard",
+  "status":200,
+  "duration":83,
+  "unit":"ms"
+}
+----
+
+*Rails*
+
+To build upon the above -- and if using the Rails framework -- you could configure your application as follows:
+
+[source,ruby]
+----
+# demo/config/application.rb
+module Demo
+  class Application < Rails::Application
+    config.logger = Cogger.new id: "demo", formatter: :json,
+    config.middleware.swap Rails::Rack::Logger, Cogger::Rack::Logger, {logger: config.logger}
+  end
+end
+----
+
+The above defines `Cogger` as the default logger for the entire application, ensures `Cogger::Rack::Logger` is configured to use it and swaps itself with the default `Rails::Rack::Logger` so you don't have two pieces of middleware logging the same HTTP requests.
+
 === Defaults
 
 Should you ever need quick access to the defaults, you can use:
@@ -799,6 +848,51 @@ Cogger.defaults
 ----
 
 This is primarily meant for display/inspection purposes, though.
+
+=== Inspection
+
+Each instance can be inspected via the `#inspect` message:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger.inspect
+
+# "#<Cogger::Hub @id=console,
+#                @io=IO,
+#                @level=1,
+#                @formatter=Cogger::Formatters::Emoji,
+#                @tags=[],
+#                @mode=false,
+#                @age=0,
+#                @size=1048576,
+#                @suffix=\"%Y-%m-%d\",
+#                @entry=Cogger::Entry,
+#                @logger=Logger>"
+----
+
+You can also look at individual attributes:
+
+[source,ruby]
+----
+logger = Cogger.new
+
+logger.id      # "console"
+logger.io      # #<IO:<STDOUT>>
+logger.tags    # []
+logger.mode    # false
+logger.age     # 0
+logger.size    # 1048576
+logger.suffix  # "%Y-%m-%d"
+
+logger.level      # 1
+logger.formatter  # Cogger::Formatters::Emoji
+logger.debug?     # false
+logger.info?      # true
+logger.warn?      # true
+logger.error?     # true
+logger.fatal?     # true
+----
 
 === Testing
 
@@ -852,7 +946,7 @@ You can also use the IRB console for direct access to all objects:
 bin/console
 ----
 
-Lastly, there is a `bin/show` script which displays multiple log formats for quick visual reference. This is the same script used to generate the screenshots shown at the top of this document.
+Lastly, there is a `bin/demo` script which displays multiple log formats for quick visual reference. This is the same script used to generate the screenshots shown at the top of this document.
 
 == Tests
 
