@@ -20,7 +20,7 @@ module Cogger
   ) do
     def initialize id: Program.call,
                    io: $stdout,
-                   level: Logger.const_get(ENV.fetch("LOG_LEVEL", "INFO")),
+                   level: Level.call,
                    formatter: Formatters::Emoji.new,
                    tags: Core::EMPTY_ARRAY,
                    mode: false,
