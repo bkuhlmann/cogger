@@ -13,6 +13,8 @@ end
 module Cogger
   extend Registry
 
+  LEVELS = %w[debug info warn error fatal unknown].freeze
+
   def self.loader registry = Zeitwerk::Registry
     @loader ||= registry.loaders.find { |loader| loader.tag == File.basename(__FILE__, ".rb") }
   end
