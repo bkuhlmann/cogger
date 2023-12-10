@@ -18,6 +18,7 @@ module Cogger
 
       def call(*input)
         attributes = sanitizer.call(*input).tagged_attributes.tap(&:compact!)
+        format_date_time attributes
 
         return "#{attributes.to_json}\n" if positions.empty?
 
@@ -27,6 +28,11 @@ module Cogger
       private
 
       attr_reader :positions, :sanitizer
+
+      # :reek:UtilityFunction
+      def format_date_time attributes
+        attributes[:at] = attributes[:at].utc.strftime "%Y-%m-%dT%H:%M:%S.%L%:z"
+      end
     end
   end
 end
