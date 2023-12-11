@@ -3,7 +3,6 @@
 module Cogger
   module Time
     # Provides unit of measure for duration.
-    # rubocop:disable Style/MethodCallWithArgsParentheses
     Unit = lambda do |duration, range: RANGE|
       case duration
         when range.fetch(:nanoseconds) then "ns"
@@ -13,6 +12,5 @@ module Cogger
         else "m"
       end
     end
-    # rubocop:enable Style/MethodCallWithArgsParentheses
   end
 end
