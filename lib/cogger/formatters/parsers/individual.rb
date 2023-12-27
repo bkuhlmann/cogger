@@ -46,13 +46,13 @@ module Cogger
         # :reek:TooManyStatements
         def sanitize_and_extract template, attributes
           template.gsub pattern do
-            captures = Regexp.last_match.named_captures
-            attributes[captures["key"].to_sym] = captures["directive"]
+            captures = Regexp.last_match.named_captures symbolize_names: true
+            attributes[captures[:key].to_sym] = captures[:directive]
 
             captures.reduce(+"%") do |body, (key, value)|
-              next body if key == "directive"
+              next body if key == :directive
 
-              body.concat key == "key" ? "<#{value}>" : value.to_s
+              body.concat key == :key ? "<#{value}>" : value.to_s
             end
           end
         end
