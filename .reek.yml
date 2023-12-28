@@ -5,7 +5,7 @@ exclude_paths:
 detectors:
   BooleanParameter:
     exclude:
-      - "Cogger#initialize"
+      - "Cogger::Configuration#initialize"
   DataClump:
     exclude:
       - "Cogger::Hub"

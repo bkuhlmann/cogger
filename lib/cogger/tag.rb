@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require "core"
-require "refinements/hashes"
+require "refinements/hash"
 
 module Cogger
   # Models a tag which may consist of an array and/or hash.
   Tag = Data.define :singles, :pairs do
-    using Refinements::Hashes
+    using Refinements::Hash
 
     def self.for(*bag)
       bag.each.with_object new do |item, tag|

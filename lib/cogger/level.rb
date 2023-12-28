@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require "logger"
-require "refinements/arrays"
+require "refinements/array"
 
 # Loads log level from environment.
 module Cogger
-  using Refinements::Arrays
+  using Refinements::Array
 
   Level = lambda do |logger = Logger, environment: ENV, allowed: LEVELS|
     value = String environment.fetch("LOG_LEVEL", "INFO")

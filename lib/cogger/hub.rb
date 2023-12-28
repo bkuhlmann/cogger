@@ -2,8 +2,8 @@
 
 require "forwardable"
 require "logger"
-require "refinements/hashes"
-require "refinements/loggers"
+require "refinements/hash"
+require "refinements/logger"
 
 module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
@@ -11,8 +11,8 @@ module Cogger
   class Hub
     extend Forwardable
 
-    using Refinements::Loggers
-    using Refinements::Hashes
+    using Refinements::Logger
+    using Refinements::Hash
 
     delegate %i[
       close

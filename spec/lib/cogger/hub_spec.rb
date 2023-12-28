@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Cogger::Hub do
-  using Refinements::StringIOs
+  using Refinements::StringIO
 
   subject(:logger) { described_class.new io:, level: Logger::DEBUG }
 
