@@ -1,5 +1,14 @@
 = Versions
 
+== 0.15.0 (2024-01-01)
+
+* Fixed RuboCop Lint/RedundantCopDisableDirective issue - Brooke Kuhlmann
+* Updated Circle CI Rake step name - Brooke Kuhlmann
+* Updated gem dependencies - Brooke Kuhlmann
+* Updated to Ruby 3.3.0 - Brooke Kuhlmann
+* Removed Gemfile code prefix from quality group - Brooke Kuhlmann
+* Removed Rakefile code prefix from quality task - Brooke Kuhlmann
+
 == 0.14.0 (2023-12-10)
 
 * Fixed RuboCop Style/RedundantParentheses issue - Brooke Kuhlmann
