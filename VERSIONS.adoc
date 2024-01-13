@@ -1,5 +1,11 @@
 = Versions
 
+== 0.16.0 (2024-01-13)
+
+* 🟢 Added hub abort - Brooke Kuhlmann
+* 🔼 Updated to Git Lint 7.0.0 - Brooke Kuhlmann
+* 🔁 Refactored hub keyword argument forwarding - Brooke Kuhlmann
+
 == 0.15.0 (2024-01-01)
 
 * Fixed RuboCop Lint/RedundantCopDisableDirective issue - Brooke Kuhlmann
