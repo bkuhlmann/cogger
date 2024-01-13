@@ -49,20 +49,20 @@ module Cogger
       self
     end
 
-    def debug(message = nil, **payload, &) = log(__method__, message, **payload, &)
+    def debug(message = nil, **, &) = log(__method__, message, **, &)
 
-    def info(message = nil, **payload, &) = log(__method__, message, **payload, &)
+    def info(message = nil, **, &) = log(__method__, message, **, &)
 
-    def warn(message = nil, **payload, &) = log(__method__, message, **payload, &)
+    def warn(message = nil, **, &) = log(__method__, message, **, &)
 
-    def error(message = nil, **payload, &) = log(__method__, message, **payload, &)
+    def error(message = nil, **, &) = log(__method__, message, **, &)
 
-    def fatal(message = nil, **payload, &) = log(__method__, message, **payload, &)
+    def fatal(message = nil, **, &) = log(__method__, message, **, &)
 
-    def any(message = nil, **payload, &) = log(__method__, message, **payload, &)
+    def any(message = nil, **, &) = log(__method__, message, **, &)
 
-    def add(severity, message = nil, **payload, &)
-      log(Logger::SEV_LABEL.fetch(severity, "ANY").downcase, message, **payload, &)
+    def add(severity, message = nil, **, &)
+      log(Logger::SEV_LABEL.fetch(severity, "ANY").downcase, message, **, &)
     end
 
     alias unknown any
@@ -88,8 +88,8 @@ module Cogger
       )
     end
 
-    def log(severity, message = nil, **payload, &)
-      dispatch(severity, message, **payload, &)
+    def log(severity, message = nil, **, &)
+      dispatch(severity, message, **, &)
     rescue StandardError => error
       crash message, error
     end
