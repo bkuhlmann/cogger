@@ -755,6 +755,31 @@ logger.info "Demo"
 # Demo
 ----
 
+=== Abort
+
+Aborting a program is mostly syntax sugar for Command Line Interfaces (CLIs) which aids in situations where you need to log an error message _and_ exit the program at the same time with an exit code of `1` (similar to how `Kernel#abort` behaves). This allows your CLI to log an error and ensure the exit status is correct when displaying status, piping commands together, etc. All of the arguments, when messaging `#error` directly, are the same. Here's how it works:
+
+[source,ruby]
+----
+logger = Cogger.new
+
+# Not recommended since `Kernel#exit false` is faster.
+logger.abort
+# Logs no message and exits with status code: 1.
+
+logger.abort "Danger!"
+# 🛑 Danger!
+# Exits with status code: 1.
+
+logger.abort { "Danger!" }
+# 🛑 Danger!
+# Exits with status code: 1.
+
+logger.abort message: "Danger!"
+# 🛑 Danger!
+# Exits with status code: 1.
+----
+
 === Rack
 
 {rack_link} is _implicitly_ supported which means your middleware _must be_ Rack-based and _must require_ the Rack gem since `Cogger::Rack::Logger` doesn't _explicitly_ require Rack by default. If these requirements are met then, to add HTTP request logging, you only need to use it. Example:
