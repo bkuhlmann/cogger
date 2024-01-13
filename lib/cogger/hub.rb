@@ -8,6 +8,7 @@ require "refinements/logger"
 module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
   # :reek:TooManyInstanceVariables
+  # :reek:TooManyMethods
   class Hub
     extend Forwardable
 
@@ -60,6 +61,11 @@ module Cogger
     def fatal(message = nil, **, &) = log(__method__, message, **, &)
 
     def any(message = nil, **, &) = log(__method__, message, **, &)
+
+    def abort(message = nil, **payload, &block)
+      error(message, **payload, &block) if message || !payload.empty? || block
+      exit false
+    end
 
     def add(severity, message = nil, **, &)
       log(Logger::SEV_LABEL.fetch(severity, "ANY").downcase, message, **, &)

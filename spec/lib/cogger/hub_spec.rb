@@ -177,6 +177,32 @@ RSpec.describe Cogger::Hub do
     end
   end
 
+  describe "#abort" do
+    it "aborts with no message" do
+      logger.abort
+    rescue SystemExit
+      expect(io.reread).to eq("")
+    end
+
+    it "logs error with payload" do
+      logger.abort message: "Danger!"
+    rescue SystemExit
+      expect(io.reread).to have_color(color, ["🛑 "], ["Danger!", :red], ["\n"])
+    end
+
+    it "logs error with message" do
+      logger.abort "test"
+    rescue SystemExit
+      expect(io.reread).to have_color(color, ["🛑 "], ["test", :red], ["\n"])
+    end
+
+    it "aborts with exit status 1" do
+      logger.abort { "test" }
+    rescue SystemExit => error
+      expect(error).to have_attributes(message: "exit", status: 1)
+    end
+  end
+
   describe "#reread" do
     it "answers what was previously written" do
       logger.info "This is a test."
