@@ -9,9 +9,7 @@ module Cogger
     class JSON
       TEMPLATE = nil
 
-      def initialize template = TEMPLATE,
-                     parser: Parsers::Individual.new,
-                     sanitizer: Kit::Sanitizer
+      def initialize template = TEMPLATE, parser: Parsers::Individual.new, sanitizer: Kit::Sanitizer
         @positions = template ? parser.call(template).last.keys : Core::EMPTY_ARRAY
         @sanitizer = sanitizer
       end
