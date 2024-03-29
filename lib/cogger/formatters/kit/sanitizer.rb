@@ -6,8 +6,10 @@ module Cogger
       # Ensures log entry is filtered of sensitive data.
       Sanitizer = lambda do |*input, filters: Cogger.filters|
         *, entry = input
-        payload = entry.payload
 
+        return Entry.for entry unless entry.is_a? Entry
+
+        payload = entry.payload
         filters.each { |key| payload[key] = "[FILTERED]" if payload.key? key }
         entry
       end

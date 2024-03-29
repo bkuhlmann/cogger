@@ -18,6 +18,11 @@ RSpec.describe Cogger::Formatters::Kit::Sanitizer do
       expect(entry).to have_attributes(payload: {verb: "GET", path: "/"})
     end
 
+    it "answers empty payload for string" do
+      entry = sanitizer.call "A string."
+      expect(entry).to have_attributes(message: "A string.", payload: {})
+    end
+
     it "filters sensitive keys" do
       Cogger.add_filter :password
       entry = sanitizer.call Cogger::Entry.for(login: "test", password: "secret")
