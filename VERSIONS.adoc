@@ -1,5 +1,11 @@
 = Versions
 
+== 0.18.0 (2024-03-28)
+
+* ✅ Fixed sanitizer to handle strings when entry isn&#39;t provided - Brooke Kuhlmann
+* 🔼 Updated setup script as a Ruby script - Brooke Kuhlmann
+* 🔼 Updated to Amazing Print 1.6.0 - Brooke Kuhlmann
+
 == 0.17.0 (2024-03-03)
 
 * ✅ Fixed RuboCop RSpec/DescribedClass issue - Brooke Kuhlmann
