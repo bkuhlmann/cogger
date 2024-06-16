@@ -29,22 +29,39 @@ RSpec.describe Cogger::Rack::Logger do
       expect(middleware.call(environment)).to eq([200, {}, ["test"]])
     end
 
-    it "logs tags" do
+    it "logs default tags for GET request" do
+      environment = Rack::MockRequest.env_for "/", "QUERY_STRING" => {debug: true}
+      middleware.call environment
+
+      expect(JSON(logger.reread)).to match(
+        hash_including(
+          "verb" => "GET",
+          "path" => "/",
+          "params" => {"debug" => true},
+          "status" => 200,
+          "duration" => be_a(Integer),
+          "unit" => /ns|µs/
+        )
+      )
+    end
+
+    it "logs default tags for POST request" do
       environment = Rack::MockRequest.env_for "/",
                                               "REMOTE_ADDR" => "localhost",
-                                              params: {query: "inspect"}
+                                              method: "POST",
+                                              input: "data"
+
       middleware.call environment
 
       expect(JSON(logger.reread)).to match(
         hash_including(
           "ip" => "localhost",
-          "verb" => "GET",
-          "status" => 200,
+          "verb" => "POST",
           "path" => "/",
-          "params" => "query=inspect",
+          "status" => 200,
+          "length" => "4",
           "duration" => be_a(Integer),
-          "unit" => /ns|µs/,
-          "length" => "0"
+          "unit" => /ns|µs/
         )
       )
     end
