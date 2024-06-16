@@ -4,7 +4,7 @@ module Cogger
   module Formatters
     # Formats simple templates that require no additional processing.
     class Simple
-      TEMPLATE = "%<message>s"
+      TEMPLATE = "[%<id>s] %<message>s"
 
       def initialize template = TEMPLATE, sanitizer: Kit::Sanitizer
         @template = template

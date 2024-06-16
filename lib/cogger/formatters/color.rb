@@ -4,7 +4,7 @@ module Cogger
   module Formatters
     # Formats by color.
     class Color
-      TEMPLATE = "%<message:dynamic>s"
+      TEMPLATE = "[%<id:dynamic>s] %<message:dynamic>s"
 
       def initialize template = TEMPLATE, processor: Processors::Color.new
         @template = template

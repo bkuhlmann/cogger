@@ -12,7 +12,7 @@ RSpec.describe Cogger::Formatters::Simple do
       formatter = described_class.new
       result = formatter.call Cogger::Entry.for("test")
 
-      expect(result).to eq("test\n")
+      expect(result).to eq("[rspec] test\n")
     end
 
     context "with template using optional attributes" do

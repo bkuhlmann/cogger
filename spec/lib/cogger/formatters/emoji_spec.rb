@@ -11,9 +11,16 @@ RSpec.describe Cogger::Formatters::Emoji do
 
     it "answers colorized string with default template using emoji and color" do
       formatter = described_class.new
-      result = formatter.call Cogger::Entry.for("test", id: :test)
+      result = formatter.call Cogger::Entry.for("Test.")
 
-      expect(result).to have_color(color, ["🟢 "], ["test", :green], ["\n"])
+      expect(result).to have_color(
+        color,
+        ["🟢 ["],
+        ["rspec", :green],
+        ["] "],
+        ["Test.", :green],
+        ["\n"]
+      )
     end
   end
 end
