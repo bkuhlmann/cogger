@@ -35,7 +35,7 @@ RSpec.describe Cogger::Formatters::Crash do
 
       let :template do
         <<~CONTENT
-          <red>[%<id>s] [%<severity>s] [%<at>s] Crash!
+          <red>[%<id>s] [%<level>s] [%<at>s] Crash!
             %<message>s
             %<error_message>s (%<error_class>s)
           %<backtrace>s</red>

@@ -16,7 +16,7 @@ RSpec.describe Cogger::Formatters::Parsers::Universal do
     end
 
     it "answers template when not matching" do
-      content = "%<severity:dynamic>s"
+      content = "%<level:dynamic>s"
       expect(parser.call(content)).to eq(content)
     end
   end

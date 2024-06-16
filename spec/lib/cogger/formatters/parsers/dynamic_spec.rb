@@ -12,11 +12,11 @@ RSpec.describe Cogger::Formatters::Parsers::Dynamic do
     end
 
     it "answers individual template and directives" do
-      result = parser.call "%<severity:dynamic>s %<message:white>s"
+      result = parser.call "%<level:dynamic>s %<message:white>s"
 
       expect(result).to contain_exactly(
-        "%<severity>s %<message>s",
-        {severity: "dynamic", message: "white"}
+        "%<level>s %<message>s",
+        {level: "dynamic", message: "white"}
       )
     end
 

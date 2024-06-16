@@ -17,12 +17,12 @@ RSpec.describe Cogger::Formatters::Parsers::Individual do
     end
 
     it "answers template with directive hash" do
-      template = "%<severity:dynamic>s %<message:white>s"
+      template = "%<level:dynamic>s %<message:white>s"
 
       expect(parser.call(template)).to eq(
         [
-          "%<severity>s %<message>s",
-          {severity: "dynamic", message: "white"}
+          "%<level>s %<message>s",
+          {level: "dynamic", message: "white"}
         ]
       )
     end

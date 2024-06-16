@@ -22,14 +22,14 @@ module Cogger
                 .add_formatter(
                   :detail,
                   Cogger::Formatters::Simple,
-                  "[%<id>s] [%<severity>s] [%<at>s] %<message>s"
+                  "[%<id>s] [%<level>s] [%<at>s] %<message>s"
                 )
                 .add_formatter(:emoji, Cogger::Formatters::Emoji)
                 .add_formatter(:json, Cogger::Formatters::JSON)
                 .add_formatter(:simple, Cogger::Formatters::Simple)
                 .add_formatter :rack,
                                Cogger::Formatters::Simple,
-                               "[%<id>s] [%<severity>s] [%<at>s] %<verb>s %<status>s " \
+                               "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s " \
                                "%<duration>s %<ip>s %<path>s %<length>s %<params>s"
     end
 

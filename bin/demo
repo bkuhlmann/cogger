@@ -10,28 +10,28 @@ severities = %i[debug info warn error fatal unknown any]
 
 puts "SIMPLE\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :simple
-severities.each { |severity| logger.public_send severity, severity.capitalize }
+severities.each { |level| logger.public_send level, level.capitalize }
 
 puts "\nCOLOR\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :color
-severities.each { |severity| logger.public_send severity, severity.capitalize }
+severities.each { |level| logger.public_send level, level.capitalize }
 
 puts "\nEMOJI\n\n"
 logger = Cogger.new id: :demo, level: :debug
-severities.each { |severity| logger.public_send severity, severity.capitalize }
+severities.each { |level| logger.public_send level, level.capitalize }
 
 puts "\nDETAIL\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :detail
-severities.each { |severity| logger.public_send severity, "A demo." }
+severities.each { |level| logger.public_send level, "A demo." }
 
 puts "\nJSON\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :json
-severities.each { |severity| logger.public_send severity, "A demo." }
+severities.each { |level| logger.public_send level, "A demo." }
 
 puts "\nRACK\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :rack
-severities.each do |severity|
-  logger.public_send severity,
+severities.each do |level|
+  logger.public_send level,
                      verb: "GET",
                      status: 200,
                      duration: "50ms",

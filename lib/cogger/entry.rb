@@ -4,10 +4,10 @@ require "core"
 
 module Cogger
   # Defines a log entry which can be formatted for output.
-  Entry = Data.define :id, :severity, :at, :message, :tags, :payload do
+  Entry = Data.define :id, :level, :at, :message, :tags, :payload do
     def self.for(message = nil, **payload)
       new id: payload.delete(:id) || Program.call,
-          severity: (payload.delete(:severity) || "INFO").upcase,
+          level: (payload.delete(:level) || "INFO").upcase,
           at: payload.delete(:at) || ::Time.now,
           message: (block_given? ? yield : message),
           tags: Array(payload.delete(:tags)),
@@ -16,7 +16,7 @@ module Cogger
 
     def self.for_crash message, error, id:
       new id:,
-          severity: "FATAL",
+          level: "FATAL",
           message:,
           payload: {
             error_message: error.message,
@@ -26,7 +26,7 @@ module Cogger
     end
 
     def initialize id: Program.call,
-                   severity: "INFO",
+                   level: "INFO",
                    at: ::Time.now,
                    message: nil,
                    tags: [],
@@ -34,14 +34,14 @@ module Cogger
       super
     end
 
-    def attributes = {id:, severity:, at:, message:, **payload}
+    def attributes = {id:, level:, at:, message:, **payload}
 
     def tagged_attributes tagger: Tag
       computed_tags = tagger.for(*tags)
 
       return attributes if computed_tags.empty?
 
-      {id:, severity:, at:, message:, **computed_tags.to_h, **payload}
+      {id:, level:, at:, message:, **computed_tags.to_h, **payload}
     end
 
     def tagged tagger: Tag

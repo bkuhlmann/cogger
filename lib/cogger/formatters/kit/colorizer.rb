@@ -3,9 +3,9 @@
 module Cogger
   module Formatters
     module Kit
-      # Transform color based on dynamic (severity) or standard color preference.
+      # Transform color based on dynamic (level) or standard color preference.
       Colorizer = lambda do |value, attributes|
-        value == "dynamic" ? attributes[:severity].downcase : value
+        value == "dynamic" ? attributes[:level].downcase : value
       end
     end
   end

@@ -299,7 +299,7 @@ RSpec.describe Cogger::Hub do
       )
     end
 
-    it "adds any entry with invalid severity" do
+    it "adds any entry with invalid level" do
       logger.add 13, "Test."
 
       expect(io.reread).to have_color(

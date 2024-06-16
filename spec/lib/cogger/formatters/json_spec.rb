@@ -11,35 +11,35 @@ RSpec.describe Cogger::Formatters::JSON do
 
     it "answers default template and message string" do
       expect(formatter.call(Cogger::Entry.for("test", at:))).to eq(
-        %(#{{id: "rspec", severity: "INFO", at: at_formatted, message: "test"}.to_json}\n)
+        %(#{{id: "rspec", level: "INFO", at: at_formatted, message: "test"}.to_json}\n)
       )
     end
 
     it "answers default template and message hash" do
       expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{id: "rspec", severity: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
+        %(#{{id: "rspec", level: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
       )
     end
 
     it "answers default template and no message" do
       expect(formatter.call(Cogger::Entry.new(at:))).to eq(
-        %(#{{id: "rspec", severity: "INFO", at: at_formatted}.to_json}\n)
+        %(#{{id: "rspec", level: "INFO", at: at_formatted}.to_json}\n)
       )
     end
 
     it "answers custom template and ordered message hash" do
-      formatter = described_class.new "%<path>s %<verb>s %<at>s %<severity>s %<id>s"
+      formatter = described_class.new "%<path>s %<verb>s %<at>s %<level>s %<id>s"
 
       expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{path: "/", verb: "GET", at: at_formatted, severity: "INFO", id: "rspec"}.to_json}\n)
+        %(#{{path: "/", verb: "GET", at: at_formatted, level: "INFO", id: "rspec"}.to_json}\n)
       )
     end
 
     it "answers custom template and ordered metadata only" do
-      formatter = described_class.new "%<at>s %<id>s %<severity>s"
+      formatter = described_class.new "%<at>s %<id>s %<level>s"
 
       expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{at: at_formatted, id: "rspec", severity: "INFO", verb: "GET", path: "/"}.to_json}\n)
+        %(#{{at: at_formatted, id: "rspec", level: "INFO", verb: "GET", path: "/"}.to_json}\n)
       )
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Cogger::Formatters::JSON do
       formatter = described_class.new "%<one>s %<two>s %<three>s"
 
       expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{id: "rspec", severity: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
+        %(#{{id: "rspec", level: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
       )
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Cogger::Formatters::JSON do
 
       proof = {
         id: "rspec",
-        severity: "INFO",
+        level: "INFO",
         at: at_formatted,
         message: "test",
         tags: %w[ONE TWO],

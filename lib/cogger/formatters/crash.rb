@@ -5,7 +5,7 @@ module Cogger
     # Formats fatal crashes.
     class Crash
       TEMPLATE = <<~CONTENT
-        <dynamic>[%<id>s] [%<severity>s] [%<at>s] Crash!
+        <dynamic>[%<id>s] [%<level>s] [%<at>s] Crash!
           %<message>s
           %<error_message>s (%<error_class>s)
         %<backtrace>s</dynamic>

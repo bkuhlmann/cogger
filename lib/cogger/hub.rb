@@ -67,8 +67,8 @@ module Cogger
       exit false
     end
 
-    def add(severity, message = nil, **, &)
-      log(Logger::SEV_LABEL.fetch(severity, "ANY").downcase, message, **, &)
+    def add(level, message = nil, **, &)
+      log(Logger::SEV_LABEL.fetch(level, "ANY").downcase, message, **, &)
     end
 
     alias unknown any
@@ -94,23 +94,23 @@ module Cogger
       )
     end
 
-    def log(severity, message = nil, **, &)
-      dispatch(severity, message, **, &)
+    def log(level, message = nil, **, &)
+      dispatch(level, message, **, &)
     rescue StandardError => error
       crash message, error
     end
 
-    def dispatch(severity, message, **payload, &)
+    def dispatch(level, message, **payload, &)
       entry = configuration.entry.for(
         message,
         id: configuration.id,
-        severity:,
+        level:,
         tags: configuration.tags + Array(payload.delete(:tags)),
         **payload,
         &
       )
 
-      mutex.synchronize { streams.each { |logger| logger.public_send severity, entry } }
+      mutex.synchronize { streams.each { |logger| logger.public_send level, entry } }
       true
     end
 

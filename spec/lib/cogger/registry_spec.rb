@@ -30,13 +30,13 @@ RSpec.describe Cogger::Registry do
   let :formatters do
     {
       color: [Cogger::Formatters::Color, nil],
-      detail: [Cogger::Formatters::Simple, "[%<id>s] [%<severity>s] [%<at>s] %<message>s"],
+      detail: [Cogger::Formatters::Simple, "[%<id>s] [%<level>s] [%<at>s] %<message>s"],
       emoji: [Cogger::Formatters::Emoji, nil],
       json: [Cogger::Formatters::JSON, nil],
       simple: [Cogger::Formatters::Simple, nil],
       rack: [
         Cogger::Formatters::Simple,
-        "[%<id>s] [%<severity>s] [%<at>s] %<verb>s %<status>s %<duration>s " \
+        "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s " \
         "%<ip>s %<path>s %<length>s %<params>s"
       ]
     }
@@ -204,12 +204,12 @@ RSpec.describe Cogger::Registry do
     it "answers default formatters" do
       expect(registry.formatters).to include(
         color: [Cogger::Formatters::Color, nil],
-        detail: [Cogger::Formatters::Simple, "[%<id>s] [%<severity>s] [%<at>s] %<message>s"],
+        detail: [Cogger::Formatters::Simple, "[%<id>s] [%<level>s] [%<at>s] %<message>s"],
         emoji: [Cogger::Formatters::Emoji, nil],
         json: [Cogger::Formatters::JSON, nil],
         rack: [
           Cogger::Formatters::Simple,
-          "[%<id>s] [%<severity>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s " \
+          "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s " \
           "%<length>s %<params>s"
         ],
         simple: [Cogger::Formatters::Simple, nil]

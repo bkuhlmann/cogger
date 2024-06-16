@@ -25,7 +25,7 @@ RSpec.describe Cogger::Formatters::Color do
     end
 
     context "when universal and dynamic" do
-      let(:template) { "<dynamic>%<severity>s %<at>s %<id>s %<message>s</dynamic>" }
+      let(:template) { "<dynamic>%<level>s %<at>s %<id>s %<message>s</dynamic>" }
 
       it "answers colorized string" do
         result = formatter.call entry
@@ -34,7 +34,7 @@ RSpec.describe Cogger::Formatters::Color do
     end
 
     context "when universal and specific" do
-      let(:template) { "<cyan>%<severity>s %<at>s %<id>s %<message>s</cyan>" }
+      let(:template) { "<cyan>%<level>s %<at>s %<id>s %<message>s</cyan>" }
 
       it "answers colorized string" do
         result = formatter.call entry
@@ -43,7 +43,7 @@ RSpec.describe Cogger::Formatters::Color do
     end
 
     context "when individual and dynamic" do
-      let(:template) { "%<severity:dynamic>s %<at:dynamic>s %<id:dynamic>s %<message:dynamic>s" }
+      let(:template) { "%<level:dynamic>s %<at:dynamic>s %<id:dynamic>s %<message:dynamic>s" }
 
       let :proof do
         [
@@ -65,7 +65,7 @@ RSpec.describe Cogger::Formatters::Color do
     end
 
     context "when individual and specific" do
-      let(:template) { "%<severity:cyan>s %<at:cyan>s %<id:cyan>s %<message:cyan>s" }
+      let(:template) { "%<level:cyan>s %<at:cyan>s %<id:cyan>s %<message:cyan>s" }
 
       let :proof do
         [
@@ -87,7 +87,7 @@ RSpec.describe Cogger::Formatters::Color do
     end
 
     context "when individual and mixed (dynamic and specific)" do
-      let(:template) { "%<severity:dynamic>s %<at:yellow>s %<id:cyan>s %<message:purple>s" }
+      let(:template) { "%<level:dynamic>s %<at:yellow>s %<id:cyan>s %<message:purple>s" }
 
       let :proof do
         [
@@ -103,7 +103,7 @@ RSpec.describe Cogger::Formatters::Color do
       end
 
       it "answers colorized string" do
-        result = formatter.call Cogger::Entry[severity: "FATAL", at:, message: "Test."]
+        result = formatter.call Cogger::Entry[level: "FATAL", at:, message: "Test."]
         expect(result).to have_color(color, *proof)
       end
     end
@@ -112,7 +112,7 @@ RSpec.describe Cogger::Formatters::Color do
       let(:template) { Cogger::Formatters::Emoji::TEMPLATE }
 
       it "answers string without leading space" do
-        result = formatter.call Cogger::Entry[severity: "ANY", at:, message: "Test."]
+        result = formatter.call Cogger::Entry[level: "ANY", at:, message: "Test."]
 
         expect(result).to have_color(
           color,

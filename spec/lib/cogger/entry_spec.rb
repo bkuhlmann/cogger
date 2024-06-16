@@ -11,7 +11,7 @@ RSpec.describe Cogger::Entry do
 
       expect(entry).to have_attributes(
         id: "rspec",
-        severity: "INFO",
+        level: "INFO",
         at: be_a(Time),
         message: nil,
         tags: [],
@@ -19,9 +19,9 @@ RSpec.describe Cogger::Entry do
       )
     end
 
-    it "answers entry with uppercase severity" do
-      entry = described_class.for severity: "warn"
-      expect(entry).to have_attributes(severity: "WARN")
+    it "answers entry with uppercase level" do
+      entry = described_class.for level: "warn"
+      expect(entry).to have_attributes(level: "WARN")
     end
 
     it "answers entry for message with string" do
@@ -86,9 +86,9 @@ RSpec.describe Cogger::Entry do
       expect(entry).to have_attributes(id: :test, message: "test", payload: {})
     end
 
-    it "answers entry with custom severity" do
-      entry = described_class.for "test", severity: "DEBUG"
-      expect(entry).to have_attributes(severity: "DEBUG", message: "test", payload: {})
+    it "answers entry with custom level" do
+      entry = described_class.for "test", level: "DEBUG"
+      expect(entry).to have_attributes(level: "DEBUG", message: "test", payload: {})
     end
   end
 
@@ -99,7 +99,7 @@ RSpec.describe Cogger::Entry do
 
       expect(entry).to have_attributes(
         id: :test,
-        severity: "FATAL",
+        level: "FATAL",
         message: "Crash",
         payload: {
           error_message: "Danger!",
@@ -114,7 +114,7 @@ RSpec.describe Cogger::Entry do
     it "answers defaults" do
       expect(entry).to have_attributes(
         id: "rspec",
-        severity: "INFO",
+        level: "INFO",
         at: instance_of(Time),
         tags: [],
         payload: {}
@@ -132,7 +132,7 @@ RSpec.describe Cogger::Entry do
 
       expect(entry.attributes).to eq(
         id: "rspec",
-        severity: "INFO",
+        level: "INFO",
         at:,
         message: "test",
         verb: "GET",
@@ -149,7 +149,7 @@ RSpec.describe Cogger::Entry do
 
       expect(entry.tagged_attributes).to eq(
         id: "rspec",
-        severity: "INFO",
+        level: "INFO",
         at:,
         message: "test",
         tags: %w[ONE TWO],
@@ -161,7 +161,7 @@ RSpec.describe Cogger::Entry do
     it "answers original message when not tagged" do
       entry = described_class.new at:, message: "test"
 
-      expect(entry.tagged_attributes).to eq(id: "rspec", severity: "INFO", at:, message: "test")
+      expect(entry.tagged_attributes).to eq(id: "rspec", level: "INFO", at:, message: "test")
     end
   end
 
@@ -173,7 +173,7 @@ RSpec.describe Cogger::Entry do
 
       expect(entry.tagged).to eq(
         id: "rspec",
-        severity: "INFO",
+        level: "INFO",
         at:,
         message: "[ONE] [TWO] [THREE] test"
       )
@@ -182,7 +182,7 @@ RSpec.describe Cogger::Entry do
     it "answers original message when not tagged" do
       entry = described_class.new at:, message: "test"
 
-      expect(entry.tagged).to eq(id: "rspec", severity: "INFO", at:, message: "test")
+      expect(entry.tagged).to eq(id: "rspec", level: "INFO", at:, message: "test")
     end
   end
 end
