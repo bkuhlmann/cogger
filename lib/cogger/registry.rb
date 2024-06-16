@@ -14,7 +14,7 @@ module Cogger
                 .add_alias(:any, :dim, :bright_white)
                 .add_emoji(:debug, "🔎")
                 .add_emoji(:info, "🟢")
-                .add_emoji(:warn, "⚠️ ")
+                .add_emoji(:warn, "⚠️")
                 .add_emoji(:error, "🛑")
                 .add_emoji(:fatal, "🔥")
                 .add_emoji(:any, "⚫️")

@@ -128,7 +128,7 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚠️  ["],
+        ["⚠️ ["],
         ["rspec", :yellow],
         ["] "],
         ["Test.", :yellow],
@@ -141,7 +141,7 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚠️  ["],
+        ["⚠️ ["],
         ["rspec", :yellow],
         ["] "],
         ["Test.", :yellow],

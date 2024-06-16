@@ -9,7 +9,7 @@ RSpec.describe Cogger::Registry do
     {
       debug: "🔎",
       info: "🟢",
-      warn: "⚠️ ",
+      warn: "⚠️",
       error: "🛑",
       fatal: "🔥",
       any: "⚫️"
@@ -66,7 +66,7 @@ RSpec.describe Cogger::Registry do
       expect(registry.emojis).to eq(
         debug: "🔎",
         info: "🟢",
-        warn: "⚠️ ",
+        warn: "⚠️",
         error: "🛑",
         fatal: "🔥",
         any: "⚫️"
