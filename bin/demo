@@ -8,25 +8,25 @@ require "cogger"
 
 severities = %i[debug info warn error fatal unknown any]
 
-puts "EMOJI\n\n"
-logger = Cogger.new id: :demo, level: :debug
+puts "SIMPLE\n\n"
+logger = Cogger.new id: :demo, level: :debug, formatter: :simple
 severities.each { |severity| logger.public_send severity, severity.capitalize }
 
 puts "\nCOLOR\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :color
 severities.each { |severity| logger.public_send severity, severity.capitalize }
 
-puts "\nSIMPLE\n\n"
-logger = Cogger.new id: :demo, level: :debug, formatter: :simple
+puts "\nEMOJI\n\n"
+logger = Cogger.new id: :demo, level: :debug
 severities.each { |severity| logger.public_send severity, severity.capitalize }
 
 puts "\nDETAIL\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :detail
-severities.each { |severity| logger.public_send severity, severity.capitalize }
+severities.each { |severity| logger.public_send severity, "A demo." }
 
 puts "\nJSON\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :json
-severities.each { |severity| logger.public_send severity, severity.capitalize }
+severities.each { |severity| logger.public_send severity, "A demo." }
 
 puts "\nRACK\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :rack
