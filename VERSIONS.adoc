@@ -1,5 +1,16 @@
 = Versions
 
+== 0.21.0 (2024-06-16)
+
+* ✅ Fixed Rack logger spec to account for GET and POST requests - Brooke Kuhlmann
+* ✅ Fixed unregistered registry emoji and formatter exceptions - Brooke Kuhlmann
+* 🔼 Updated demo script formatters in ascending order - Brooke Kuhlmann
+* 🔼 Updated formatters to include ID - Brooke Kuhlmann
+* 🔼 Updated to Caliber 0.58.0 - Brooke Kuhlmann
+* 🔼 Updated to Ruby 3.3.3 - Brooke Kuhlmann
+* 🔼 Updated to using level instead of severity terminology - Brooke Kuhlmann
+* ⛔️ Removed trailing space from warning emoji - Brooke Kuhlmann
+
 == 0.20.0 (2024-06-01)
 
 * 🟢 Added IRB Kit gem - Brooke Kuhlmann
