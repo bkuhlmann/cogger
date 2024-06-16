@@ -45,7 +45,9 @@ module Cogger
       self
     end
 
-    def get_emoji(key) = emojis[key.to_sym]
+    def get_emoji key
+      emojis.fetch(key.to_sym) { fail KeyError, "Unregistered emoji: #{key}." }
+    end
 
     def emojis = @emojis ||= {}
 
@@ -61,7 +63,9 @@ module Cogger
       self
     end
 
-    def get_formatter(key) = formatters[key.to_sym]
+    def get_formatter key
+      formatters.fetch(key.to_sym) { fail KeyError, "Unregistered formatter: #{key}." }
+    end
 
     def formatters = @formatters ||= {}
 

@@ -124,6 +124,11 @@ RSpec.describe Cogger::Registry do
     it "answers template for key (string)" do
       expect(registry.get_emoji("test")).to eq("🧪")
     end
+
+    it "fails when not registered" do
+      expectation = proc { registry.get_emoji :bogus }
+      expect(&expectation).to raise_error(KeyError, "Unregistered emoji: bogus.")
+    end
   end
 
   describe "#add_filter" do
@@ -187,6 +192,11 @@ RSpec.describe Cogger::Registry do
 
     it "answers template for key (string)" do
       expect(registry.get_formatter("test")).to eq([Cogger::Formatters::Simple, nil])
+    end
+
+    it "fails when not registered" do
+      expectation = proc { registry.get_formatter :bogus }
+      expect(&expectation).to raise_error(KeyError, "Unregistered formatter: bogus.")
     end
   end
 
