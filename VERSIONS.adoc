@@ -1,5 +1,11 @@
 = Versions
 
+== 0.22.0 (2024-07-08)
+
+* 🔼 Updated to Git Lint 8.0.0 - Brooke Kuhlmann
+* 🔼 Updated to IRB Kit 0.3.0 - Brooke Kuhlmann
+* 🔼 Updated to Refinements 12.5.0 - Brooke Kuhlmann
+
 == 0.21.0 (2024-06-16)
 
 * ✅ Fixed Rack logger spec to account for GET and POST requests - Brooke Kuhlmann
