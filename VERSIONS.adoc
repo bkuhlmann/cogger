@@ -1,5 +1,16 @@
 = Versions
 
+== 0.23.0 (2024-08-15)
+
+* ✅ Fixed configuration to freeze tags upon initialization - Brooke Kuhlmann
+* ✅ Fixed entry to use frozen tags array by default - Brooke Kuhlmann
+* 🟢 Added configuration entag - Brooke Kuhlmann
+* 🟢 Added version release notes - Brooke Kuhlmann
+* 🔼 Updated to Refinements 12.7.0 - Brooke Kuhlmann
+* 🔼 Updated to Ruby 3.3.4 - Brooke Kuhlmann
+* ⛔️ Removed Guard - Brooke Kuhlmann
+* 🔁 Refactored hub to use configuration entag - Brooke Kuhlmann
+
 == 0.22.0 (2024-07-08)
 
 * 🔼 Updated to Git Lint 8.0.0 - Brooke Kuhlmann

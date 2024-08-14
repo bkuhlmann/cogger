@@ -625,7 +625,7 @@ There is no restriction on what dependency you might want to initialize your cus
 
 === Tags
 
-Tags allow you to tag your messages at both a global and local (i.e. per message) level. For example, here's what tagging looks like when used globally:
+Tags allow you to tag your messages at both a global and local (i.e. per message) level. For example, here's a single global tag:
 
 [source,ruby]
 ----
@@ -635,7 +635,7 @@ logger.info "Demo"
 # 🟢 [console] [WEB] Demo
 ----
 
-Each tag is wrapped in brackets (i.e. `[]`) and you can use multiple tags:
+You can use multiple tags as well:
 
 [source,ruby]
 ----
