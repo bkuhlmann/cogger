@@ -29,7 +29,7 @@ module Cogger
                    level: "INFO",
                    at: ::Time.now,
                    message: nil,
-                   tags: [],
+                   tags: Core::EMPTY_ARRAY,
                    payload: Core::EMPTY_HASH
       super
     end
