@@ -28,6 +28,32 @@ RSpec.describe Cogger::Configuration do
     end
   end
 
+  describe "#entag" do
+    it "answers other tag when default tags are empty" do
+      expect(configuration.entag("A")).to eq(["A"])
+    end
+
+    it "answers other tags when default tags are empty" do
+      expect(configuration.entag(%w[A B])).to eq(%w[A B])
+    end
+
+    it "doesn't mutate itself with other tags" do
+      configuration.entag "A"
+      expect(configuration.tags).to eq([])
+    end
+
+    it "answers empty tags when there are none" do
+      expect(configuration.entag).to eq([])
+    end
+
+    it "answers identical object ID without other tags" do
+      object_id = configuration.tags.object_id
+      configuration.entag
+
+      expect(configuration.tags.object_id).to eq(object_id)
+    end
+  end
+
   describe "#to_logger" do
     it "answers logger instance for configuration" do
       expect(configuration.to_logger).to have_attributes(

@@ -2,6 +2,7 @@
 
 require "core"
 require "logger"
+require "refinements/array"
 
 module Cogger
   # Defines the default configuration for all pipes.
@@ -18,6 +19,8 @@ module Cogger
     :entry,
     :logger
   ) do
+    using Refinements::Array
+
     def initialize id: Program.call,
                    io: $stdout,
                    level: Level.call,
@@ -32,6 +35,8 @@ module Cogger
 
       super.tap { tags.freeze }
     end
+
+    def entag(other = nil) = other ? tags.including(other) : tags
 
     def to_logger
       logger.new io,
