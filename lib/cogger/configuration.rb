@@ -29,7 +29,8 @@ module Cogger
                    suffix: "%Y-%m-%d",
                    entry: Entry,
                    logger: Logger
-      super
+
+      super.tap { tags.freeze }
     end
 
     def to_logger

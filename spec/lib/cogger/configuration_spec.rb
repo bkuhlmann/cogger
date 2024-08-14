@@ -21,6 +21,11 @@ RSpec.describe Cogger::Configuration do
         logger: Logger
       )
     end
+
+    it "ensures tags are frozen" do
+      configuration = described_class.new tags: %w[A B]
+      expect(configuration.tags.frozen?).to be(true)
+    end
   end
 
   describe "#to_logger" do
