@@ -12,8 +12,8 @@ module Cogger
   class Hub
     extend Forwardable
 
-    using Refinements::Logger
     using Refinements::Hash
+    using Refinements::Logger
 
     delegate %i[
       close
@@ -105,7 +105,7 @@ module Cogger
         message,
         id: configuration.id,
         level:,
-        tags: configuration.tags + Array(payload.delete(:tags)),
+        tags: configuration.entag(payload.delete(:tags)),
         **payload,
         &
       )
