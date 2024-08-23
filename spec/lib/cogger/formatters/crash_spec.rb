@@ -5,9 +5,8 @@ require "spec_helper"
 RSpec.describe Cogger::Formatters::Crash do
   subject(:formatter) { described_class.new }
 
-  let(:color) { Cogger.color }
-
   describe "#call" do
+    let(:color) { Cogger.color }
     let(:at) { Time.now }
 
     let :entry do
@@ -21,12 +20,12 @@ RSpec.describe Cogger::Formatters::Crash do
       expect(result).to have_color(
         color,
         [
-          "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  one\n  two\n  three\n",
+          "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  one\n  two\n  three",
           :bold,
           :white,
           :on_red
         ],
-        ["\n"]
+        ["\n\n"]
       )
     end
 
@@ -49,10 +48,10 @@ RSpec.describe Cogger::Formatters::Crash do
           color,
           [
             "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  " \
-            "one\n  two\n  three\n",
+            "one\n  two\n  three",
             :red
           ],
-          ["\n"]
+          ["\n\n"]
         )
       end
     end
