@@ -2,9 +2,9 @@ cff-version: 1.2.0
 message: Please use the following metadata when citing this project in your work.
 title: Cogger
 abstract: A customizable and feature rich logger.
-version: 0.23.0
+version: 0.24.0
 license: Hippocratic-2.1
-date-released: 2024-08-15
+date-released: 2024-08-23
 authors:
   - family-names: Kuhlmann
     given-names: Brooke

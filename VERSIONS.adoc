@@ -1,5 +1,19 @@
 = Versions
 
+== 0.24.0 (2024-08-23)
+
+* ✅ Fixed color and emoji formatter template color brackets - Brooke Kuhlmann
+* 🟢 Added README Developer Certificate of Origin documentation - Brooke Kuhlmann
+* 🟢 Added abstract format parser - Brooke Kuhlmann
+* 🟢 Added combined format parser - Brooke Kuhlmann
+* 🟢 Added element format parser - Brooke Kuhlmann
+* 🟢 Added emoji format parser - Brooke Kuhlmann
+* 🟢 Added key extractor format parser - Brooke Kuhlmann
+* 🟢 Added specific format parser - Brooke Kuhlmann
+* 🔼 Updated color processor to leverage combined parser - Brooke Kuhlmann
+* ⛔️ Removed dynamic, individual, and universal parsers - Brooke Kuhlmann
+* 🔁 Refactored JSON formatter to use key extractor - Brooke Kuhlmann
+
 == 0.23.0 (2024-08-15)
 
 * ✅ Fixed configuration to freeze tags upon initialization - Brooke Kuhlmann

@@ -10,7 +10,7 @@
 
 = Cogger
 
-Cogger is a portmanteau for custom logger (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native {logger_link} functionality with additional features such as dynamic emojis, colorized text, structured JSON, multiple outputs, and much more. 🚀
+Cogger is a portmanteau for custom logger (i.e. `[c]ustom + l[ogger] = cogger`) which enhances Ruby's native {logger_link} functionality with additional features such as dynamic emojis, colorized text, structured JSON, multiple streams, and much more. 🚀
 
 toc::[]
 
@@ -19,7 +19,7 @@ toc::[]
 * Enhances Ruby's default {logger_link} with additional functionality and firepower.
 * Provides dynamic/specific emoji output.
 * Provides dynamic/specific colorized output via the {tone_link} gem.
-* Provides customizable templates which leverage native {format_link}.
+* Provides customizable templates which leverage the {format_link}.
 * Provides customizable formatters for simple, color, emoji, JSON, and/or custom formats.
 * Provides multiple streams so you can log the same information to several outputs at once.
 * Provides global and individual log entry tagging.
@@ -28,7 +28,7 @@ toc::[]
 
 == Screenshots
 
-image::https://alchemists.io/images/projects/cogger/screenshots/demo.png[Rack,width=713,height=1110]
+image::https://alchemists.io/images/projects/cogger/screenshots/demo.png[Rack,width=724,height=1118]
 
 == Requirements
 
@@ -73,7 +73,7 @@ All behavior is provided by creating an instance of `Cogger`. Example:
 [source,ruby]
 ----
 logger = Cogger.new
-logger.info "Demo"  # "Demo"
+logger.info "Demo" # 🟢 [console] Demo
 ----
 
 If you set your logging level to `debug`, you can walk through each level:
@@ -213,10 +213,10 @@ Here's a detailed breakdown of the above:
 
 * *Universal*: Applies color universally to the _entire_ template and requires you to:
 ** Wrap your entire template in a  and start (`<dynamic>`) and end tag (`</dynamic>`) which works much like an HTML tag in this context.
-** Your tag names must either be `<dynamic></dynamic>`, any default color (example: `<green></green>`), or alias (i.e. `<your_alias></your_alias>`) as supported by the {tone_link} gem.
+** Your tag names must either be dynamic based on log level: `<dynamic></dynamic>`, a specific color: `<green></green>`, or an alias (example: `<your_alias></your_alias>`) as supported by the {tone_link} gem.
 * *Individual*: Individual templates allow you to apply color to _specific_ attributes and require you to:
-** Format your attributes as `attribute:directive`. The colon delimiter is required to separate your attribute for your color choice.
-** The color value (what follows after the colon) can be `dynamic`, any default color (example: `green`), or alias (i.e. `your_alias`) as supported by the {tone_link} gem.
+** Format your attributes as `%<attribute:directive>s`. The colon delimiter is required to separate your attribute for your color choice.
+** The color value (what follows after the colon) can be `dynamic`, any color (example: `green`), or an alias (i.e. `your_alias`) as supported by the {tone_link} gem.
 
 In addition to the general categorization of universal and individual tags, each support the following directives:
 
@@ -380,10 +380,17 @@ Symbols or strings can be used interchangeably when adding/getting formatters. A
 
 [source,ruby]
 ----
-Cogger::Formatters::Color::TEMPLATE   # "%<message:dynamic>s"
-Cogger::Formatters::Emoji::TEMPLATE   # "%<emoji:dynamic>s %<message:dynamic>s"
-Cogger::Formatters::JSON::TEMPLATE    # nil
-Cogger::Formatters::Simple::TEMPLATE  # "%<message>s"
+Cogger::Formatters::Color::TEMPLATE
+# "<dynamic>[</dynamic>%<id:dynamic>s<dynamic>]</dynamic> %<message:dynamic>s"
+
+Cogger::Formatters::Emoji::TEMPLATE
+# "%<emoji:dynamic>s <dynamic>[</dynamic>%<id:dynamic>s<dynamic>]</dynamic> %<message:dynamic>s"
+
+Cogger::Formatters::JSON::TEMPLATE
+# nil
+
+Cogger::Formatters::Simple::TEMPLATE
+# "[%<id>s] %<message>s"
 ----
 
 💡 When you find yourself customizing any of the default formatters, you can reduce typing by adding your custom configuration to the registry and then referring to it via it's associated key when initializing a new logger.
@@ -457,7 +464,7 @@ The emoji formatter is enabled by default and is the equivalent of initializing 
 ----
 logger = Cogger.new
 logger = Cogger.new formatter: :emoji
-logger = Cogger.new formatter: Cogger::Formatters::Emoji.new("%<emoji:dynamic>s %<message:dynamic>s")
+logger = Cogger.new formatter: Cogger::Formatters::Emoji.new
 ----
 
 All of the above examples are identical so you can see how different formatters can be used and customized further. The default emojis are registered as follows:
