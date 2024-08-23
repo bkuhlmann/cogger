@@ -10,9 +10,9 @@ module Cogger
       TEMPLATE = nil
 
       def initialize template = TEMPLATE,
-                     parser: Parsers::Individual.new,
+                     parser: Parsers::KeyExtractor.new,
                      sanitizer: Kit::Sanitizer
-        @positions = template ? parser.call(template).last.keys : Core::EMPTY_ARRAY
+        @positions = template ? parser.call(template) : Core::EMPTY_ARRAY
         @sanitizer = sanitizer
       end
 
