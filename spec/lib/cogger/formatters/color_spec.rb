@@ -10,19 +10,22 @@ RSpec.describe Cogger::Formatters::Color do
     let(:color) { Cogger.color }
     let(:entry) { Cogger::Entry[at:, message: "Test."] }
 
+    # rubocop:disable RSpec/ExampleLength
     it "answers colorized string with default template and colors" do
       formatter = described_class.new
       result = formatter.call entry
 
       expect(result).to have_color(
         color,
-        ["["],
+        ["[", :green],
         ["rspec", :green],
-        ["] "],
+        ["]", :green],
+        [" "],
         ["Test.", :green],
         ["\n"]
       )
     end
+    # rubocop:enable RSpec/ExampleLength
 
     context "when universal and dynamic" do
       let(:template) { "<dynamic>%<level>s %<at>s %<id>s %<message>s</dynamic>" }
@@ -111,17 +114,21 @@ RSpec.describe Cogger::Formatters::Color do
     context "with dynamic emoji template" do
       let(:template) { Cogger::Formatters::Emoji::TEMPLATE }
 
-      it "answers string without leading space" do
-        result = formatter.call Cogger::Entry[level: "ANY", at:, message: "Test."]
-
-        expect(result).to have_color(
-          color,
-          ["⚫️ ["],
+      let :proof do
+        [
+          ["⚫️ "],
+          ["[", :dim, :bright_white],
           ["rspec", :dim, :bright_white],
-          ["] "],
+          ["]", :dim, :bright_white],
+          [" "],
           ["Test.", :dim, :bright_white],
           ["\n"]
-        )
+        ]
+      end
+
+      it "answers string without leading space" do
+        result = formatter.call Cogger::Entry[level: "ANY", at:, message: "Test."]
+        expect(result).to have_color(color, *proof)
       end
     end
 

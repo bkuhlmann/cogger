@@ -2,6 +2,7 @@
 
 require "spec_helper"
 
+# rubocop:todo RSpec/ExampleLength
 RSpec.describe Cogger::Hub do
   using Refinements::StringIO
 
@@ -68,9 +69,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🔎 ["],
+        ["🔎 "],
+        ["[", :white],
         ["rspec", :white],
-        ["] "],
+        ["]", :white],
+        [" "],
         ["Test.", :white],
         ["\n"]
       )
@@ -81,9 +84,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🔎 ["],
+        ["🔎 "],
+        ["[", :white],
         ["rspec", :white],
-        ["] "],
+        ["]", :white],
+        [" "],
         ["Test.", :white],
         ["\n"]
       )
@@ -98,9 +103,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🟢 ["],
+        ["🟢 "],
+        ["[", :green],
         ["rspec", :green],
-        ["] "],
+        ["]", :green],
+        [" "],
         ["Test.", :green],
         ["\n"]
       )
@@ -111,9 +118,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🟢 ["],
+        ["🟢 "],
+        ["[", :green],
         ["rspec", :green],
-        ["] "],
+        ["]", :green],
+        [" "],
         ["Test.", :green],
         ["\n"]
       )
@@ -128,9 +137,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚠️ ["],
+        ["⚠️ "],
+        ["[", :yellow],
         ["rspec", :yellow],
-        ["] "],
+        ["]", :yellow],
+        [" "],
         ["Test.", :yellow],
         ["\n"]
       )
@@ -141,9 +152,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚠️ ["],
+        ["⚠️ "],
+        ["[", :yellow],
         ["rspec", :yellow],
-        ["] "],
+        ["]", :yellow],
+        [" "],
         ["Test.", :yellow],
         ["\n"]
       )
@@ -158,9 +171,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🛑 ["],
+        ["🛑 "],
+        ["[", :red],
         ["rspec", :red],
-        ["] "],
+        ["]", :red],
+        [" "],
         ["Test.", :red],
         ["\n"]
       )
@@ -171,9 +186,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🛑 ["],
+        ["🛑 "],
+        ["[", :red],
         ["rspec", :red],
-        ["] "],
+        ["]", :red],
+        [" "],
         ["Test.", :red],
         ["\n"]
       )
@@ -188,9 +205,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🔥 ["],
+        ["🔥 "],
+        ["[", :bold, :white, :on_red],
         ["rspec", :bold, :white, :on_red],
-        ["] "],
+        ["]", :bold, :white, :on_red],
+        [" "],
         ["Test.", :bold, :white, :on_red],
         ["\n"]
       )
@@ -201,9 +220,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🔥 ["],
+        ["🔥 "],
+        ["[", :bold, :white, :on_red],
         ["rspec", :bold, :white, :on_red],
-        ["] "],
+        ["]", :bold, :white, :on_red],
+        [" "],
         ["Test.", :bold, :white, :on_red],
         ["\n"]
       )
@@ -218,9 +239,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚫️ ["],
+        ["⚫️ "],
+        ["[", :dim, :bright_white],
         ["rspec", :dim, :bright_white],
-        ["] "],
+        ["]", :dim, :bright_white],
+        [" "],
         ["Test.", :dim, :bright_white],
         ["\n"]
       )
@@ -231,9 +254,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚫️ ["],
+        ["⚫️ "],
+        ["[", :dim, :bright_white],
         ["rspec", :dim, :bright_white],
-        ["] "],
+        ["]", :dim, :bright_white],
+        [" "],
         ["Test.", :dim, :bright_white],
         ["\n"]
       )
@@ -248,9 +273,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚫️ ["],
+        ["⚫️ "],
+        ["[", :dim, :bright_white],
         ["rspec", :dim, :bright_white],
-        ["] "],
+        ["]", :dim, :bright_white],
+        [" "],
         ["Test.", :dim, :bright_white],
         ["\n"]
       )
@@ -261,9 +288,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚫️ ["],
+        ["⚫️ "],
+        ["[", :dim, :bright_white],
         ["rspec", :dim, :bright_white],
-        ["] "],
+        ["]", :dim, :bright_white],
+        [" "],
         ["Test.", :dim, :bright_white],
         ["\n"]
       )
@@ -278,9 +307,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🟢 ["],
+        ["🟢 "],
+        ["[", :green],
         ["rspec", :green],
-        ["] "],
+        ["]", :green],
+        [" "],
         ["Test.", :green],
         ["\n"]
       )
@@ -291,9 +322,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["🟢 ["],
+        ["🟢 "],
+        ["[", :green],
         ["rspec", :green],
-        ["] "],
+        ["]", :green],
+        [" "],
         ["Test.", :green],
         ["\n"]
       )
@@ -304,9 +337,11 @@ RSpec.describe Cogger::Hub do
 
       expect(io.reread).to have_color(
         color,
-        ["⚫️ ["],
+        ["⚫️ "],
+        ["[", :dim, :bright_white],
         ["rspec", :dim, :bright_white],
-        ["] "],
+        ["]", :dim, :bright_white],
+        [" "],
         ["Test.", :dim, :bright_white],
         ["\n"]
       )
@@ -325,9 +360,11 @@ RSpec.describe Cogger::Hub do
     rescue SystemExit
       expect(io.reread).to have_color(
         color,
-        ["🛑 ["],
+        ["🛑 "],
+        ["[", :red],
         ["rspec", :red],
-        ["] "],
+        ["]", :red],
+        [" "],
         ["Danger!", :red],
         ["\n"]
       )
@@ -338,9 +375,11 @@ RSpec.describe Cogger::Hub do
     rescue SystemExit
       expect(io.reread).to have_color(
         color,
-        ["🛑 ["],
+        ["🛑 "],
+        ["[", :red],
         ["rspec", :red],
-        ["] "],
+        ["]", :red],
+        [" "],
         ["Danger!", :red],
         ["\n"]
       )
@@ -370,3 +409,4 @@ RSpec.describe Cogger::Hub do
     end
   end
 end
+# rubocop:enable RSpec/ExampleLength
