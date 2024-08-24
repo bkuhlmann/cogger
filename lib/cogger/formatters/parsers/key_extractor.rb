@@ -6,14 +6,14 @@ module Cogger
       # Parses template and extracts keys.
       class KeyExtractor
         PATTERN = /
-                    %             # Start.
-                    ?             # Flag, width, or precision.
-                    <             # Reference start.
-                    (?<name>\w+)  # Name.
-                    (?::[\w]+)?   # Optional delimiter and or color.
-                    >             # Reference end.
-                    ?             # Specifier.
-                  /x
+          %             # Start.
+          ?             # Flag, width, or precision.
+          <             # Reference start.
+          (?<name>\w+)  # Name.
+          (?::[\w]+)?   # Optional delimiter and or color.
+          >             # Reference end.
+          ?             # Specifier.
+        /x
 
         def initialize pattern: PATTERN
           @pattern = pattern

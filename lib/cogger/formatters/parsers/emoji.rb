@@ -6,12 +6,12 @@ module Cogger
       # Parses template emojis for specific and dynamic colors.
       class Emoji < Abstract
         PATTERN = /
-                    %<             # Start.
-                    emoji          # Name.
-                    :              # Delimiter.
-                    (?<color>\w+)  # Color.
-                    >s             # End.
-                  /x
+          %<             # Start.
+          emoji          # Name.
+          :              # Delimiter.
+          (?<color>\w+)  # Color.
+          >s             # End.
+        /x
 
         def initialize pattern: PATTERN
           super()

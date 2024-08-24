@@ -6,14 +6,14 @@ module Cogger
       # Parses template elements for specific and dynamic colors.
       class Element < Abstract
         PATTERN = %r(
-                    <                # Tag open start.
-                    (?<name>\w+)     # Tag open name.
-                    >                # Tag open end.
-                    (?<content>.+?)  # Content.
-                    </               # Tag close start.
-                    \w+              # Tag close.
-                    >                # Tag close end.
-                  )mx
+          <                # Tag open start.
+          (?<name>\w+)     # Tag open name.
+          >                # Tag open end.
+          (?<content>.+?)  # Content.
+          </               # Tag close start.
+          \w+              # Tag close.
+          >                # Tag close end.
+        )mx
 
         def initialize pattern: PATTERN
           super()

@@ -8,18 +8,18 @@ module Cogger
       # Parses template for specific and dynamic string format specifiers.
       class Specific < Abstract
         PATTERN = /
-                    %                                   # Start.
-                    (?<flag>[\s#+-0*])?                 # Optional flag.
-                    (?<width>\d+)?                      # Optional width.
-                    \.?                                 # Optional precision delimiter.
-                    (?<precision>\d+)?                  # Optional precision value.
-                    <                                   # Reference start.
-                    (?<name>\w+)                        # Name.
-                    :                                   # Delimiter.
-                    (?<color>\w+)                       # Color.
-                    >                                   # Reference end.
-                    (?<specifier>[ABEGXabcdefgiopsux])  # Specifier.
-                  /x
+          %                                   # Start.
+          (?<flag>[\s#+-0*])?                 # Optional flag.
+          (?<width>\d+)?                      # Optional width.
+          \.?                                 # Optional precision delimiter.
+          (?<precision>\d+)?                  # Optional precision value.
+          <                                   # Reference start.
+          (?<name>\w+)                        # Name.
+          :                                   # Delimiter.
+          (?<color>\w+)                       # Color.
+          >                                   # Reference end.
+          (?<specifier>[ABEGXabcdefgiopsux])  # Specifier.
+        /x
 
         def initialize pattern: PATTERN
           super()
