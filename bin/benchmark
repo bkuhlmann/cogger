@@ -135,88 +135,92 @@ __END__
 
 INITIALIZATION
 
+ruby 3.3.4 (2024-07-09 revision be1089c8ec) +YJIT [arm64-darwin23.6.0]
 Warming up --------------------------------------
-              Cogger    18.988k i/100ms
-          Dry Logger    16.714k i/100ms
-             Logging   114.985k i/100ms
-               Ougai    23.207k i/100ms
-          TTY Logger    15.504k i/100ms
+              Cogger    23.354k i/100ms
+          Dry Logger    24.297k i/100ms
+             Logging   441.541k i/100ms
+               Ougai     5.564k i/100ms
+          TTY Logger    21.525k i/100ms
 Calculating -------------------------------------
-              Cogger    178.052k (± 3.3%) i/s -    892.436k in   5.017566s
-          Dry Logger    177.487k (± 3.7%) i/s -    902.556k in   5.091339s
-             Logging      3.212M (± 4.3%) i/s -     16.098M in   5.021795s
-               Ougai    240.580k (± 3.0%) i/s -      1.207M in   5.020310s
-          TTY Logger    157.590k (± 1.7%) i/s -    790.704k in   5.018861s
+              Cogger    219.750k (± 1.2%) i/s -      1.121M in   5.101934s
+          Dry Logger    238.336k (± 1.3%) i/s -      1.215M in   5.098125s
+             Logging      4.928M (± 1.6%) i/s -     24.726M in   5.018740s
+               Ougai     56.268k (± 1.1%) i/s -    283.764k in   5.043753s
+          TTY Logger    213.100k (± 1.3%) i/s -      1.076M in   5.051320s
 
 Comparison:
-             Logging:  3211550.2 i/s
-               Ougai:   240579.8 i/s - 13.35x  slower
-              Cogger:   178052.1 i/s - 18.04x  slower
-          Dry Logger:   177487.4 i/s - 18.09x  slower
-          TTY Logger:   157589.9 i/s - 20.38x  slower
+             Logging:  4928120.2 i/s
+          Dry Logger:   238335.7 i/s - 20.68x  slower
+              Cogger:   219749.7 i/s - 22.43x  slower
+          TTY Logger:   213100.0 i/s - 23.13x  slower
+               Ougai:    56267.5 i/s - 87.58x  slower
 
 DEFAULT
 
+ruby 3.3.4 (2024-07-09 revision be1089c8ec) +YJIT [arm64-darwin23.6.0]
 Warming up --------------------------------------
-              Cogger    31.748k i/100ms
-          Dry Logger    24.031k i/100ms
-             Logging    37.514k i/100ms
-               Ougai    38.210k i/100ms
-          TTY Logger    18.705k i/100ms
+              Cogger    40.258k i/100ms
+          Dry Logger    29.336k i/100ms
+             Logging    35.686k i/100ms
+               Ougai    42.384k i/100ms
+          TTY Logger    30.050k i/100ms
 Calculating -------------------------------------
-              Cogger    314.679k (± 2.1%) i/s -      1.587M in   5.046620s
-          Dry Logger    233.609k (± 2.4%) i/s -      1.178M in   5.043368s
-             Logging    372.444k (± 5.9%) i/s -      1.876M in   5.057254s
-               Ougai    375.718k (± 6.0%) i/s -      1.872M in   5.004552s
-          TTY Logger    187.454k (± 2.6%) i/s -    953.955k in   5.092396s
+              Cogger    401.632k (± 1.2%) i/s -      2.013M in   5.012588s
+          Dry Logger    290.469k (± 1.6%) i/s -      1.467M in   5.051132s
+             Logging    397.864k (± 5.2%) i/s -      1.998M in   5.040300s
+               Ougai    481.920k (± 5.2%) i/s -      2.416M in   5.030791s
+          TTY Logger    307.623k (± 4.5%) i/s -      1.563M in   5.092537s
 
 Comparison:
-               Ougai:   375717.7 i/s
-             Logging:   372443.8 i/s - same-ish: difference falls within error
-              Cogger:   314679.4 i/s - 1.19x  slower
-          Dry Logger:   233608.8 i/s - 1.61x  slower
-          TTY Logger:   187454.0 i/s - 2.00x  slower
+               Ougai:   481920.0 i/s
+              Cogger:   401631.9 i/s - 1.20x  slower
+             Logging:   397863.7 i/s - 1.21x  slower
+          TTY Logger:   307622.6 i/s - 1.57x  slower
+          Dry Logger:   290468.8 i/s - 1.66x  slower
 
 COLOR
 
+ruby 3.3.4 (2024-07-09 revision be1089c8ec) +YJIT [arm64-darwin23.6.0]
 Warming up --------------------------------------
-              Cogger     6.441k i/100ms
-          Dry Logger    21.690k i/100ms
-             Logging    26.952k i/100ms
-               Ougai    43.171k i/100ms
-          TTY Logger    13.955k i/100ms
+              Cogger     9.617k i/100ms
+          Dry Logger    27.034k i/100ms
+             Logging    28.768k i/100ms
+               Ougai    52.148k i/100ms
+          TTY Logger    22.383k i/100ms
 Calculating -------------------------------------
-              Cogger     64.837k (± 2.0%) i/s -    328.491k in   5.068305s
-          Dry Logger    212.295k (± 3.3%) i/s -      1.063M in   5.011630s
-             Logging    270.868k (± 6.7%) i/s -      1.348M in   5.002217s
-               Ougai    443.630k (± 4.6%) i/s -      2.245M in   5.073228s
-          TTY Logger    139.768k (± 2.4%) i/s -    711.705k in   5.094872s
+              Cogger     94.827k (± 1.3%) i/s -    480.850k in   5.071620s
+          Dry Logger    272.332k (± 1.2%) i/s -      1.379M in   5.063431s
+             Logging    288.734k (± 5.1%) i/s -      1.467M in   5.098865s
+               Ougai    527.200k (± 3.4%) i/s -      2.660M in   5.051571s
+          TTY Logger    225.776k (± 1.6%) i/s -      1.142M in   5.057429s
 
 Comparison:
-               Ougai:   443629.5 i/s
-             Logging:   270868.1 i/s - 1.64x  slower
-          Dry Logger:   212295.4 i/s - 2.09x  slower
-          TTY Logger:   139768.1 i/s - 3.17x  slower
-              Cogger:    64836.5 i/s - 6.84x  slower
+               Ougai:   527199.6 i/s
+             Logging:   288733.8 i/s - 1.83x  slower
+          Dry Logger:   272331.5 i/s - 1.94x  slower
+          TTY Logger:   225776.3 i/s - 2.34x  slower
+              Cogger:    94827.3 i/s - 5.56x  slower
 
 JSON
 
+ruby 3.3.4 (2024-07-09 revision be1089c8ec) +YJIT [arm64-darwin23.6.0]
 Warming up --------------------------------------
-              Cogger    17.139k i/100ms
-          Dry Logger    15.152k i/100ms
-             Logging    29.172k i/100ms
-               Ougai    30.436k i/100ms
-          TTY Logger     6.521k i/100ms
+              Cogger    22.605k i/100ms
+          Dry Logger    18.516k i/100ms
+             Logging    33.584k i/100ms
+               Ougai    36.286k i/100ms
+          TTY Logger     9.912k i/100ms
 Calculating -------------------------------------
-              Cogger    170.911k (± 3.2%) i/s -    856.950k in   5.018972s
-          Dry Logger    151.331k (± 2.7%) i/s -    757.600k in   5.009457s
-             Logging    292.254k (± 5.7%) i/s -      1.459M in   5.010710s
-               Ougai    303.247k (± 6.9%) i/s -      1.522M in   5.046771s
-          TTY Logger     65.482k (± 3.7%) i/s -    332.571k in   5.085191s
+              Cogger    226.597k (± 3.4%) i/s -      1.153M in   5.094744s
+          Dry Logger    187.880k (± 1.4%) i/s -    944.316k in   5.027114s
+             Logging    338.638k (± 3.8%) i/s -      1.713M in   5.066779s
+               Ougai    365.200k (± 5.1%) i/s -      1.851M in   5.084597s
+          TTY Logger    100.089k (± 3.4%) i/s -    505.512k in   5.056332s
 
 Comparison:
-               Ougai:   303246.6 i/s
-             Logging:   292254.4 i/s - same-ish: difference falls within error
-              Cogger:   170911.0 i/s - 1.77x  slower
-          Dry Logger:   151330.5 i/s - 2.00x  slower
-          TTY Logger:    65482.0 i/s - 4.63x  slower
+               Ougai:   365199.6 i/s
+             Logging:   338637.9 i/s - same-ish: difference falls within error
+              Cogger:   226596.7 i/s - 1.61x  slower
+          Dry Logger:   187880.4 i/s - 1.94x  slower
+          TTY Logger:   100089.0 i/s - 3.65x  slower
