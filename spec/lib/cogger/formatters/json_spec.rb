@@ -9,49 +9,19 @@ RSpec.describe Cogger::Formatters::JSON do
     let(:at) { Time.now }
     let(:at_formatted) { at.utc.strftime "%Y-%m-%dT%H:%M:%S.%L%:z" }
 
-    it "answers default template and message string" do
+    it "answers message string with default template" do
       expect(formatter.call(Cogger::Entry.for("test", at:))).to eq(
         %(#{{id: "rspec", level: "INFO", at: at_formatted, message: "test"}.to_json}\n)
       )
     end
 
-    it "answers default template and message hash" do
+    it "answers message hash with default template" do
       expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
         %(#{{id: "rspec", level: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
       )
     end
 
-    it "answers default template and no message" do
-      expect(formatter.call(Cogger::Entry.new(at:))).to eq(
-        %(#{{id: "rspec", level: "INFO", at: at_formatted}.to_json}\n)
-      )
-    end
-
-    it "answers custom template and ordered message hash" do
-      formatter = described_class.new "%<path>s %<verb>s %<at>s %<level>s %<id>s"
-
-      expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{path: "/", verb: "GET", at: at_formatted, level: "INFO", id: "rspec"}.to_json}\n)
-      )
-    end
-
-    it "answers custom template and ordered metadata only" do
-      formatter = described_class.new "%<at>s %<id>s %<level>s"
-
-      expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{at: at_formatted, id: "rspec", level: "INFO", verb: "GET", path: "/"}.to_json}\n)
-      )
-    end
-
-    it "answers custom template using invalid keys and message hash" do
-      formatter = described_class.new "%<one>s %<two>s %<three>s"
-
-      expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(#{{id: "rspec", level: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
-      )
-    end
-
-    it "answers with mixed tags" do
+    it "answers mixed tags with default template" do
       entry = Cogger::Entry.for at:,
                                 message: "test",
                                 path: "/",
@@ -69,6 +39,36 @@ RSpec.describe Cogger::Formatters::JSON do
       }
 
       expect(formatter.call(entry)).to eq(%(#{proof.to_json}\n))
+    end
+
+    it "answers no message with default template" do
+      expect(formatter.call(Cogger::Entry.new(at:))).to eq(
+        %(#{{id: "rspec", level: "INFO", at: at_formatted}.to_json}\n)
+      )
+    end
+
+    it "answers ordered message hash with custom template" do
+      formatter = described_class.new "%<path>s %<verb>s %<at>s %<level>s %<id>s"
+
+      expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
+        %(#{{path: "/", verb: "GET", at: at_formatted, level: "INFO", id: "rspec"}.to_json}\n)
+      )
+    end
+
+    it "answers ordered metadata only with custom template" do
+      formatter = described_class.new "%<at>s %<id>s %<level>s"
+
+      expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
+        %(#{{at: at_formatted, id: "rspec", level: "INFO", verb: "GET", path: "/"}.to_json}\n)
+      )
+    end
+
+    it "answers message hash with custom template and invalid keys" do
+      formatter = described_class.new "%<one>s %<two>s %<three>s"
+
+      expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
+        %(#{{id: "rspec", level: "INFO", at: at_formatted, verb: "GET", path: "/"}.to_json}\n)
+      )
     end
   end
 end
