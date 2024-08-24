@@ -36,6 +36,7 @@ RSpec.describe Cogger::Registry do
         "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
       ],
       json: [Cogger::Formatters::JSON, nil],
+      property: [Cogger::Formatters::Property, nil],
       simple: [Cogger::Formatters::Simple, "[%<id>s] %<message>s"],
       rack: [
         Cogger::Formatters::Simple,

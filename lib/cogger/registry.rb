@@ -26,6 +26,7 @@ module Cogger
                 )
                 .add_formatter(:emoji, Cogger::Formatters::Emoji)
                 .add_formatter(:json, Cogger::Formatters::JSON)
+                .add_formatter(:property, Cogger::Formatters::Property)
                 .add_formatter(:simple, Cogger::Formatters::Simple)
                 .add_formatter :rack,
                                Cogger::Formatters::Simple,
