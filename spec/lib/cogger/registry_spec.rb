@@ -242,6 +242,20 @@ RSpec.describe Cogger::Registry do
     end
   end
 
+  describe "#templates" do
+    it "answers default templates" do
+      expect(registry.templates).to include(
+        color: "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s",
+        detail: "[%<id>s] [%<level>s] [%<at>s] %<message>s",
+        emoji: "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s",
+        json: nil,
+        rack: "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s " \
+              "%<length>s %<params>s",
+        simple: "[%<id>s] %<message>s"
+      )
+    end
+  end
+
   describe "#color" do
     it "answers color instance" do
       expect(registry.color).to be_a(Tone::Client)

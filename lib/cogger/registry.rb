@@ -71,6 +71,12 @@ module Cogger
 
     def formatters = @formatters ||= {}
 
+    def templates
+      formatters.each.with_object({}) do |(key, (_formatter, template)), collection|
+        collection[key] = template
+      end
+    end
+
     def color = @color ||= Tone.new
 
     def defaults = {emojis:, aliases:, formatters:, filters:, color:}
