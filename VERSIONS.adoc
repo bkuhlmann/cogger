@@ -1,5 +1,14 @@
 = Versions
 
+== 0.24.1 (2024-08-25)
+
+* ✅ Fixed color and emoji formatter templates to use less syntax - Brooke Kuhlmann
+* 🟢 Added version release notes - Brooke Kuhlmann
+* 🔼 Updated benchmarks - Brooke Kuhlmann
+* 🔁 Refactored JSON formatter spec descriptions - Brooke Kuhlmann
+* 🔁 Refactored demo script to use levels - Brooke Kuhlmann
+* 🔁 Refactored regular expression pattern indentations - Brooke Kuhlmann
+
 == 0.24.0 (2024-08-23)
 
 * ✅ Fixed color and emoji formatter template color brackets - Brooke Kuhlmann

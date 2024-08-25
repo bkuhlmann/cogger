@@ -17,12 +17,11 @@ toc::[]
 == Features
 
 * Enhances Ruby's default {logger_link} with additional functionality and firepower.
-* Provides dynamic/specific emoji output.
-* Provides dynamic/specific colorized output via the {tone_link} gem.
-* Provides customizable templates which leverage the {format_link}.
-* Provides customizable formatters for simple, color, emoji, JSON, and/or custom formats.
+* Provides customizable templates that use keys, emojis, and/or elements as an enhanced form of the {format_link}.
+* Provides colored output via the {tone_link} gem.
+* Provides customizable formatters.
 * Provides multiple streams so you can log the same information to several outputs at once.
-* Provides global and individual log entry tagging.
+* Provides global and individual tagging.
 * Provides filtering of sensitive information.
 * Provides {rack_link} middleware for HTTP request logging.
 
@@ -162,7 +161,7 @@ export LOG_LEVEL=fatal
 export LOG_LEVEL=unknown
 ----
 
-While downcase is preferred for the log level, you can use upcased values as well. If the `LOG_LEVEL` environment variable is not set, `Cogger` will fall back to `"info"` unless overwritten during initialization. Example: `Cogger.new level: :debug`. Otherwise, an invalid log level will result in an `ArgumentError`.
+While downcase is preferred for each log level value, you can use upcased values as well. If the `LOG_LEVEL` environment variable is not set, `Cogger` will fall back to `"info"` unless overwritten during initialization. Example: `Cogger.new level: :debug`. Otherwise, an invalid log level will result in an `ArgumentError`.
 
 === Mutations
 
@@ -187,65 +186,147 @@ Please see the {logger_link} documentation for more information.
 
 === Templates
 
-Templates are used by all formatters and adhere to the {format_link} as used by `Kernel#format`. All specifiers, flags, width, and precision are supported except for the following restrictions:
+Templates are used by all formatters and adhere to an _enhanced_ version of the {format_link} as used by `Kernel#format`. All specifiers, flags, width, and precision are supported except for the following restrictions:
 
-- Use of _reference by name_ is required which means `%<demo>s` is allowed but `%{demo}` is not. This is because _reference by name_ is required for regular expressions and/or {pattern_matching_link}.
-- Use of the `n$` flag is prohibited because it's not compatible with the above.
+* Use of _reference by name_ is required which means `%<demo>s` is allowed but `%{demo}` is not. This is because _reference by name_ is required for regular expressions and/or {pattern_matching_link}.
+* Use of the `n$` flag is prohibited because it's not compatible with the above.
 
-In addition to the above, the {format_link} is further enhanced with the use of _universal_ and _individual_ directives which are primarily used by the _color_ formatter but can prove useful for other formatters. Example:
+In addition to the above, the {format_link} is further enhanced with the use of keys, emojis, and/or elements. Each is explained in detail below.
+
+==== Keys
+
+Template keys works exactly as you'd expect when formatting a string using the {format_link} where each key in the template will be replaced with the corresponding attribute that matches the key. Example:
 
 [source,ruby]
 ----
-# Universal: Dynamic (color is determined by level).
-"<dynamic>%<level>s %<at>s %<id>s %<message>s</dynamic>"
+# Template
+"%<level>s %<at>s %<id>s %<message>s"
 
-# Universal: Specific (uses the green color only).
-"<green>%<level>s %<at>s %<id>s %<message>s</green>"
+# Output
+# INFO 2024-08-25 10:44:58 -0600 console demo
+----
 
-# Individual: Dynamic (color is determined by level).
+Each key can be _enhanced_ further by delimiting the key with a colon and supplying a directive. Directives can be any of the following:
+
+* *Dynamic*: Color is automatically calculated based on current log level.
+* *Literal*: Color is specific/static while ignoring current log level.
+
+Here's a few examples to illustrate:
+
+[source,ruby]
+----
+# Dynamic
 "%<level:dynamic>s %<at:dynamic>s %<id:dynamic>s %<message:dynamic>s"
 
-# Individual: Specific (uses a rainbow of colors).
+# Literal
 "%<level:purple>s %<at:yellow>s %<id:cyan>s %<message:green>s"
 ----
 
-Here's a detailed breakdown of the above:
-
-* *Universal*: Applies color universally to the _entire_ template and requires you to:
-** Wrap your entire template in a  and start (`<dynamic>`) and end tag (`</dynamic>`) which works much like an HTML tag in this context.
-** Your tag names must either be dynamic based on log level: `<dynamic></dynamic>`, a specific color: `<green></green>`, or an alias (example: `<your_alias></your_alias>`) as supported by the {tone_link} gem.
-* *Individual*: Individual templates allow you to apply color to _specific_ attributes and require you to:
-** Format your attributes as `%<attribute:directive>s`. The colon delimiter is required to separate your attribute for your color choice.
-** The color value (what follows after the colon) can be `dynamic`, any color (example: `green`), or an alias (i.e. `your_alias`) as supported by the {tone_link} gem.
-
-In addition to the general categorization of universal and individual tags, each support the following directives:
-
-* *Dynamic*: A dynamic directive means color will be determined by log level only. This means if info level is used, the associated color (alias) for info will be applied. Same goes for warn, error, etc.
-* *Specific*: A specific directive means the color you use will be applied without any further processing regardless of log level. This gives you the ability to customize your colors further in situations where dynamic coloring isn't enough.
-
-At this point, you might have gathered that there are specific keys you can use for the log event metadata in your template and everything else is up to you. This stems from the fact that {logger_link} entries always have the following metadata:
-
-* `id`: The program/process ID you created your logger with (i.e. `Cogger.new id: :demo`).
-* `level`: The level at which you messaged your logger (i.e. `logger.info`).
-* `at`: The date/time as which your log event was created.
-
-This also means if you pass in these same keys as a log event (example: `logger.info id: :bad, at: Time.now, level: :bogus`) they will be ignored.
-
-The last key (or keys) is customizable to your needs and is known as the log event message. The only special key is the `tags` key which will be explained later. Here a couple of examples to illustrate:
+In the dynamic example, the color of each key is determined by current log level (i.e. info, warn, error, etc) which is looked up via the `Cogger.aliases` hash:
 
 [source,ruby]
 ----
-# Available as "%<message>s" in your template.
-logger.info "demo"
-
-# Available as "%<message>s" in your template.
-logger.info message: "demo"
-
-# Available as "%<verb>s" and "%<path>s" in your template.
-logger.info verb: "GET", path: "/"`
+Cogger.aliases
+# {
+#   debug: %i[white],
+#   info: %i[green],
+#   warn: %i[yellow],
+#   error: %i[red],
+#   fatal: %i[bold white on_red],
+#   any: %i[dim bright_white]
+# }
 ----
 
-💡 In situations where a message hash is logged but the keys of that hash don't match the keys in the template, then an empty message will be logged. This applies to all formatters except the JSON formatter which will log any key/value that doesn't have a `nil` value.
+In the literal example, the color is exactly what is specified which means the `level` is purple, `at` is yellow, `id` is cyan, and `message` is green. This is means you can mix-n-match dynamic and literal directives as desired:
+
+[source,ruby]
+----
+"%<level:dynamic>s %<at:yellow>s %<id:dynamic>s %<message:green>s"
+----
+
+Assuming the current log level is _info_, then `level` is green; `at` is yellow; `id` is green; and `message` is green.
+
+==== Emojis
+
+Template emojis work similar to _keys_ but the `emoji` key is _special_ in that you can't use `emoji` as a key in your log messages. In other words the `emoji` key can only be used in templates. That said, emojis can be dynamic or literal. Example:
+
+[source,ruby]
+----
+# Dynamic
+"%<emoji:dynamic>s %<message:dynamic>s"
+
+# Literal
+"%<emoji:any>s %<message:dynamic>s"
+----
+
+In the dynamic example, the emoji is determined by current log level (i.e. info, warn, error, etc) which is looked up via the `Cogger.emojis` hash:
+
+[source,ruby]
+----
+Cogger.emojis
+# {
+#   :debug => "🔎",
+#    :info => "🟢",
+#    :warn => "⚠️",
+#   :error => "🛑",
+#   :fatal => "🔥",
+#     :any => "⚫️"
+# }
+----
+
+In the literal example, the emoji will be rendered exactly as defined.
+
+==== Elements
+
+Template elements are slightly different than _keys_ and _emojis_ in that they behave more like HTML elements. This means you can use open and close tags to use dynamic or literal colors. Example:
+
+[source,ruby]
+----
+# Dynamic
+"<dynamic>%<level>s %<at>s %<id>s %<message>s</dynamic>"
+
+# Literal
+"<purple>%<level>s %<at>s %<id>s %<message>s</purple>"
+----
+
+In the dynamic example, all characters within the template string will use the same color as determined by the current log level. In the literal example, all characters will be purple.
+
+Using template elements, in this manner, keeps your templates simple when needing to apply the same color to multiple characters at once.
+
+==== Combinations
+
+Now that you know how template keys; emojis; and elements works, this means you can mix and match them in interesting combinations. Example:
+
+[source,ruby]
+----
+"[%<id:purple>s] <dynamic>[%<level>s] [%<at>s]</dynamic> %<message:cyan>s"
+----
+
+The above will render as follows:
+
+* The opening and closing brackets will be white (default color).
+* The `id` will be purple.
+* The `level` and `at` will be dynamic in color based on current log level (this includes the bracket characters).
+* The `message` will be cyan.
+
+==== Guidelines
+
+Each log entry provides you with default keys you can use for the log event metadata in your templates. This stems from the fact that {logger_link} entries always have the following keys:
+
+* `id`: The program/process ID you created your logger with (i.e. `Cogger.new id: :demo`).
+* `level`: The level at which you messaged your logger (i.e. `Cogger#info`).
+* `at`: The date/time as which your log event was created.
+
+Additional keys as provided by your message hash and/or tags can be customized as desired but the above is _always_ available to you.
+
+Template keys, emojis, and elements do have a few restrictions:
+
+* Use the special `emoji` key to provide dynamic or literal emoji logging.
+* Use the special `tags` key to provide tagged logging. More information on tags can be found later in this document.
+* Avoid supplying the same keys as the default keys. Example: `logger.info id: :bad, at: Time.now, level: :bogus`. This is because these keys will be ignored. In other words, you can't _override_ the default keys.
+* Avoid wrapping keys and/or emojis in elements because nesting isn't supported and can lead to strange output. Example: `<green>%<emoji:error>s %<id:dynamic>s</green>`.
+* Avoid wrapping elements within elements because nesting isn't supported and can lead to strange output. Example: `<dynamic><cyan>%<message>s</cyan></dynamic>`.
+* Avoid situations where a message hash doesn't match the keys in the template because an empty message will be logged instead. This applies to all formatters except the JSON formatter which will log any key/value that doesn't have a `nil` value.
 
 === Emojis
 
@@ -359,7 +440,7 @@ Cogger.formatters
 # }
 ----
 
-You can add a formatter by providing a key, class, and _optional_ template. If a template isn't supplied, then the formatter's default template will be used instead (more on that shortly). Example:
+You can add a formatter by providing a key, class, and _optional_ template. If a template isn't supplied, then the formatter's default template will be used instead (more on this shortly). Example:
 
 [source,ruby]
 ----
@@ -381,10 +462,10 @@ Symbols or strings can be used interchangeably when adding/getting formatters. A
 [source,ruby]
 ----
 Cogger::Formatters::Color::TEMPLATE
-# "<dynamic>[</dynamic>%<id:dynamic>s<dynamic>]</dynamic> %<message:dynamic>s"
+# "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
 
 Cogger::Formatters::Emoji::TEMPLATE
-# "%<emoji:dynamic>s <dynamic>[</dynamic>%<id:dynamic>s<dynamic>]</dynamic> %<message:dynamic>s"
+# "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
 
 Cogger::Formatters::JSON::TEMPLATE
 # nil
@@ -416,7 +497,7 @@ logger = Cogger.new formatter: :rack
 
 ==== Color
 
-The color formatter allows you to have color coded logs and can be configured as follows:
+The color formatter allows you to have color coded logs and can be used as follows:
 
 [source,ruby]
 ----
@@ -593,7 +674,7 @@ logger.info "Demo"
 # I, [2023-10-15T14:32:55.061777 #72801]  INFO -- console: #<data Cogger::Entry id="console", level=:info, at=2023-10-15 14:32:55.061734 -0600, message="Demo", tags=[], payload={}>
 ----
 
-While the above doesn't cause an error, you only get a dump of the `Cogger::Entry` which is not what you want. To replicate native {logger_link} functionality, you can do use the simple formatter as follows to produce the rough equivalent:
+While the above doesn't cause an error, you only get a dump of the `Cogger::Entry` which is not what you want. To replicate native {logger_link} functionality, you can use the `Simple` formatter as follows:
 
 [source,ruby]
 ----
@@ -605,6 +686,8 @@ logger.info "Demo"
 
 # INFO, [2023-10-15 15:07:13 -0600]  INFO -- console: Demo
 ----
+
+The above is the rough equivalent of what {logger_link} provides for you by default.
 
 ==== Custom
 
