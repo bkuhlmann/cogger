@@ -29,11 +29,14 @@ RSpec.describe Cogger::Registry do
 
   let :formatters do
     {
-      color: [Cogger::Formatters::Color, nil],
+      color: [Cogger::Formatters::Color, "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s"],
       detail: [Cogger::Formatters::Simple, "[%<id>s] [%<level>s] [%<at>s] %<message>s"],
-      emoji: [Cogger::Formatters::Emoji, nil],
+      emoji: [
+        Cogger::Formatters::Emoji,
+        "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
+      ],
       json: [Cogger::Formatters::JSON, nil],
-      simple: [Cogger::Formatters::Simple, nil],
+      simple: [Cogger::Formatters::Simple, "[%<id>s] %<message>s"],
       rack: [
         Cogger::Formatters::Simple,
         "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s " \
@@ -165,12 +168,18 @@ RSpec.describe Cogger::Registry do
   describe "#add_formatter" do
     it "adds formatter (symbol)" do
       registry.add_formatter :test, Cogger::Formatters::Simple
-      expect(registry.get_formatter(:test)).to eq([Cogger::Formatters::Simple, nil])
+
+      expect(registry.get_formatter(:test)).to eq(
+        [Cogger::Formatters::Simple, "[%<id>s] %<message>s"]
+      )
     end
 
     it "adds formatter (string)" do
       registry.add_formatter "test", Cogger::Formatters::Simple
-      expect(registry.get_formatter(:test)).to eq([Cogger::Formatters::Simple, nil])
+
+      expect(registry.get_formatter(:test)).to eq(
+        [Cogger::Formatters::Simple, "[%<id>s] %<message>s"]
+      )
     end
 
     it "adds formatter with template" do
@@ -178,8 +187,17 @@ RSpec.describe Cogger::Registry do
       expect(registry.get_formatter(:test)).to eq([Cogger::Formatters::Simple, "%<messag>s"])
     end
 
+    it "fails when formatter doesn't have a default template" do
+      expectation = proc { registry.add_formatter :test, Object }
+
+      expect(&expectation).to raise_error(
+        NameError,
+        "Object::TEMPLATE must be defined with a default template string."
+      )
+    end
+
     it "answers itself" do
-      expect(registry.add_formatter(:test, "%<message>s")).to be_a(described_class)
+      expect(registry.add_formatter(:test, Cogger::Formatters::Simple)).to be_a(described_class)
     end
   end
 
@@ -187,11 +205,15 @@ RSpec.describe Cogger::Registry do
     before { registry.add_formatter :test, Cogger::Formatters::Simple }
 
     it "answers template for key (symbol)" do
-      expect(registry.get_formatter(:test)).to eq([Cogger::Formatters::Simple, nil])
+      expect(registry.get_formatter(:test)).to eq(
+        [Cogger::Formatters::Simple, "[%<id>s] %<message>s"]
+      )
     end
 
     it "answers template for key (string)" do
-      expect(registry.get_formatter("test")).to eq([Cogger::Formatters::Simple, nil])
+      expect(registry.get_formatter("test")).to eq(
+        [Cogger::Formatters::Simple, "[%<id>s] %<message>s"]
+      )
     end
 
     it "fails when not registered" do
@@ -203,16 +225,19 @@ RSpec.describe Cogger::Registry do
   describe "#formatters" do
     it "answers default formatters" do
       expect(registry.formatters).to include(
-        color: [Cogger::Formatters::Color, nil],
+        color: [Cogger::Formatters::Color, "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s"],
         detail: [Cogger::Formatters::Simple, "[%<id>s] [%<level>s] [%<at>s] %<message>s"],
-        emoji: [Cogger::Formatters::Emoji, nil],
+        emoji: [
+          Cogger::Formatters::Emoji,
+          "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
+        ],
         json: [Cogger::Formatters::JSON, nil],
         rack: [
           Cogger::Formatters::Simple,
           "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s " \
           "%<length>s %<params>s"
         ],
-        simple: [Cogger::Formatters::Simple, nil]
+        simple: [Cogger::Formatters::Simple, "[%<id>s] %<message>s"]
       )
     end
   end

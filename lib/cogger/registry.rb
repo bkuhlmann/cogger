@@ -59,8 +59,10 @@ module Cogger
     def filters = @filters ||= Set.new
 
     def add_formatter key, formatter, template = nil
-      formatters[key.to_sym] = [formatter, template]
+      formatters[key.to_sym] = [formatter, template || formatter::TEMPLATE]
       self
+    rescue NameError
+      raise NameError, "#{formatter}::TEMPLATE must be defined with a default template string."
     end
 
     def get_formatter key

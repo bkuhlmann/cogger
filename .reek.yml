@@ -6,6 +6,9 @@ detectors:
   BooleanParameter:
     exclude:
       - "Cogger::Configuration#initialize"
+  ControlParameter:
+    exclude:
+      - "Cogger::Registry#add_formatter"
   DataClump:
     exclude:
       - "Cogger::Hub"
