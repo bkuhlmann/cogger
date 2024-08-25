@@ -6,6 +6,7 @@
 :logger_link: link:https://rubyapi.org/o/s?q=Logger[Logger]
 :pattern_matching_link: link:https://alchemists.io/articles/ruby_pattern_matching[pattern matching]
 :rack_link: link:https://github.com/rack/rack[Rack]
+:rfc_3339_link: link:https://datatracker.ietf.org/doc/html/rfc3339[RFC 3339]
 :tone_link: link:https://alchemists.io/projects/tone[Tone]
 
 = Cogger
@@ -27,7 +28,7 @@ toc::[]
 
 == Screenshots
 
-image::https://alchemists.io/images/projects/cogger/screenshots/demo.png[Rack,width=724,height=1118]
+image::https://alchemists.io/images/projects/cogger/screenshots/demo.png[Rack,width=703,height=1151]
 
 == Requirements
 
@@ -102,7 +103,7 @@ logger.any { "Demo" }                # ⚫️ [console] Demo
 logger.add(Logger::INFO) { "Demo" }  # 🟢 [console] Demo
 ----
 
-The `[console]`, in the above output, is the program ID which, in this case, is the ID of this gem's IRB console.
+The `[console]`, in the above output, is the program ID which is the ID of this gem's IRB console.
 
 === Initialization
 
@@ -112,7 +113,8 @@ When creating a new logger, you can configure behavior via the following attribu
 * `io`: The input/output stream. This can be `STDOUT/$stdout`, a file/path, or `nil`. Default: `$stdout`.
 * `level`: The log level you want to log at. Can be `:debug`, `:info`, `:warn`, `:error`, `:fatal`, or `:unknown`. Default: `:info`.
 * `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Color`. See the _Formatters_ section for more info.
-* `tags`: Global tagging for _every_ log entry which _must_ be an array of objects you wish to use for tagging purposes.
+* `tags`: The global tags used for all log entries. _Must_ be an array of objects you wish to use for tagging purposes. Default: `[]`.
+* `datetime_format`: The global date/time format used for all `Time`, `Date`, and/or `DateTime` values in your log entries. Default: `%Y-%m-%dT%H:%M:%S.%L%:z`.
 * `mode`: The binary mode which determines if your logs should be written in binary mode or not. Can be `true` or `false` and is identical to the `binmode` functionality found in the {logger_link} class. Default: `false`.
 * `age`: The rotation age of your log. This only applies when logging to a file. This is equivalent to the `shift_age` as found with the {logger_link} class. Default: `0`.
 * `size`: The rotation size of your log. This only applies when logging to a file. This is equivalent to the `shift_size` as found with the {logger_link} class. Default: `1,048,576` (i.e. 1 MB).
@@ -131,6 +133,7 @@ logger = Cogger.new id: :demo,
                     level: :debug,
                     formatter: :json,
                     tags: %w[DEMO DB],
+                    datetime_format: "%Y-%m-%d",
                     mode: false,
                     age: 5,
                     size: 1_000,
@@ -145,6 +148,23 @@ Supported levels can be obtained via `Cogger::LEVELS`. Example:
 ----
 Cogger::LEVELS
 # ["debug", "info", "warn", "error", "fatal", "unknown"]
+----
+
+=== Date/Time
+
+The default date/time format used for _all_ log values can be viewed via the following:
+
+[source,ruby]
+----
+Cogger::DATETIME_FORMAT
+# "%Y-%m-%dT%H:%M:%S.%L%:z
+----
+
+The above adheres to {rfc_3339_link} and can be customized -- as mentioned earlier -- when creating a new logger instance. Example:
+
+[source,ruby]
+----
+Cogger.new datetime_format: "%Y-%m-%d"
 ----
 
 === Environment
@@ -184,9 +204,104 @@ logger.level = Logger::WARN                        # 2
 
 Please see the {logger_link} documentation for more information.
 
+=== Emojis
+
+Emojis can be used to decorate and add visual emphasis to your logs. Here are the defaults:
+
+[source,ruby]
+----
+Cogger.emojis
+
+# {
+#   :debug => "🔎",
+#    :info => "🟢",
+#    :warn => "⚠️",
+#   :error => "🛑",
+#   :fatal => "🔥",
+#     :any => "⚫️"
+# }
+----
+
+The `:emoji` formatter is the default formatter which provides dynamic rendering of emojis based on log level. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+logger.info "Demo"
+
+# 🟢 [console] Demo
+----
+
+To add multiple custom emojis, you can chain messages together when registering them:
+
+[source,ruby]
+----
+Cogger.add_emoji(:tada, "🎉")
+      .add_emoji :favorite, "❇️"
+----
+
+If you always want to use the _same_ emoji, you could use the emoji formatter with a specific template:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: Cogger::Formatters::Emoji.new("%<emoji:tada>s %<message:dynamic>s")
+
+logger.info "Demo"
+logger.warn "Demo"
+
+# 🎉 Demo
+# 🎉 Demo
+----
+
+As you can see, using a specific emoji will _always_ display regardless of the current log level.
+
+💡 Emojis are used by the color and emoji formatters so check out the _Templates_ and _Formatters_ sections below to learn more.
+
+=== Aliases
+
+Aliases are specific to the {tone_link} gem which allows you _alias_ specific colors/styles via a new name. Here's how you can use them:
+
+[source,ruby]
+----
+Cogger.add_alias :haze, :bold, :white, :on_purple
+Cogger.aliases
+----
+
+The above would add a `:haze` alias which consists of bold white text on a purple background. Once added, you'd then be able to view a list of all default and custom aliases. You can also override an existing alias if you'd like something else.
+
+Aliases are a powerful way to customize colors via concise syntax in your templates. Building upon the aliases, added above, you'd be able to use them in your templates as follows:
+
+[source,ruby]
+----
+# Element
+"<haze>%<message></haze>"
+
+# Key
+"%<message:haze>"
+----
+
+💡 Aliases are used by the color and emoji formatters so check out the {tone_link} documentation and/or _Templates_ and _Formatters_ sections below to learn more.
+
 === Templates
 
-Templates are used by all formatters and adhere to an _enhanced_ version of the {format_link} as used by `Kernel#format`. All specifiers, flags, width, and precision are supported except for the following restrictions:
+Templates are used by all formatters and adhere to an _enhanced_ version of the {format_link} as used by `Kernel#format`. Here’s what is provided by default:
+
+[source,ruby]
+----
+Cogger.templates
+
+# {
+#   :color => "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s",
+#   :detail => "[%<id>s] [%<level>s] [%<at>s] %<message>s",
+#   :emoji => "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s",
+#   :json => nil,
+#   :property => nil,
+#   :simple => "[%<id>s] %<message>s",
+#   :rack => "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s %<length># s %<params>s"
+# }
+----
+
+All {format_link} specifiers, flags, width, and precision are supported except for the following restrictions:
 
 * Use of _reference by name_ is required which means `%<demo>s` is allowed but `%{demo}` is not. This is because _reference by name_ is required for regular expressions and/or {pattern_matching_link}.
 * Use of the `n$` flag is prohibited because it's not compatible with the above.
@@ -209,7 +324,7 @@ Template keys works exactly as you'd expect when formatting a string using the {
 Each key can be _enhanced_ further by delimiting the key with a colon and supplying a directive. Directives can be any of the following:
 
 * *Dynamic*: Color is automatically calculated based on current log level.
-* *Literal*: Color is specific/static while ignoring current log level.
+* *Specific*: Color is specific/static while ignoring current log level.
 
 Here's a few examples to illustrate:
 
@@ -218,7 +333,7 @@ Here's a few examples to illustrate:
 # Dynamic
 "%<level:dynamic>s %<at:dynamic>s %<id:dynamic>s %<message:dynamic>s"
 
-# Literal
+# Specific
 "%<level:purple>s %<at:yellow>s %<id:cyan>s %<message:green>s"
 ----
 
@@ -237,7 +352,7 @@ Cogger.aliases
 # }
 ----
 
-In the literal example, the color is exactly what is specified which means the `level` is purple, `at` is yellow, `id` is cyan, and `message` is green. This is means you can mix-n-match dynamic and literal directives as desired:
+In the specific example, the `level` is purple; `at` is yellow; `id` is cyan; and `message` is green. This is means you can mix-n-match dynamic and specific directives as desired:
 
 [source,ruby]
 ----
@@ -248,14 +363,14 @@ Assuming the current log level is _info_, then `level` is green; `at` is yellow;
 
 ==== Emojis
 
-Template emojis work similar to _keys_ but the `emoji` key is _special_ in that you can't use `emoji` as a key in your log messages. In other words the `emoji` key can only be used in templates. That said, emojis can be dynamic or literal. Example:
+Template emojis work similar to _keys_ but the `emoji` key is _special_ in that you can't use `emoji` as a key in your log messages. In other words the `emoji` key can only be used in templates. That said, emojis can be dynamic or specific. Example:
 
 [source,ruby]
 ----
 # Dynamic
 "%<emoji:dynamic>s %<message:dynamic>s"
 
-# Literal
+# Specific
 "%<emoji:any>s %<message:dynamic>s"
 ----
 
@@ -274,22 +389,22 @@ Cogger.emojis
 # }
 ----
 
-In the literal example, the emoji will be rendered exactly as defined.
+In the specific example, the emoji will be rendered exactly as defined.
 
 ==== Elements
 
-Template elements are slightly different than _keys_ and _emojis_ in that they behave more like HTML elements. This means you can use open and close tags to use dynamic or literal colors. Example:
+Template elements are slightly different than _keys_ and _emojis_ in that they behave more like HTML elements. This means you can use open and close tags to use dynamic or specific colors. Example:
 
 [source,ruby]
 ----
 # Dynamic
 "<dynamic>%<level>s %<at>s %<id>s %<message>s</dynamic>"
 
-# Literal
+# Specific
 "<purple>%<level>s %<at>s %<id>s %<message>s</purple>"
 ----
 
-In the dynamic example, all characters within the template string will use the same color as determined by the current log level. In the literal example, all characters will be purple.
+In the dynamic example, all characters within the template string will use the same color as determined by the current log level. In the specific example, all characters will be purple.
 
 Using template elements, in this manner, keeps your templates simple when needing to apply the same color to multiple characters at once.
 
@@ -321,88 +436,12 @@ Additional keys as provided by your message hash and/or tags can be customized a
 
 Template keys, emojis, and elements do have a few restrictions:
 
-* Use the special `emoji` key to provide dynamic or literal emoji logging.
+* Use the special `emoji` key to provide dynamic or specific emoji logging.
 * Use the special `tags` key to provide tagged logging. More information on tags can be found later in this document.
 * Avoid supplying the same keys as the default keys. Example: `logger.info id: :bad, at: Time.now, level: :bogus`. This is because these keys will be ignored. In other words, you can't _override_ the default keys.
 * Avoid wrapping keys and/or emojis in elements because nesting isn't supported and can lead to strange output. Example: `<green>%<emoji:error>s %<id:dynamic>s</green>`.
 * Avoid wrapping elements within elements because nesting isn't supported and can lead to strange output. Example: `<dynamic><cyan>%<message>s</cyan></dynamic>`.
 * Avoid situations where a message hash doesn't match the keys in the template because an empty message will be logged instead. This applies to all formatters except the JSON formatter which will log any key/value that doesn't have a `nil` value.
-
-=== Emojis
-
-In addition to coloring to your log output, you can add emojis as well. Here are the defaults:
-
-[source,ruby]
-----
-Cogger.emojis
-
-# {
-#   :debug => "🔎",
-#    :info => "🟢",
-#    :warn => "⚠️",
-#   :error => "🛑",
-#   :fatal => "🔥",
-#     :any => "⚫️"
-# }
-----
-
-The `:emoji` formatter is the default formatter which provides dynamic rendering of emojis based on log level. Example:
-
-[source,ruby]
-----
-logger = Cogger.new
-logger.info "Demo"
-
-# 🟢 [console] Demo
-----
-
-To add one or more emojis, you can chain messages together when registering them:
-
-[source,ruby]
-----
-Cogger.add_emoji(:tada, "🎉")
-      .add_emoji :favorite, "❇️"
-----
-
-If you always want to use the _same_ emoji, you could use the emoji formatter with a specific template:
-
-[source,ruby]
-----
-logger = Cogger.new formatter: Cogger::Formatters::Emoji.new("%<emoji:tada>s %<message:dynamic>s")
-
-logger.info "Demo"
-logger.warn "Demo"
-
-# 🎉 Demo
-# 🎉 Demo
-----
-
-As you can see, using a specific and non-dynamic emoji will _always_ display regardless of the current log level.
-
-=== Aliases
-
-Aliases are specific to the {tone_link} gem which allows you _alias_ specific colors/styles via a new name. Here's how you can use them:
-
-[source,ruby]
-----
-Cogger.add_alias :haze, :bold, :white, :on_purple
-Cogger.aliases
-----
-
-The above would add a `:haze` alias which consists of bold white text on a purple background. Once added, you'd then be able to view a list of all default and custom aliases. You can also override an existing alias if you'd like something else.
-
-Aliases are a powerful way to customize your colors and use short syntax in your templates. Building upon the alias, added above, you'd be able to use it in your templates as follows:
-
-[source,ruby]
-----
-# Universal
-"<haze>%<message></haze>"
-
-# Individual
-"%<message:haze>"
-----
-
-💡 These aliases are used by the color and emoji formatters but check out the {tone_link} documentation and _Formatters_ section below for further examples.
 
 === Formatters
 
@@ -413,28 +452,32 @@ Multiple formatters are provided for you which can be further customized as need
 Cogger.formatters
 
 # {
-#    :color => [
-#     Cogger::Formatters::Color < Object,
-#     nil
+#      :color => [
+#     Cogger::Formatters::Color < Cogger::Formatters::Abstract,
+#     "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
 #   ],
-#   :detail => [
-#     Cogger::Formatters::Simple < Object,
+#     :detail => [
+#     Cogger::Formatters::Simple < Cogger::Formatters::Abstract,
 #     "[%<id>s] [%<level>s] [%<at>s] %<message>s"
 #   ],
-#    :emoji => [
+#      :emoji => [
 #     Cogger::Formatters::Emoji < Cogger::Formatters::Color,
+#     "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
+#   ],
+#       :json => [
+#     Cogger::Formatters::JSON < Cogger::Formatters::Abstract,
 #     nil
 #   ],
-#     :json => [
-#     Cogger::Formatters::JSON < Object,
+#   :property => [
+#     Cogger::Formatters::Property < Cogger::Formatters::Abstract,
 #     nil
 #   ],
-#   :simple => [
-#     Cogger::Formatters::Simple < Object,
-#     nil
+#     :simple => [
+#     Cogger::Formatters::Simple < Cogger::Formatters::Abstract,
+#     "[%<id>s] %<message>s"
 #   ],
-#     :rack => [
-#     Cogger::Formatters::Simple < Object,
+#       :rack => [
+#     Cogger::Formatters::Simple < Cogger::Formatters::Abstract,
 #     "[%<id>s] [%<level>s] [%<at>s] %<verb>s %<status>s %<duration>s %<ip>s %<path>s %<length>s # %<params>s"
 #   ]
 # }
@@ -457,28 +500,13 @@ Cogger.get_formatter :bogus
 # Unregistered formatter: bogus. (KeyError)
 ----
 
-Symbols or strings can be used interchangeably when adding/getting formatters. As mentioned above, a template doesn't have to be supplied if you want to use the formatter's default template which can be inspected as follows:
-
-[source,ruby]
-----
-Cogger::Formatters::Color::TEMPLATE
-# "<dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
-
-Cogger::Formatters::Emoji::TEMPLATE
-# "%<emoji:dynamic>s <dynamic>[%<id>s]</dynamic> %<message:dynamic>s"
-
-Cogger::Formatters::JSON::TEMPLATE
-# nil
-
-Cogger::Formatters::Simple::TEMPLATE
-# "[%<id>s] %<message>s"
-----
+Symbols or strings can be used interchangeably when adding/getting formatters. As mentioned above, a template doesn't have to be supplied if you want to use the formatter's default template which can be inspected via `Cogger.templates` as mentioned earlier.
 
 💡 When you find yourself customizing any of the default formatters, you can reduce typing by adding your custom configuration to the registry and then referring to it via it's associated key when initializing a new logger.
 
 ==== Simple
 
-The simple formatter is a bare bones formatter that uses no color information, doesn't support the universal/dynamic template syntax, and only supports the {format_link} as mentioned in the _Templates_ section earlier. Example:
+The simple formatter is a bare bones formatter that uses no color information and only supports basic {format_link} as mentioned in the _Templates_ section earlier. Example:
 
 [source,ruby]
 ----
@@ -591,9 +619,76 @@ This formatter is the _Simple_ formatter with a different template and can be co
 logger = Cogger.new formatter: :detail
 ----
 
+==== Property
+
+This formatter is similar in behavior to the _simple_ formatter except the template allows you to _order_ the layout of your keys. All other template information is ignored. Example:
+
+*Default Order*
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :property
+
+logger.info verb: "GET", path: "/"
+# id=console level=INFO at=2024-08-28T14:47:09.447-06:00 verb=GET path=/
+----
+
+*Custom Order*
+
+[source,ruby]
+----
+logger = Cogger.new formatter: Cogger::Formatters::Property.new("%<level>s %<verb>s")
+
+logger.info verb: "GET", path: "/"
+# level=INFO verb=GET id=console at=2024-08-28T14:49:13.861-06:00 path=/
+----
+
+Your template can be a full or partial match of keys. If no keys match what is defined in the template, then the original order of the keys will be used instead.
+
+You can always supply a message as your first argument -- or specify it by using the `:message` key -- but is removed if not supplied which is why the above doesn't print a message in the output. To illustrate, the following are equivalent:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :property
+
+logger.info "Demo"
+id=console level=INFO at=2024-08-28T14:50:01.990-06:00 message=Demo
+
+logger.info message: "demo"
+# id=console level=INFO at=2024-08-28T14:50:25.344-06:00 message=demo
+----
+
+When tags are provided, the `:tags` key will appear in the output depending on whether you are using _single tags_. If hash tags are used, they'll show up as additional attributes in the output. Here's an example where a mix of single and hash keys are used:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :property
+
+logger.info "Demo", tags: ["WEB", "PRIMARY", {service: :api, demo: true}]
+# id=console
+# level=INFO
+# at=2024-08-28T14:51:06.600-06:00
+# message=Demo
+# tags="[WEB, PRIMARY]"
+# service=api
+# demo=true
+----
+
+Notice, with the above, that the single tags of `WEB` and `PRIMARY` show up in the `tags` stringified array while the `:service` and `:demo` keys show up at the top level of the hash. Since the `:tags`, `:service`, `:demo` keys are normal keys, like any key in your output, this means you can use a custom template to arrange the order of these keys if you don't like the default.
+
+Emojis, spaces, tabs, new lines, and control characters will all be escaped and wrapped in quotes if detected for any value. Here's where the message has the special characters but this formatting would be applied to any value.
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :property
+
+logger.info "☀️ An example.\t\n \x1F"
+# id=console level=INFO at=2024-08-28T15:03:24.107-06:00 message="\u2600\uFE0F An example.\t\n \x1F"
+----
+
 ==== JSON
 
-This formatter is similar in behavior to the _simple_ formatter except that date/time defaults to UTC, is formatted according to link:https://datatracker.ietf.org/doc/html/rfc3339[RFC 3339] using millisecond precision, and the template allows you to _order_ the layout of your keys. All other template information is ignored, only the order of your template keys matters. Example:
+This formatter is similar in behavior to the _property_ formatter because you can _order_ the layout of your keys. All other template information is ignored, only the order of your template keys matters. Example:
 
 *Default Order*
 
@@ -671,7 +766,7 @@ require "logger"
 logger = Cogger.new formatter: Logger::Formatter.new
 logger.info "Demo"
 
-# I, [2023-10-15T14:32:55.061777 #72801]  INFO -- console: #<data Cogger::Entry id="console", level=:info, at=2023-10-15 14:32:55.061734 -0600, message="Demo", tags=[], payload={}>
+# I, [2024-08-28T15:57:31.930722 #69391]  INFO -- console: #<data Cogger::Entry id="console", level=:INFO, at=2024-08-28 15:57:31.930696 -0600, message="Demo", tags=[], datetime_format="%Y-%m-%dT%H:%M:%S.%L%:z", payload={}>
 ----
 
 While the above doesn't cause an error, you only get a dump of the `Cogger::Entry` which is not what you want. To replicate native {logger_link} functionality, you can use the `Simple` formatter as follows:
@@ -691,31 +786,36 @@ The above is the rough equivalent of what {logger_link} provides for you by defa
 
 ==== Custom
 
-Should none of the built-in formatters be to your liking, you can implement, use, and/or register a custom formatter as well. The most minimum, bare bones, skeleton would be:
+Should none of the built-in formatters be to your liking, you can implement, use, and/or register a custom formatter as well. A minimum implementation would be to inherit from the `Abstract` superclass as follows:
 
 [source,ruby]
 ----
-class MyFormatter
+class MyFormatter < Cogger::Formatters::Abstract
   TEMPLATE = "%<message>s"
 
-  def initialize template = TEMPLATE, sanitizer: Kit::Sanitizer.new
+  def initialize template = TEMPLATE
+    super()
     @template = template
-    @sanitizer = sanitizer
   end
 
-  def call(*input) = "#{format template, sanitizer.call(*input)}\n"
+  def call(*input)
+    *, entry = input
+    attributes = sanitize entry, :tagged
+
+    "#{format(template, attributes).tap(&:strip!)}\n"
+  end
 
   private
 
-  attr_reader :template, :sanitizer
+  attr_reader :template
 end
 ----
 
-There is no restriction on what dependency you might want to initialize your custom formatter with but -- as a bare minimum -- you'll want to provide a default template and inject the sanitizer which sanitizes the raw input into a `Cogger::Entry` object you can interact with in your implementation. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `level`, `at`, `id`, `entry`) and answers back a formatted string. If you need more examples you can look at any of the formatters provided within this gem.
+There is no restriction on the dependencies you might want to inject into your custom formatter but -- at a minimum -- you'll want to provide a default template so it can be sanitized by the superclass. The only other requirement is that you must implement `#call` which takes a log entry which is an array of positional arguments (i.e. `level`, `at`, `id`, `entry`) and answers back a formatted string. If you need more examples you can look at any of the formatters provided within this gem.
 
 === Tags
 
-Tags allow you to tag your messages at both a global and local (i.e. per message) level. For example, here's a single global tag:
+Tags allow you to tag your messages at both a global and local (i.e. per message) level. _Please note that tags are mostly universal in behavior but can differ based on formatter used._ For example, here's a single global tag:
 
 [source,ruby]
 ----
@@ -803,11 +903,11 @@ logger = Cogger.new formatter: :json
 logger.info login: "jayne", password: "secret"
 
 # {
-#   "id":"console",
-#   "level":"INFO",
-#   "at":"2023-10-18 19:21:40 -0600",
-#   "login":"jayne",
-#   "password":"[FILTERED]"
+#   "id": "console",
+#   "level": "INFO",
+#   "at": "2024-08-28T16:09:26.132-06:00",
+#   "login": "jayne",
+#   "password": "[FILTERED]"
 # }
 ----
 
@@ -848,8 +948,8 @@ logger.info "Demo"
 
 # 🟢 [console] Demo
 # [console] Demo
-# [console] [INFO] [2024-06-16 15:09:38 -0600] Demo
-# {"id":"console","level":"INFO","at":"2024-06-16T21:09:38.896+00:00","message":"Demo"}
+# [console] [INFO] [2024-08-28T16:10:27.833-06:00] Demo
+# {"id":"console","level":"INFO","at":"2024-08-28T16:10:27.833-06:00","message":"Demo"}
 # [console] Demo
 ----
 
@@ -1029,6 +1129,7 @@ logger.inspect
 #                @io=IO,
 #                @level=1,
 #                @formatter=Cogger::Formatters::Emoji,
+#                @datetime_format=\"%Y-%m-%dT%H:%M:%S.%L%:z\",
 #                @tags=[],
 #                @mode=false,
 #                @age=0,
