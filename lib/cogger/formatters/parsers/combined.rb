@@ -5,7 +5,7 @@ module Cogger
     module Parsers
       # Parses template literals, emojis, and keys for specific and dynamic colors.
       class Combined
-        STEPS = [Element.new, Emoji.new, Specific.new].freeze
+        STEPS = [Element.new, Emoji.new, Key.new].freeze # Order matters.
 
         def initialize steps: STEPS
           @steps = steps

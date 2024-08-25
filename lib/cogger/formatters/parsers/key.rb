@@ -5,8 +5,8 @@ require "core"
 module Cogger
   module Formatters
     module Parsers
-      # Parses template for specific and dynamic string format specifiers.
-      class Specific < Abstract
+      # Parses template for specific and dynamic keys (i.e. string format specifiers).
+      class Key < Abstract
         PATTERN = /
           %                                   # Start.
           (?<flag>[\s#+-0*])?                 # Optional flag.

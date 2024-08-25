@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Cogger::Formatters::Parsers::Specific do
+RSpec.describe Cogger::Formatters::Parsers::Key do
   subject(:parser) { described_class.new }
 
   describe "#call" do
