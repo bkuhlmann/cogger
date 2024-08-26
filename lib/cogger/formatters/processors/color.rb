@@ -12,7 +12,7 @@ module Cogger
 
         def call(template, *input)
           attributes = sanitizer.call(*input).tagged
-          [parser.call(template, **attributes), attributes]
+          [parser.call(template, attributes.fetch(:level)), attributes]
         end
 
         private

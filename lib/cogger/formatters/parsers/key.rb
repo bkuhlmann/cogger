@@ -14,9 +14,9 @@ module Cogger
           \.?                                 # Optional precision delimiter.
           (?<precision>\d+)?                  # Optional precision value.
           <                                   # Reference start.
-          (?<name>\w+)                        # Name.
+          (?<key>\w+)                         # Key.
           :                                   # Delimiter.
-          (?<color>\w+)                       # Color.
+          (?<directive>\w+)                   # Directive.
           >                                   # Reference end.
           (?<specifier>[ABEGXabcdefgiopsux])  # Specifier.
         /x
@@ -26,23 +26,24 @@ module Cogger
           @pattern = pattern
         end
 
-        # :reek:TooManyStatements
-        def call(template, **)
-          template.gsub! pattern do |match|
-            captures = expressor.last_match.named_captures
-            original_color = captures["color"]
-            color = colorizer.call(original_color, **)
-
-            match.sub! ":#{original_color}", Core::EMPTY_STRING
-            registry.color[match, color]
-          end
-
+        def call template, level
+          mutate template, level
           template
         end
 
         private
 
         attr_reader :pattern
+
+        def mutate template, level
+          template.gsub! pattern do |match|
+            captures = expressor.last_match.named_captures
+            directive = captures["directive"]
+            match.sub! ":#{directive}", Core::EMPTY_STRING
+
+            transform_color match, directive, level
+          end
+        end
       end
     end
   end

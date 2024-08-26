@@ -21,16 +21,16 @@ RSpec.describe Cogger::Formatters::Parsers::Combined do
       ]
     end
 
-    it "answers template with literals, emojis, and keys with specific and dynamic colors" do
+    it "answers template with elements, emojis, and keys with specific and dynamic colors" do
       template = "%<emoji:dynamic>s %<emoji:fatal>s %<one:cyan>s %<two:dynamic>s " \
                  "<yellow>three</yellow> " \
                  "<dynamic>four</dynamic>"
 
-      expect(parser.call(template, level: "debug")).to have_color(color, *proof)
+      expect(parser.call(template, "DEBUG")).to have_color(color, *proof)
     end
 
-    it "answers template with no colors" do
-      expect(parser.call("Test".dup, level: "info")).to eq("Test")
+    it "answers template with no directives" do
+      expect(parser.call("Test".dup, "INFO")).to eq("Test")
     end
   end
 end

@@ -11,8 +11,8 @@ module Cogger
           @steps = steps
         end
 
-        def call(template, **attributes)
-          steps.reduce(template.dup) { |modification, step| step.call modification, **attributes }
+        def call template, level
+          steps.reduce(template.dup) { |modification, step| step.call modification, level }
         end
 
         private
