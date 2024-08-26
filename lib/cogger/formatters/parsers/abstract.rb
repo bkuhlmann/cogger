@@ -3,11 +3,13 @@
 module Cogger
   module Formatters
     module Parsers
-      # An abstrct class with default functionality.
+      # An abstract class with common functionality.
       class Abstract
-        def initialize registry: Cogger, colorizer: Kit::Colorizer, expressor: Regexp
+        TRANSFORMERS = {color: Transformers::Color.new, emoji: Transformers::Emoji.new}.freeze
+
+        def initialize registry: Cogger, transformers: TRANSFORMERS, expressor: Regexp
           @registry = registry
-          @colorizer = colorizer
+          @transformers = transformers
           @expressor = expressor
         end
 
@@ -18,7 +20,11 @@ module Cogger
 
         protected
 
-        attr_reader :registry, :colorizer, :expressor
+        attr_reader :registry, :transformers, :expressor
+
+        def transform_color(...) = transformers.fetch(:color).call(...)
+
+        def transform_emoji(...) = transformers.fetch(:emoji).call(...)
       end
     end
   end
