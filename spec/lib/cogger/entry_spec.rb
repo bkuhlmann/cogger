@@ -15,6 +15,7 @@ RSpec.describe Cogger::Entry do
         at: be_a(Time),
         message: nil,
         tags: [],
+        datetime_format: Cogger::DATETIME_FORMAT,
         payload: {}
       )
     end
@@ -74,6 +75,16 @@ RSpec.describe Cogger::Entry do
       )
     end
 
+    it "answers entry for message with payload and date/time format" do
+      entry = described_class.for "test", datetime_format: "%Y", one: 1, two: 2
+
+      expect(entry).to have_attributes(
+        message: "test",
+        datetime_format: "%Y",
+        payload: {one: 1, two: 2}
+      )
+    end
+
     it "answers entry for non-string message" do
       object = Object.new
       entry = described_class.for object
@@ -94,12 +105,14 @@ RSpec.describe Cogger::Entry do
 
   describe ".for_crash" do
     it "answers fatal entry" do
+      at = Time.now
       error = StandardError.new "Danger!"
-      entry = described_class.for_crash "Crash", error, id: :test
+      entry = described_class.for_crash("Crash", error, id: :test, at:)
 
       expect(entry).to have_attributes(
         id: :test,
         level: "FATAL",
+        at:,
         message: "Crash",
         payload: {
           error_message: "Danger!",
@@ -117,6 +130,7 @@ RSpec.describe Cogger::Entry do
         level: "INFO",
         at: instance_of(Time),
         tags: [],
+        datetime_format: Cogger::DATETIME_FORMAT,
         payload: {}
       )
     end
