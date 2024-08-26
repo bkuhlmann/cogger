@@ -11,6 +11,7 @@ module Cogger
     :io,
     :level,
     :formatter,
+    :datetime_format,
     :tags,
     :mode,
     :age,
@@ -25,6 +26,7 @@ module Cogger
                    io: $stdout,
                    level: Level.call,
                    formatter: Formatters::Emoji.new,
+                   datetime_format: DATETIME_FORMAT,
                    tags: Core::EMPTY_ARRAY,
                    mode: false,
                    age: 0,
@@ -45,15 +47,16 @@ module Cogger
                  progname: id,
                  level:,
                  formatter:,
+                 datetime_format:,
                  binmode: mode,
                  shift_period_suffix: suffix
     end
 
     def inspect
       "#<#{self.class} @id=#{id}, @io=#{io.class}, @level=#{level}, " \
-      "@formatter=#{formatter.class}, @tags=#{tags.inspect}, " \
-      "@mode=#{mode}, @age=#{age}, @size=#{size}, @suffix=#{suffix.inspect}, " \
-      "@entry=#{entry}, @logger=#{logger}>"
+      "@formatter=#{formatter.class}, @datetime_format=#{datetime_format.inspect}, " \
+      "@tags=#{tags.inspect}, @mode=#{mode}, @age=#{age}, @size=#{size}, " \
+      "@suffix=#{suffix.inspect}, @entry=#{entry}, @logger=#{logger}>"
     end
   end
 end

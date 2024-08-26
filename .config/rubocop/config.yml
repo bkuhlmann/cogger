@@ -3,6 +3,7 @@ inherit_gem:
 
 Metrics/AbcSize:
   Exclude:
+    - "lib/cogger/configuration.rb"
     - "lib/cogger/registry.rb"
 Metrics/MethodLength:
   Exclude:

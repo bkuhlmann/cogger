@@ -12,6 +12,7 @@ RSpec.describe Cogger::Configuration do
         io: $stdout,
         level: Logger::INFO,
         formatter: instance_of(Cogger::Formatters::Emoji),
+        datetime_format: Cogger::DATETIME_FORMAT,
         tags: [],
         mode: false,
         age: 0,
@@ -62,16 +63,21 @@ RSpec.describe Cogger::Configuration do
         formatter: instance_of(Cogger::Formatters::Emoji)
       )
     end
+
+    it "answers default date/time format" do
+      logger = configuration.to_logger
+      expect(logger.datetime_format).to eq(Cogger::DATETIME_FORMAT)
+    end
   end
 
   describe "#inspect" do
     it "answers attributes" do
       expect(configuration.inspect).to match(
         /
-          #<Cogger::Configuration @id=rspec, @io=IO, @level=1,
-          @formatter=Cogger::Formatters::Emoji,\s@tags=\[\],\s@mode=false,
+          #<Cogger::Configuration @id=rspec, @io=IO, @level=1, @formatter=Cogger::Formatters::Emoji,
+          \s@datetime_format="#{Cogger::DATETIME_FORMAT}",\s@tags=\[\],\s@mode=false,
           \s@age=0,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@entry=Cogger::Entry,\s@logger=Logger>
-        /x
+        /xo
       )
     end
   end
