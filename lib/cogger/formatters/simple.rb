@@ -2,20 +2,25 @@
 
 module Cogger
   module Formatters
-    # Formats simple templates that require no additional processing.
-    class Simple
+    # Formats simple templates that require minimal processing.
+    class Simple < Abstract
       TEMPLATE = "[%<id>s] %<message>s"
 
-      def initialize template = TEMPLATE, sanitizer: Kit::Sanitizer
+      def initialize template = TEMPLATE
+        super()
         @template = template
-        @sanitizer = sanitizer
       end
 
-      def call(*input) = "#{format(template, sanitizer.call(*input).tagged).tap(&:strip!)}\n"
+      def call(*input)
+        *, entry = input
+        attributes = sanitize entry, :tagged
+
+        "#{format(template, attributes).tap(&:strip!)}\n"
+      end
 
       private
 
-      attr_reader :template, :sanitizer
+      attr_reader :template, :processor
     end
   end
 end

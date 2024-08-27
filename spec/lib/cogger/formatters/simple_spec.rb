@@ -6,11 +6,11 @@ RSpec.describe Cogger::Formatters::Simple do
   subject(:formatter) { described_class.new template }
 
   describe "#call" do
-    let(:at) { Time.now }
+    include_context "with current time"
 
     it "answers simple string" do
       formatter = described_class.new
-      result = formatter.call Cogger::Entry.for("test")
+      result = formatter.call Cogger::Entry.for("test", at: now)
 
       expect(result).to eq("[rspec] test\n")
     end
@@ -19,7 +19,7 @@ RSpec.describe Cogger::Formatters::Simple do
       let(:template) { "%<one>s %<two>s %<three>s" }
 
       it "answers string where leading and trailing spaces are removed" do
-        result = formatter.call Cogger::Entry.for(one: nil, two: "Two", three: nil)
+        result = formatter.call Cogger::Entry.for(one: nil, two: "Two", three: nil, at: now)
         expect(result).to eq("Two\n")
       end
     end
@@ -29,6 +29,7 @@ RSpec.describe Cogger::Formatters::Simple do
 
       it "answers detailed string" do
         result = formatter.call Cogger::Entry.for(
+          at: now,
           verb: "GET",
           path: "/up",
           duration: "8ms",

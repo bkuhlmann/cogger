@@ -62,7 +62,7 @@ RSpec.describe Cogger::Formatters::JSON do
       )
     end
 
-    it "answers message hash with custom template and invalid keys" do
+    it "answers message hash with custom template and non-matching keys" do
       formatter = described_class.new "%<one>s %<two>s %<three>s"
 
       expect(formatter.call(Cogger::Entry.for(at: now, verb: "GET", path: "/"))).to eq(

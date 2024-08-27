@@ -6,33 +6,35 @@ require "json"
 module Cogger
   module Formatters
     # Formats as JSON output.
-    class JSON
+    class JSON < Abstract
       TEMPLATE = nil
 
-      def initialize template = TEMPLATE,
-                     parser: Parsers::KeyExtractor.new,
-                     sanitizer: Kit::Sanitizer
-        @positions = template ? parser.call(template) : Core::EMPTY_ARRAY
-        @sanitizer = sanitizer
+      def initialize template = TEMPLATE, parser: Parsers::KeyExtractor.new
+        super()
+        @template = template
+        @parser = parser
       end
 
       def call(*input)
-        attributes = sanitizer.call(*input).tagged_attributes.tap(&:compact!)
-        format_date_time attributes
+        *, entry = input
+        attributes = sanitize(entry, :tagged_attributes).tap(&:compact!)
 
-        return "#{attributes.to_json}\n" if positions.empty?
-
-        "#{attributes.slice(*positions).merge!(attributes.except(*positions)).to_json}\n"
+        %(#{reorder(attributes).to_json}\n)
       end
 
       private
 
-      attr_reader :positions, :sanitizer
+      attr_reader :template, :parser
 
-      # :reek:UtilityFunction
-      def format_date_time attributes
-        attributes[:at] = attributes[:at].strftime "%Y-%m-%dT%H:%M:%S.%L%:z"
+      def reorder attributes
+        positions = positions_for template
+
+        return attributes if positions.empty?
+
+        attributes.slice(*positions).merge!(attributes.except(*positions))
       end
+
+      def positions_for(template) = template ? parser.call(template) : Core::EMPTY_ARRAY
     end
   end
 end

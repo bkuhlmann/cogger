@@ -3,7 +3,7 @@
 module Cogger
   module Formatters
     # Formats fatal crashes.
-    class Crash
+    class Crash < Abstract
       TEMPLATE = <<~CONTENT
         <dynamic>[%<id>s] [%<level>s] [%<at>s] Crash!
           %<message>s
@@ -11,20 +11,25 @@ module Cogger
         %<backtrace>s</dynamic>
       CONTENT
 
-      def initialize template = TEMPLATE, processor: Processors::Color.new
+      def initialize template = TEMPLATE, parser: Parsers::Combined.new
+        super()
         @template = template
-        @processor = processor
+        @parser = parser
       end
 
       def call(*input)
-        updated_template, attributes = processor.call(template, *input)
+        *, entry = input
+        attributes = sanitize entry, :tagged
         attributes[:backtrace] = %(  #{attributes[:backtrace].join "\n  "})
-        "#{format(updated_template, **attributes)}\n"
+
+        "#{format(parse(attributes[:level]), attributes)}\n"
       end
 
       private
 
-      attr_reader :template, :processor
+      attr_reader :template, :parser
+
+      def parse(level) = parser.call template, level
     end
   end
 end

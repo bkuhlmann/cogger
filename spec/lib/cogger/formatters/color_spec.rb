@@ -24,7 +24,7 @@ RSpec.describe Cogger::Formatters::Color do
       )
     end
 
-    context "when universal and dynamic" do
+    context "with dynamic element" do
       let(:template) { "<dynamic>%<level>s %<at>s %<id>s %<message>s</dynamic>" }
 
       it "answers colorized string" do
@@ -33,7 +33,7 @@ RSpec.describe Cogger::Formatters::Color do
       end
     end
 
-    context "when universal and specific" do
+    context "with specific element" do
       let(:template) { "<cyan>%<level>s %<at>s %<id>s %<message>s</cyan>" }
 
       it "answers colorized string" do
@@ -42,7 +42,7 @@ RSpec.describe Cogger::Formatters::Color do
       end
     end
 
-    context "when individual and dynamic" do
+    context "with dynamic keys" do
       let(:template) { "%<level:dynamic>s %<at:dynamic>s %<id:dynamic>s %<message:dynamic>s" }
 
       let :proof do
@@ -64,7 +64,7 @@ RSpec.describe Cogger::Formatters::Color do
       end
     end
 
-    context "when individual and specific" do
+    context "when specific keys" do
       let(:template) { "%<level:cyan>s %<at:cyan>s %<id:cyan>s %<message:cyan>s" }
 
       let :proof do
@@ -86,7 +86,7 @@ RSpec.describe Cogger::Formatters::Color do
       end
     end
 
-    context "when individual and mixed (dynamic and specific)" do
+    context "with dynamic and specific keys" do
       let(:template) { "%<level:dynamic>s %<at:yellow>s %<id:cyan>s %<message:purple>s" }
 
       let :proof do
@@ -108,10 +108,10 @@ RSpec.describe Cogger::Formatters::Color do
       end
     end
 
-    context "with dynamic emoji template" do
+    context "with dynamic emoji" do
       let(:template) { Cogger::Formatters::Emoji::TEMPLATE }
 
-      it "answers string without leading space" do
+      it "answers colorized string" do
         result = formatter.call Cogger::Entry[level: "ANY", at: now, message: "Test."]
 
         expect(result).to have_color(
@@ -125,7 +125,22 @@ RSpec.describe Cogger::Formatters::Color do
       end
     end
 
-    context "with no directives or attributes" do
+    context "with specific emoji" do
+      let(:template) { "%<emoji:any>s %<id:dynamic>s" }
+
+      it "answers string without leading space" do
+        result = formatter.call Cogger::Entry[level: "INFO", at: now, message: "Test."]
+
+        expect(result).to have_color(
+          color,
+          ["⚫️ "],
+          ["rspec", :green],
+          ["\n"]
+        )
+      end
+    end
+
+    context "with no directives" do
       let(:template) { "test" }
 
       it "answers string with no colorization" do
