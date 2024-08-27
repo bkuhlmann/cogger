@@ -6,12 +6,13 @@ RSpec.describe Cogger::Formatters::Crash do
   subject(:formatter) { described_class.new }
 
   describe "#call" do
+    include_context "with current time"
+
     let(:color) { Cogger.color }
-    let(:at) { Time.now }
 
     let :entry do
       error = KeyError.new("Danger!").tap { |instance| instance.set_backtrace %w[one two three] }
-      Cogger::Entry.for_crash "test", error, id: :test
+      Cogger::Entry.for_crash "test", error, id: :test, at: now
     end
 
     it "answers string with default template" do

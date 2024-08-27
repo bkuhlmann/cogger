@@ -31,7 +31,7 @@ module Cogger
 
       # :reek:UtilityFunction
       def format_date_time attributes
-        attributes[:at] = attributes[:at].utc.strftime "%Y-%m-%dT%H:%M:%S.%L%:z"
+        attributes[:at] = attributes[:at].strftime "%Y-%m-%dT%H:%M:%S.%L%:z"
       end
     end
   end

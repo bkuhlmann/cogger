@@ -6,12 +6,13 @@ RSpec.describe Cogger::Formatters::Emoji do
   subject(:formatter) { described_class.new template }
 
   describe "#call" do
-    let(:at) { Time.now }
+    include_context "with current time"
+
     let(:color) { Cogger.color }
 
     it "answers colorized string with default template using emoji and color" do
       formatter = described_class.new
-      result = formatter.call Cogger::Entry.for("Test.")
+      result = formatter.call Cogger::Entry.for("Test.", at: now)
 
       expect(result).to have_color(
         color,
