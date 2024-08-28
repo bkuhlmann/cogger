@@ -28,6 +28,10 @@ puts "\nJSON\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :json
 levels.each { |level| logger.public_send level, "A demo." }
 
+puts "\nPROPERTY\n\n"
+logger = Cogger.new id: :demo, level: :debug, formatter: :property
+levels.each { |level| logger.public_send level, "A demo." }
+
 puts "\nRACK\n\n"
 logger = Cogger.new id: :demo, level: :debug, formatter: :rack
 levels.each do |level|
