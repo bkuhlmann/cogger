@@ -23,10 +23,11 @@ module Cogger
 
       def sanitize entry, message
         entry.public_send(message).tap do |attributes|
-          function = -> value { sanitize_datetime value, format: entry.datetime_format }
-
           filter attributes
-          attributes.transform_values!(&function)
+
+          attributes.transform_values! do |value|
+            sanitize_datetime value, format: entry.datetime_format
+          end
         end
       end
 
