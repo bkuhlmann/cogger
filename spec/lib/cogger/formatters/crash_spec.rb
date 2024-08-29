@@ -6,13 +6,12 @@ RSpec.describe Cogger::Formatters::Crash do
   subject(:formatter) { described_class.new }
 
   describe "#call" do
-    include_context "with current time"
-
     let(:color) { Cogger.color }
+    let(:datetime_format) { entry.at.strftime entry.datetime_format }
 
     let :entry do
       error = KeyError.new("Danger!").tap { |instance| instance.set_backtrace %w[one two three] }
-      Cogger::Entry.for_crash "test", error, id: :test, at: now
+      Cogger::Entry.for_crash "test", error, id: :test
     end
 
     it "answers string with default template" do
@@ -21,7 +20,8 @@ RSpec.describe Cogger::Formatters::Crash do
       expect(result).to have_color(
         color,
         [
-          "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  one\n  two\n  three",
+          "[test] [FATAL] [#{datetime_format}] Crash!\n  test\n  " \
+          "Danger! (KeyError)\n  one\n  two\n  three",
           :bold,
           :white,
           :on_red
@@ -48,7 +48,7 @@ RSpec.describe Cogger::Formatters::Crash do
         expect(result).to have_color(
           color,
           [
-            "[test] [FATAL] [#{at}] Crash!\n  test\n  Danger! (KeyError)\n  " \
+            "[test] [FATAL] [#{datetime_format}] Crash!\n  test\n  Danger! (KeyError)\n  " \
             "one\n  two\n  three",
             :red
           ],

@@ -105,14 +105,13 @@ RSpec.describe Cogger::Entry do
 
   describe ".for_crash" do
     it "answers fatal entry" do
-      at = Time.now
       error = StandardError.new "Danger!"
-      entry = described_class.for_crash("Crash", error, id: :test, at:)
+      entry = described_class.for_crash "Crash", error, id: :test
 
       expect(entry).to have_attributes(
         id: :test,
         level: "FATAL",
-        at:,
+        at: kind_of(Time),
         message: "Crash",
         payload: {
           error_message: "Danger!",

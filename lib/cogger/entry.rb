@@ -15,10 +15,9 @@ module Cogger
           payload:
     end
 
-    def self.for_crash message, error, id:, at: ::Time.now
+    def self.for_crash message, error, id:
       new id:,
           level: "FATAL",
-          at:,
           message:,
           payload: {
             error_message: error.message,
