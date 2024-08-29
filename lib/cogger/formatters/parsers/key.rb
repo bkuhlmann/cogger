@@ -10,9 +10,8 @@ module Cogger
         PATTERN = /
           %                                   # Start.
           (?<flag>[\s#+-0*])?                 # Optional flag.
+          \.?                                 # Optional precision.
           (?<width>\d+)?                      # Optional width.
-          \.?                                 # Optional precision delimiter.
-          (?<precision>\d+)?                  # Optional precision value.
           <                                   # Reference start.
           (?<key>\w+)                         # Key.
           :                                   # Delimiter.

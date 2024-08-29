@@ -29,62 +29,73 @@ RSpec.describe Cogger::Formatters::Parsers::Key do
     end
 
     it "answers template with space flag" do
-      expect(parser.call("% <one:dynamic>s".dup, "INFO")).to have_color(
+      expect(parser.call("% <one:dynamic>d".dup, "INFO")).to have_color(
         color,
-        ["% <one>s", :green]
+        ["% <one>d", :green]
       )
     end
 
     it "answers template with pound flag" do
-      expect(parser.call("%#<one:dynamic>s".dup, "INFO")).to have_color(
+      expect(parser.call("%#<one:dynamic>x".dup, "INFO")).to have_color(
         color,
-        ["%#<one>s", :green]
+        ["%#<one>x", :green]
       )
     end
 
     it "answers template with plus flag" do
-      expect(parser.call("%+<one:dynamic>s".dup, "INFO")).to have_color(
+      expect(parser.call("%+<one:dynamic>x".dup, "INFO")).to have_color(
         color,
-        ["%+<one>s", :green]
+        ["%+<one>x", :green]
       )
     end
 
     it "answers template with dash flag" do
-      expect(parser.call("%-<one:dynamic>s".dup, "INFO")).to have_color(
+      expect(parser.call("%-<one:dynamic>d".dup, "INFO")).to have_color(
         color,
-        ["%-<one>s", :green]
+        ["%-<one>d", :green]
       )
     end
 
     it "answers template with zero flag" do
-      expect(parser.call("%0<one:dynamic>s".dup, "INFO")).to have_color(
+      expect(parser.call("%0<one:dynamic>d".dup, "INFO")).to have_color(
         color,
-        ["%0<one>s", :green]
+        ["%0<one>d", :green]
       )
     end
 
     it "answers template with star flag" do
-      expect(parser.call("%*<one:dynamic>s".dup, "INFO")).to have_color(
+      expect(parser.call("%*<one:dynamic>d".dup, "INFO")).to have_color(
         color,
-        ["%*<one>s", :green]
+        ["%*<one>d", :green]
       )
     end
 
-    it "doesn't parse dollar sign flag" do
+    it "doesn't parse dollar sign flag (position)" do
+      expect(parser.call("%1$s".dup, "INFO")).to eq("%1$s")
+    end
+
+    it "doesn't parse dollar sign flag (key)" do
       expect(parser.call("%$<one:dynamic>s".dup, "INFO")).to eq("%$<one:dynamic>s")
     end
 
-    it "answers template with width specifier" do
+    it "answers template with positive width specifier" do
       expect(parser.call("%10<one:dynamic>s".dup, "INFO")).to have_color(
         color,
         ["%10<one>s", :green]
       )
     end
 
-    it "answers template with precision specifier" do
-      expect(parser.call("%.5<one:dynamic>s".dup, "INFO")).to have_color(
+    it "answers template with negative width specifier" do
+      expect(parser.call("%-10<one:dynamic>s".dup, "INFO")).to have_color(
         color,
-        ["%.5<one>s", :green]
+        ["%-10<one>s", :green]
+      )
+    end
+
+    it "answers template with precision specifier" do
+      expect(parser.call("%.5<one:dynamic>d".dup, "INFO")).to have_color(
+        color,
+        ["%.5<one>d", :green]
       )
     end
 
