@@ -15,7 +15,7 @@ module Cogger
         *, entry = input
         attributes = sanitize entry, :tagged
 
-        "#{format(template, attributes).tap(&:strip!)}\n"
+        format(template, attributes).tap(&:strip!) << NEW_LINE
       end
 
       private

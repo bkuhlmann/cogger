@@ -18,7 +18,7 @@ module Cogger
         *, entry = input
         attributes = sanitize(entry, :tagged_attributes).tap(&:compact!)
 
-        concat(attributes).chop! << "\n"
+        concat(attributes).chop! << NEW_LINE
       end
 
       private

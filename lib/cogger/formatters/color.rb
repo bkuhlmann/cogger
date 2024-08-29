@@ -16,7 +16,7 @@ module Cogger
         *, entry = input
         attributes = sanitize entry, :tagged
 
-        "#{format(parse(attributes[:level]), attributes).tap(&:strip!)}\n"
+        format(parse(attributes[:level]), attributes).tap(&:strip!) << NEW_LINE
       end
 
       private

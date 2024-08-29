@@ -4,6 +4,8 @@ module Cogger
   module Formatters
     # An abstract class with common/shared functionality.
     class Abstract
+      NEW_LINE = "\n"
+
       SANITIZERS = {
         escape: Sanitizers::Escape.new,
         filter: Sanitizers::Filter,

@@ -19,7 +19,7 @@ module Cogger
         *, entry = input
         attributes = sanitize(entry, :tagged_attributes).tap(&:compact!)
 
-        parser.call(template, attributes).to_json << "\n"
+        parser.call(template, attributes).to_json << NEW_LINE
       end
 
       private

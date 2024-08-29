@@ -22,7 +22,7 @@ module Cogger
         attributes = sanitize entry, :tagged
         attributes[:backtrace] = %(  #{attributes[:backtrace].join "\n  "})
 
-        "#{format(parse(attributes[:level]), attributes)}\n"
+        format(parse(attributes[:level]), attributes) << NEW_LINE
       end
 
       private
