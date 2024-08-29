@@ -9,7 +9,7 @@ module Cogger
     class JSON < Abstract
       TEMPLATE = nil
 
-      def initialize template = TEMPLATE, parser: Parsers::KeyExtractor.new
+      def initialize template = TEMPLATE, parser: Parsers::Position.new
         super()
         @template = template
         @parser = parser
@@ -19,22 +19,12 @@ module Cogger
         *, entry = input
         attributes = sanitize(entry, :tagged_attributes).tap(&:compact!)
 
-        %(#{reorder(attributes).to_json}\n)
+        parser.call(template, attributes).to_json << "\n"
       end
 
       private
 
       attr_reader :template, :parser
-
-      def reorder attributes
-        positions = positions_for template
-
-        return attributes if positions.empty?
-
-        attributes.slice(*positions).merge!(attributes.except(*positions))
-      end
-
-      def positions_for(template) = template ? parser.call(template) : Core::EMPTY_ARRAY
     end
   end
 end

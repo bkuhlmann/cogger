@@ -8,7 +8,7 @@ module Cogger
     class Property < Abstract
       TEMPLATE = nil
 
-      def initialize template = TEMPLATE, parser: Parsers::KeyExtractor.new
+      def initialize template = TEMPLATE, parser: Parsers::Position.new
         super()
         @template = template
         @parser = parser
@@ -26,20 +26,10 @@ module Cogger
       attr_reader :template, :parser
 
       def concat attributes
-        reorder(attributes).each.with_object(+"") do |(key, value), line|
+        parser.call(template, attributes).each.with_object(+"") do |(key, value), line|
           line << key.to_s << "=" << escape(value) << " "
         end
       end
-
-      def reorder attributes
-        positions = positions_for template
-
-        return attributes if positions.empty?
-
-        attributes.slice(*positions).merge!(attributes.except(*positions))
-      end
-
-      def positions_for(template) = template ? parser.call(template) : Core::EMPTY_ARRAY
     end
   end
 end
