@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Cogger::Formatters::Sanitizers::DateTime do
+RSpec.describe Cogger::Formatters::Sanitizers::FormatTime do
   subject(:sanitizer) { described_class }
 
   describe "#call" do

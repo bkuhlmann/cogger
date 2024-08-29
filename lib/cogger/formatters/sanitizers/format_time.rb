@@ -6,7 +6,7 @@ module Cogger
   module Formatters
     module Sanitizers
       # Sanitizes/formats date/time value.
-      DateTime = lambda do |value, format: Cogger::DATETIME_FORMAT|
+      FormatTime = lambda do |value, format: Cogger::DATETIME_FORMAT|
         return value unless value.is_a?(::Time) || value.is_a?(Date) || value.is_a?(::DateTime)
 
         value.strftime format

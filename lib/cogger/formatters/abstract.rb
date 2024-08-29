@@ -5,9 +5,9 @@ module Cogger
     # An abstract class with common/shared functionality.
     class Abstract
       SANITIZERS = {
-        datetime: Sanitizers::DateTime,
         escape: Sanitizers::Escape.new,
-        filter: Sanitizers::Filter
+        filter: Sanitizers::Filter,
+        format_time: Sanitizers::FormatTime
       }.freeze
 
       def initialize sanitizers: SANITIZERS
@@ -24,10 +24,7 @@ module Cogger
       def sanitize entry, message
         entry.public_send(message).tap do |attributes|
           filter attributes
-
-          attributes.transform_values! do |value|
-            sanitize_datetime value, format: entry.datetime_format
-          end
+          attributes.transform_values! { |value| format_time value, format: entry.datetime_format }
         end
       end
 
@@ -35,7 +32,7 @@ module Cogger
 
       def filter(...) = sanitizers.fetch(__method__).call(...)
 
-      def sanitize_datetime(...) = sanitizers.fetch(:datetime).call(...)
+      def format_time(...) = sanitizers.fetch(__method__).call(...)
 
       private
 
