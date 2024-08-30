@@ -1,5 +1,18 @@
 = Versions
 
+== 0.26.0 (2024-08-30)
+
+* ✅ Fixed key parser width and precision accuracy - Brooke Kuhlmann
+* 🟢 Added position parser - Brooke Kuhlmann
+* 🔼 Updated benchmarks - Brooke Kuhlmann
+* 🔼 Updated date/time as format time sanitizer - Brooke Kuhlmann
+* ⛔️ Removed key extractor parser - Brooke Kuhlmann
+* ⛔️ Removed passing of date/time for entry crash - Brooke Kuhlmann
+* 🔁 Refactored JSON and property formatters to use position parser - Brooke Kuhlmann
+* 🔁 Refactored RSpec current time as static time - Brooke Kuhlmann
+* 🔁 Refactored abstract formatter date/time sanitization - Brooke Kuhlmann
+* 🔁 Refactored formatters to use new line constant - Brooke Kuhlmann
+
 == 0.25.0 (2024-08-28)
 
 ✅ Fixed abstract parser spec description - Brooke Kuhlmann
