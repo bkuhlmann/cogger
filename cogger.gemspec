@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     "bug_tracker_uri" => "https://github.com/bkuhlmann/cogger/issues",
     "changelog_uri" => "https://alchemists.io/projects/cogger/versions",
-    "documentation_uri" => "https://alchemists.io/projects/cogger",
+    "homepage_uri" => "https://alchemists.io/projects/cogger",
     "funding_uri" => "https://github.com/sponsors/bkuhlmann",
     "label" => "Cogger",
     "rubygems_mfa_required" => "true",
