@@ -15,35 +15,35 @@
 
 == 0.25.0 (2024-08-28)
 
-✅ Fixed abstract parser spec description - Brooke Kuhlmann
-✅ Fixed key extractor regular expression description - Brooke Kuhlmann
-✅ Fixed program description - Brooke Kuhlmann
-✅ Fixed registry to add formatters with fully resolved templates - Brooke Kuhlmann
-🟢 Added RSpec current time shared context - Brooke Kuhlmann
-🟢 Added abstract formatter - Brooke Kuhlmann
-🟢 Added color format transformer - Brooke Kuhlmann
-🟢 Added configuration date/time format - Brooke Kuhlmann
-🟢 Added date/time format constant - Brooke Kuhlmann
-🟢 Added date/time sanitizer - Brooke Kuhlmann
-🟢 Added emoji format transformer - Brooke Kuhlmann
-🟢 Added entry date/time format - Brooke Kuhlmann
-🟢 Added escape sanitizer - Brooke Kuhlmann
-🟢 Added filter santizer - Brooke Kuhlmann
-🟢 Added key format transformer - Brooke Kuhlmann
-🟢 Added property formatter - Brooke Kuhlmann
-🟢 Added registry templates - Brooke Kuhlmann
-🟢 Added version information - Brooke Kuhlmann
-🟢 Added version release notes - Brooke Kuhlmann
-🔼 Updated abstract parser to use transformers - Brooke Kuhlmann
-🔼 Updated demo script to include property formatter - Brooke Kuhlmann
-🔼 Updated hub to pass configuration date/time format to entry - Brooke Kuhlmann
-🔼 Updated parsers to use transformers - Brooke Kuhlmann
-🔼 Updated specific format parser as key parser - Brooke Kuhlmann
-⛔️ Removed color processor - Brooke Kuhlmann
-⛔️ Removed kit format colorizer - Brooke Kuhlmann
-⛔️ Removed sanitizer kit - Brooke Kuhlmann
-🔁 Refactored formatters to use abstract superclass - Brooke Kuhlmann
-🔁 Refactored specs to use current time shared context - Brooke Kuhlmann
+* ✅ Fixed abstract parser spec description - Brooke Kuhlmann
+* ✅ Fixed key extractor regular expression description - Brooke Kuhlmann
+* ✅ Fixed program description - Brooke Kuhlmann
+* ✅ Fixed registry to add formatters with fully resolved templates - Brooke Kuhlmann
+* 🟢 Added RSpec current time shared context - Brooke Kuhlmann
+* 🟢 Added abstract formatter - Brooke Kuhlmann
+* 🟢 Added color format transformer - Brooke Kuhlmann
+* 🟢 Added configuration date/time format - Brooke Kuhlmann
+* 🟢 Added date/time format constant - Brooke Kuhlmann
+* 🟢 Added date/time sanitizer - Brooke Kuhlmann
+* 🟢 Added emoji format transformer - Brooke Kuhlmann
+* 🟢 Added entry date/time format - Brooke Kuhlmann
+* 🟢 Added escape sanitizer - Brooke Kuhlmann
+* 🟢 Added filter santizer - Brooke Kuhlmann
+* 🟢 Added key format transformer - Brooke Kuhlmann
+* 🟢 Added property formatter - Brooke Kuhlmann
+* 🟢 Added registry templates - Brooke Kuhlmann
+* 🟢 Added version information - Brooke Kuhlmann
+* 🟢 Added version release notes - Brooke Kuhlmann
+* 🔼 Updated abstract parser to use transformers - Brooke Kuhlmann
+* 🔼 Updated demo script to include property formatter - Brooke Kuhlmann
+* 🔼 Updated hub to pass configuration date/time format to entry - Brooke Kuhlmann
+* 🔼 Updated parsers to use transformers - Brooke Kuhlmann
+* 🔼 Updated specific format parser as key parser - Brooke Kuhlmann
+* ⛔️ Removed color processor - Brooke Kuhlmann
+* ⛔️ Removed kit format colorizer - Brooke Kuhlmann
+* ⛔️ Removed sanitizer kit - Brooke Kuhlmann
+* 🔁 Refactored formatters to use abstract superclass - Brooke Kuhlmann
+* 🔁 Refactored specs to use current time shared context - Brooke Kuhlmann
 
 == 0.24.1 (2024-08-25)
 
