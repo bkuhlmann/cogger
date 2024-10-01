@@ -83,15 +83,14 @@ module Cogger
 
     attr_reader :registry, :configuration, :primary, :streams, :mutex
 
+    # :reek:FeatureEnvy
     def find_formatter attributes
-      attributes.transform_with!(
-        formatter: lambda do |value|
-          return value unless value.is_a?(Symbol) || value.is_a?(String)
+      attributes.transform_value! :formatter do |value|
+        next value unless value.is_a?(Symbol) || value.is_a?(String)
 
-          formatter, template = registry.get_formatter value
-          template ? formatter.new(template) : formatter.new
-        end
-      )
+        formatter, template = registry.get_formatter value
+        template ? formatter.new(template) : formatter.new
+      end
     end
 
     def log(level, message = nil, **, &)
