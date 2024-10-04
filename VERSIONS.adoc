@@ -1,5 +1,11 @@
 = Versions
 
+== 0.28.0 (2024-10-04)
+
+* 🔼 Updated to Refinements 12.9.0 - Brooke Kuhlmann
+* 🔼 Updated to Ruby 3.3.5 - Brooke Kuhlmann
+* 🔁 Refactored hub to use transform value when finding formatters - Brooke Kuhlmann
+
 == 0.27.0 (2024-09-01)
 
 * ✅ Fixed version bullets - Brooke Kuhlmann
