@@ -3,7 +3,6 @@
 require "forwardable"
 require "logger"
 require "refinements/hash"
-require "refinements/logger"
 
 module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
@@ -13,7 +12,7 @@ module Cogger
     extend Forwardable
 
     using Refinements::Hash
-    using Refinements::Logger
+    using Refines::Logger
 
     delegate %i[
       close
