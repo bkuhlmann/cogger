@@ -34,7 +34,6 @@ module Cogger
                    suffix: "%Y-%m-%d",
                    entry: Entry,
                    logger: Logger
-
       super.tap { tags.freeze }
     end
 
