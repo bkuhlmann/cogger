@@ -15,7 +15,7 @@ RSpec.describe Cogger::Configuration do
         datetime_format: Cogger::DATETIME_FORMAT,
         tags: [],
         mode: false,
-        age: 0,
+        age: nil,
         size: 1_048_576,
         suffix: "%Y-%m-%d",
         entry: Cogger::Entry,
@@ -76,7 +76,7 @@ RSpec.describe Cogger::Configuration do
         /
           #<Cogger::Configuration @id=rspec, @io=IO, @level=1, @formatter=Cogger::Formatters::Emoji,
           \s@datetime_format="#{Cogger::DATETIME_FORMAT}",\s@tags=\[\],\s@mode=false,
-          \s@age=0,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@entry=Cogger::Entry,\s@logger=Logger>
+          \s@age=,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@entry=Cogger::Entry,\s@logger=Logger>
         /xo
       )
     end

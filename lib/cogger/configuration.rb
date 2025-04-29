@@ -29,7 +29,7 @@ module Cogger
                    datetime_format: DATETIME_FORMAT,
                    tags: Core::EMPTY_ARRAY,
                    mode: false,
-                   age: 0,
+                   age: nil,
                    size: 1_048_576,
                    suffix: "%Y-%m-%d",
                    entry: Entry,
