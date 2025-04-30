@@ -22,9 +22,9 @@ module Cogger
 
         attr_reader :registry, :transformers, :expressor
 
-        def transform_color(...) = transformers.fetch(:color).call(...)
+        def transform_color(...) = (@tranform_color ||= transformers.fetch(:color)).call(...)
 
-        def transform_emoji(...) = transformers.fetch(:emoji).call(...)
+        def transform_emoji(...) = (@transform_emoji ||= transformers.fetch(:emoji)).call(...)
       end
     end
   end

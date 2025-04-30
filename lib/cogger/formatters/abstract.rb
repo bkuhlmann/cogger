@@ -30,11 +30,11 @@ module Cogger
         end
       end
 
-      def escape(...) = sanitizers.fetch(__method__).call(...)
+      def escape(...) = (@escape ||= sanitizers.fetch(__method__)).call(...)
 
-      def filter(...) = sanitizers.fetch(__method__).call(...)
+      def filter(...) = (@filter ||= sanitizers.fetch(__method__)).call(...)
 
-      def format_time(...) = sanitizers.fetch(__method__).call(...)
+      def format_time(...) = (@format_time ||= sanitizers.fetch(__method__)).call(...)
 
       private
 
