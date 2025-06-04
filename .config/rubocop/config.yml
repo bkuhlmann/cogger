@@ -12,3 +12,7 @@ Metrics/ParameterLists:
   Exclude:
     - "lib/cogger/configuration.rb"
     - "lib/cogger/entry.rb"
+Naming/PredicateMethod:
+  AllowedMethods:
+    - dispatch
+    - crash
