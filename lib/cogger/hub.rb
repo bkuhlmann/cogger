@@ -6,7 +6,6 @@ require "refinements/hash"
 
 module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
-  # :reek:TooManyInstanceVariables
   # :reek:TooManyMethods
   class Hub
     extend Forwardable
@@ -40,7 +39,6 @@ module Cogger
       @configuration = model[**find_formatter(attributes)]
       @primary = configuration.to_logger
       @streams = [@primary]
-      @mutex = Mutex.new
     end
 
     def add_stream **attributes
@@ -80,7 +78,7 @@ module Cogger
 
     private
 
-    attr_reader :registry, :configuration, :primary, :streams, :mutex
+    attr_reader :registry, :configuration, :primary, :streams
 
     # :reek:FeatureEnvy
     def find_formatter attributes
@@ -110,7 +108,7 @@ module Cogger
         &
       )
 
-      mutex.synchronize { streams.each { |logger| logger.public_send level, entry } }
+      configuration.mutex.synchronize { streams.each { |logger| logger.public_send level, entry } }
       true
     end
     # rubocop:enable Metrics/MethodLength
