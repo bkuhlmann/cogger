@@ -19,7 +19,8 @@ RSpec.describe Cogger::Configuration do
         size: 1_048_576,
         suffix: "%Y-%m-%d",
         entry: Cogger::Entry,
-        logger: Logger
+        logger: Logger,
+        mutex: instance_of(Mutex)
       )
     end
 

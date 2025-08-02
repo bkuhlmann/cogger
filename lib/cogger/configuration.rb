@@ -18,7 +18,8 @@ module Cogger
     :size,
     :suffix,
     :entry,
-    :logger
+    :logger,
+    :mutex
   ) do
     using Refinements::Array
 
@@ -33,7 +34,8 @@ module Cogger
                    size: 1_048_576,
                    suffix: "%Y-%m-%d",
                    entry: Entry,
-                   logger: Logger
+                   logger: Logger,
+                   mutex: Mutex.new
       super.tap { tags.freeze }
     end
 
