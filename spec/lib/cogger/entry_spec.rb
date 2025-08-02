@@ -6,6 +6,8 @@ RSpec.describe Cogger::Entry do
   subject(:entry) { described_class.new }
 
   describe ".for" do
+    let(:bad_encoding) { "b\xE9d".dup.force_encoding "ASCII-8BIT" }
+
     it "answers entry with defaults" do
       entry = described_class.for
 
@@ -25,37 +27,52 @@ RSpec.describe Cogger::Entry do
       expect(entry).to have_attributes(level: "WARN")
     end
 
-    it "answers entry for message with string" do
+    it "answers entry for string message" do
       entry = described_class.for "test"
-      expect(entry).to have_attributes(message: "test", tags: [])
+      expect(entry).to have_attributes(message: "test")
     end
 
-    it "answers entry for message with hash" do
-      entry = described_class.for({one: 1, two: 2})
-      expect(entry).to have_attributes(message: {one: 1, two: 2}, tags: [])
+    it "answers entry for string message with replaced invalid characters" do
+      entry = described_class.for bad_encoding
+      expect(entry).to have_attributes(message: "b?d")
     end
 
     it "answers entry for block with string" do
       entry = described_class.for { "test" }
-      expect(entry).to have_attributes(message: "test", tags: [])
+      expect(entry).to have_attributes(message: "test")
     end
 
-    it "answers entry for block with hash" do
-      entry = described_class.for { {one: 1, two: 2} }
-      expect(entry).to have_attributes(message: {one: 1, two: 2}, tags: [])
+    it "answers entry for block with string with replaced invalid characters" do
+      entry = described_class.for { bad_encoding }
+      expect(entry).to have_attributes(message: "b?d")
     end
 
-    it "answers entry with block precedence for message and block" do
+    it "answers entry for hash message" do
+      entry = described_class.for({one: 1, two: 2})
+      expect(entry).to have_attributes(message: nil, payload: {one: 1, two: 2})
+    end
+
+    it "answers entry for hash message with replaced invalid characters" do
+      entry = described_class.for({message: bad_encoding})
+      expect(entry).to have_attributes(message: "b?d")
+    end
+
+    it "answers entry for block with hash message with replaced invalid characters" do
+      entry = described_class.for { {message: bad_encoding, one: 1, two: 2} }
+      expect(entry).to have_attributes(message: "b?d", payload: {one: 1, two: 2})
+    end
+
+    it "answers entry with block message precedence" do
       entry = described_class.for("first") { "second" }
-      expect(entry).to have_attributes(message: "second", tags: [])
+      expect(entry).to have_attributes(message: "second")
     end
 
     it "answers entry for message and payload" do
       entry = described_class.for "test", one: 1, two: 2
-      expect(entry).to have_attributes(message: "test", tags: [], payload: {one: 1, two: 2})
+      expect(entry).to have_attributes(message: "test", payload: {one: 1, two: 2})
     end
 
-    it "answers entry for message and payload with tags" do
+    it "answers entry for message, tags, and payload" do
       entry = described_class.for "test", tags: %w[ONE TWO THREE], one: 1, two: 2
 
       expect(entry).to have_attributes(
@@ -94,12 +111,12 @@ RSpec.describe Cogger::Entry do
 
     it "answers entry with custom ID" do
       entry = described_class.for "test", id: :test
-      expect(entry).to have_attributes(id: :test, message: "test", payload: {})
+      expect(entry).to have_attributes(id: :test, message: "test")
     end
 
     it "answers entry with custom level" do
       entry = described_class.for "test", level: "DEBUG"
-      expect(entry).to have_attributes(level: "DEBUG", message: "test", payload: {})
+      expect(entry).to have_attributes(level: "DEBUG")
     end
   end
 
@@ -136,8 +153,9 @@ RSpec.describe Cogger::Entry do
   end
 
   describe "#attributes" do
+    let(:at) { Time.now }
+
     it "answers custom attributes" do
-      at = Time.now
       entry = described_class.new at:,
                                   message: "test",
                                   tags: %w[ONE TWO THREE],
@@ -173,7 +191,6 @@ RSpec.describe Cogger::Entry do
 
     it "answers original message when not tagged" do
       entry = described_class.new at:, message: "test"
-
       expect(entry.tagged_attributes).to eq(id: "rspec", level: "INFO", at:, message: "test")
     end
   end
@@ -194,7 +211,6 @@ RSpec.describe Cogger::Entry do
 
     it "answers original message when not tagged" do
       entry = described_class.new at:, message: "test"
-
       expect(entry.tagged).to eq(id: "rspec", level: "INFO", at:, message: "test")
     end
   end

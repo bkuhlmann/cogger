@@ -5,11 +5,13 @@ require "core"
 module Cogger
   # Defines a log entry which can be formatted for output.
   Entry = Data.define :id, :level, :at, :message, :tags, :datetime_format, :payload do
-    def self.for(message = nil, **payload)
+    def self.for(message = nil, **payload, &)
+      content = block_given? ? yield : message
+
       new id: payload.delete(:id) || Program.call,
           level: (payload.delete(:level) || "INFO").upcase,
           at: payload.delete(:at) || ::Time.now,
-          message: (block_given? ? yield : message),
+          message: sanitize!(content, payload),
           tags: Array(payload.delete(:tags)),
           datetime_format: payload.delete(:datetime_format) || DATETIME_FORMAT,
           payload:
@@ -25,6 +27,22 @@ module Cogger
             backtrace: error.backtrace
           }
     end
+
+    def self.sanitize! content, payload
+      body = if content.is_a? Hash
+               content.delete(:message).tap { payload.merge! content }
+             else
+               content
+             end
+
+      if body.is_a? String
+        body.encode "UTF-8", invalid: :replace, undef: :replace, replace: "?"
+      else
+        body
+      end
+    end
+
+    private_class_method :sanitize!
 
     def initialize id: Program.call,
                    level: "INFO",
