@@ -19,10 +19,8 @@ module Cogger
           @pattern = pattern
         end
 
-        # :reek:FeatureEnvy
         def call template, attributes
-          return attributes if !template || template.empty?
-          return attributes unless template.match? pattern
+          return attributes unless String(template).match? pattern
 
           keys = scan template
           attributes.slice(*keys).merge!(attributes.except(*keys))
