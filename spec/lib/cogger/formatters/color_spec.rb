@@ -9,7 +9,7 @@ RSpec.describe Cogger::Formatters::Color do
     include_context "with static time"
 
     let(:color) { Cogger.color }
-    let(:entry) { Cogger::Entry[at:, message: "Test."] }
+    let(:entry) { Cogger::Entry.for at:, message: "Test." }
 
     it "answers colorized string with default template and colors" do
       formatter = described_class.new
@@ -103,7 +103,7 @@ RSpec.describe Cogger::Formatters::Color do
       end
 
       it "answers colorized string" do
-        result = formatter.call Cogger::Entry[level: "FATAL", at:, message: "Test."]
+        result = formatter.call Cogger::Entry.for level: "FATAL", at:, message: "Test."
         expect(result).to have_color(color, *proof)
       end
     end
@@ -112,7 +112,7 @@ RSpec.describe Cogger::Formatters::Color do
       let(:template) { Cogger::Formatters::Emoji::TEMPLATE }
 
       it "answers colorized string" do
-        result = formatter.call Cogger::Entry[level: "ANY", at:, message: "Test."]
+        result = formatter.call Cogger::Entry.for level: "ANY", at:, message: "Test."
 
         expect(result).to have_color(
           color,
@@ -129,7 +129,7 @@ RSpec.describe Cogger::Formatters::Color do
       let(:template) { "%<emoji:any>s %<id:dynamic>s" }
 
       it "answers string without leading space" do
-        result = formatter.call Cogger::Entry[level: "INFO", at:, message: "Test."]
+        result = formatter.call Cogger::Entry.for level: "INFO", at:, message: "Test."
 
         expect(result).to have_color(
           color,
