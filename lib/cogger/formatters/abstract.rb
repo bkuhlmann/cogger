@@ -23,8 +23,8 @@ module Cogger
 
       protected
 
-      def sanitize entry, message
-        entry.public_send(message).tap do |attributes|
+      def sanitize entry, method
+        entry.public_send(method).tap do |attributes|
           filter attributes
           attributes.transform_values! { |value| format_time value, format: entry.datetime_format }
         end
