@@ -282,6 +282,26 @@ Aliases are a powerful way to customize colors via concise syntax in your templa
 
 💡 Aliases are used by the color and emoji formatters so check out the {tone_link} documentation and/or _Templates_ and _Formatters_ sections below to learn more.
 
+=== Encodings
+
+All messages use UTF-8 encoding. Any unknown character will show up as a question mark. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+bad = "b\xE9d".dup.force_encoding "ASCII-8BIT"
+
+logger.info bad      # "b?d"
+logger.info { bad }  # "b?d"
+----
+
+The underlying implementation uses the following to produce the logs shown above:
+
+[source,ruby]
+----
+message.encode "UTF-8", invalid: :replace, undef: :replace, replace: "?"
+----
+
 === Templates
 
 Templates are used by all formatters and adhere to an _enhanced_ version of the {format_link} as used by `Kernel#format`. Here’s what is provided by default:
@@ -745,6 +765,41 @@ logger.info "Demo", tags: ["WEB", "PRIMARY", {service: :api, demo: true}]
 ----
 
 Notice, with the above, that the single tags of `WEB` and `PRIMARY` show up in the `tags` array while the `:service` and `:demo` keys show up at the top level of the hash. Since the `:tags`, `:service`, `:demo` keys are normal keys, like any key in your JSON output, this means you can use a custom template to arrange the order of these keys if you don't like the default.
+
+A block can be used with a string or hash for content. Example:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :json
+
+logger.info { "Demo" }
+# {
+#   "id":"console",
+#   "level":"INFO",
+#   "at":"2025-08-03T13:37:58.227-06:00",
+#   "message":"Demo"
+# }
+
+logger.info { {message: :demo, weight: 0.2} }
+# {
+#   "id":"console",
+#   "level":"INFO",
+#   "at":"2025-08-03T13:39:32.438-06:00",
+#   "message":"demo",
+#   "weight":0.2
+# }
+
+logger.info(tags: %w[WEB PRIMARY]) { {message: :demo, weight: 0.2} }
+# {
+#   "id":"console",
+#   "level":"INFO",
+#   "at":"2025-08-03T13:42:22.869-06:00",
+#   "message":"demo",
+#   "tags":["WEB",
+#   "PRIMARY"],
+#   "weight":0.2
+# }
+----
 
 ==== Rack
 
