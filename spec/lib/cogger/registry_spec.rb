@@ -118,6 +118,40 @@ RSpec.describe Cogger::Registry do
     end
   end
 
+  describe "#add_emojis" do
+    it "doesn't add anything when given no arguments" do
+      registry.add_emojis
+
+      expect(registry.emojis).to eq(
+        any: "⚫️",
+        debug: "🔎",
+        error: "🛑",
+        fatal: "🔥",
+        info: "🟢",
+        warn: "⚠️"
+      )
+    end
+
+    it "adds mixed emojis (symbol and string)" do
+      registry.add_emojis ghost: "👻", genie: "🧞‍♂️"
+
+      expect(registry.emojis).to eq(
+        any: "⚫️",
+        debug: "🔎",
+        error: "🛑",
+        fatal: "🔥",
+        genie: "🧞‍♂️",
+        ghost: "👻",
+        info: "🟢",
+        warn: "⚠️"
+      )
+    end
+
+    it "answers itself" do
+      expect(registry.add_emojis(test: "🧪")).to be_a(described_class)
+    end
+  end
+
   describe "#get_emoji" do
     before { registry.add_emoji :test, "🧪" }
 
