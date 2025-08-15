@@ -9,7 +9,7 @@ RSpec.describe Cogger::Formatters::Sanitizers::Filter do
     let(:at) { Time.now }
 
     it "answers filtered values when keys match" do
-      Cogger.add_filter :password
+      Cogger.add_filters :password
 
       expect(sanitizer.call({login: "test", password: "secret"})).to eq(
         login: "test",
@@ -30,7 +30,7 @@ RSpec.describe Cogger::Formatters::Sanitizers::Filter do
     end
 
     it "mutates attributes" do
-      Cogger.add_filter :password
+      Cogger.add_filters :password
       attributes = {password: "secret"}
 
       sanitizer.call attributes

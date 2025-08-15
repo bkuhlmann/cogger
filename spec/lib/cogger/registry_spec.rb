@@ -153,6 +153,19 @@ RSpec.describe Cogger::Registry do
     end
   end
 
+  describe "#add_filters" do
+    before { registry.filters.clear }
+
+    it "adds mixed filters (symbol and string)" do
+      registry.add_filters :one, "two"
+      expect(registry.filters).to eq(Set[:one, :two])
+    end
+
+    it "answers itself" do
+      expect(registry.add_filters(:test)).to be_a(described_class)
+    end
+  end
+
   describe "#filters" do
     it "answers default filters" do
       expect(registry.filters).to eq(Set.new)
@@ -160,7 +173,7 @@ RSpec.describe Cogger::Registry do
 
     it "answers filters when they exist" do
       registry.filters.clear
-      registry.add_filter(:one).add_filter(:two)
+      registry.add_filters :one, :two
 
       expect(registry.filters).to eq(Set[:one, :two])
     end
