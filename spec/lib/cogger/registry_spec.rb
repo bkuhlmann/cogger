@@ -138,6 +138,13 @@ RSpec.describe Cogger::Registry do
   describe "#add_filter" do
     before { registry.filters.clear }
 
+    it "prints deprecation warning" do
+      expectation = proc { registry.add_filter :test }
+      message = "`Class#add_filter` is deprecated, use `#add_filters` instead.\n"
+
+      expect(&expectation).to output(message).to_stderr
+    end
+
     it "adds filter (symbol)" do
       registry.add_filter :test
       expect(registry.filters).to eq(Set[:test])

@@ -53,6 +53,9 @@ module Cogger
     def emojis = @emojis ||= {}
 
     def add_filter key
+      warn "`#{self.class}##{__method__}` is deprecated, use `#add_filters` instead.",
+           category: :deprecated
+
       filters.add key.to_sym
       self
     end
