@@ -57,6 +57,11 @@ module Cogger
       self
     end
 
+    def add_filters(*keys)
+      filters.merge(keys.map(&:to_sym))
+      self
+    end
+
     def filters = @filters ||= Set.new
 
     def add_formatter key, formatter, template = nil
