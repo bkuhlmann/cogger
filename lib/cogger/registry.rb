@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require "refinements/hash"
 require "tone"
 
 module Cogger
   # Provides a global regsitry for global configuration.
   module Registry
+    using Refinements::Hash
+
     def self.extended descendant
       descendant.add_alias(:debug, :white)
                 .add_alias(:info, :green)
@@ -12,12 +15,14 @@ module Cogger
                 .add_alias(:error, :red)
                 .add_alias(:fatal, :bold, :white, :on_red)
                 .add_alias(:any, :dim, :bright_white)
-                .add_emoji(:debug, "🔎")
-                .add_emoji(:info, "🟢")
-                .add_emoji(:warn, "⚠️")
-                .add_emoji(:error, "🛑")
-                .add_emoji(:fatal, "🔥")
-                .add_emoji(:any, "⚫️")
+                .add_emojis(
+                  debug: "🔎",
+                  info: "🟢",
+                  warn: "⚠️",
+                  error: "🛑",
+                  fatal: "🔥",
+                  any: "⚫️"
+                )
                 .add_formatter(:color, Cogger::Formatters::Color)
                 .add_formatter(
                   :detail,
@@ -43,6 +48,11 @@ module Cogger
 
     def add_emoji key, value
       emojis[key.to_sym] = value
+      self
+    end
+
+    def add_emojis(**attributes)
+      emojis.merge! attributes.symbolize_keys!
       self
     end
 
