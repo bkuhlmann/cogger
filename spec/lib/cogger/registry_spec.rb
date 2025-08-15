@@ -103,6 +103,13 @@ RSpec.describe Cogger::Registry do
   end
 
   describe "#add_emoji" do
+    it "prints deprecation warning" do
+      expectation = proc { registry.add_emoji :test, "🧪" }
+      message = "`Class#add_emoji` is deprecated, use `#add_emojis` instead.\n"
+
+      expect(&expectation).to output(message).to_stderr
+    end
+
     it "adds emoji (symbol)" do
       registry.add_emoji :test, "🧪"
       expect(registry.get_emoji(:test)).to eq("🧪")
