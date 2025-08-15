@@ -153,18 +153,27 @@ RSpec.describe Cogger::Registry do
   end
 
   describe "#get_emoji" do
-    before { registry.add_emoji :test, "🧪" }
+    it "prints deprecation warning" do
+      expectation = proc { registry.add_emoji :test, "🧪" }
+      message = "`Class#add_emoji` is deprecated, use `#add_emojis` instead.\n"
+
+      expect(&expectation).to output(message).to_stderr
+    end
 
     it "answers template for key (symbol)" do
+      registry.add_emoji :test, "🧪"
       expect(registry.get_emoji(:test)).to eq("🧪")
     end
 
     it "answers template for key (string)" do
+      registry.add_emoji :test, "🧪"
       expect(registry.get_emoji("test")).to eq("🧪")
     end
 
     it "fails when not registered" do
+      registry.add_emoji :test, "🧪"
       expectation = proc { registry.get_emoji :bogus }
+
       expect(&expectation).to raise_error(KeyError, "Unregistered emoji: bogus.")
     end
   end
