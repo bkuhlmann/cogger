@@ -47,6 +47,9 @@ module Cogger
     def aliases = color.aliases
 
     def add_emoji key, value
+      warn "`#{self.class}##{__method__}` is deprecated, use `#add_emojis` instead.",
+           category: :deprecated
+
       emojis[key.to_sym] = value
       self
     end
