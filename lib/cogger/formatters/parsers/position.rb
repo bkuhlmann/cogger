@@ -10,7 +10,7 @@ module Cogger
           ?             # Flag, width, or precision.
           <             # Reference start.
           (?<name>\w+)  # Name.
-          (?::[\w]+)?   # Optional delimiter and directive.
+          (?::\w+)?     # Optional delimiter and directive.
           >             # Reference end.
           ?             # Specifier.
         /x
