@@ -236,8 +236,7 @@ To add multiple custom emojis, you can chain messages together when registering 
 
 [source,ruby]
 ----
-Cogger.add_emoji(:tada, "🎉")
-      .add_emoji :favorite, "❇️"
+Cogger.add_emojis tada: "🎉", favorite: "❇️"
 ----
 
 If you always want to use the _same_ emoji, you could use the emoji formatter with a specific template:
@@ -616,7 +615,7 @@ This allows an emoji to be dynamically applied based on log level. You can add o
 
 [source,ruby]
 ----
-Cogger.add_emoji :warn, "🟡"
+Cogger.add_emojis warn: "🟡"
 ----
 
 Once an alias is added/updated, it can be immediately applied via the template of your formatter. Example:
@@ -943,9 +942,7 @@ To add filters, use:
 
 [source,ruby]
 ----
-Cogger.add_filter(:login)
-      .add_filter "email"
-
+Cogger.add_filters :login, "email"
 Cogger.filters  # #<Set: {:login, :email}>
 ----
 
@@ -953,7 +950,7 @@ Symbols and strings can be used interchangeably but are stored as symbols since 
 
 [source,ruby]
 ----
-Cogger.add_filter :password
+Cogger.add_filters :password
 logger = Cogger.new formatter: :json
 logger.info login: "jayne", password: "secret"
 
