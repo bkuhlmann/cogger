@@ -13,6 +13,7 @@ module Cogger
     :formatter,
     :datetime_format,
     :tags,
+    :header,
     :mode,
     :age,
     :size,
@@ -29,6 +30,7 @@ module Cogger
                    formatter: Formatters::Emoji.new,
                    datetime_format: DATETIME_FORMAT,
                    tags: Core::EMPTY_ARRAY,
+                   header: true,
                    mode: false,
                    age: nil,
                    size: 1_048_576,
@@ -49,6 +51,7 @@ module Cogger
                  level:,
                  formatter:,
                  datetime_format:,
+                 skip_header: skip_header?,
                  binmode: mode,
                  shift_period_suffix: suffix
     end
@@ -56,8 +59,12 @@ module Cogger
     def inspect
       "#<#{self.class} @id=#{id}, @io=#{io.class}, @level=#{level}, " \
       "@formatter=#{formatter.class}, @datetime_format=#{datetime_format.inspect}, " \
-      "@tags=#{tags.inspect}, @mode=#{mode}, @age=#{age}, @size=#{size}, " \
+      "@tags=#{tags.inspect}, @header=#{header}, @mode=#{mode}, @age=#{age}, @size=#{size}, " \
       "@suffix=#{suffix.inspect}, @entry=#{entry}, @logger=#{logger}>"
     end
+
+    private
+
+    def skip_header? = formatter == :json || formatter.is_a?(Formatters::JSON) || !header
   end
 end

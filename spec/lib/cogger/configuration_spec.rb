@@ -14,6 +14,7 @@ RSpec.describe Cogger::Configuration do
         formatter: instance_of(Cogger::Formatters::Emoji),
         datetime_format: Cogger::DATETIME_FORMAT,
         tags: [],
+        header: true,
         mode: false,
         age: nil,
         size: 1_048_576,
@@ -69,6 +70,32 @@ RSpec.describe Cogger::Configuration do
       logger = configuration.to_logger
       expect(logger.datetime_format).to eq(Cogger::DATETIME_FORMAT)
     end
+
+    it "includes file header by default" do
+      logger = configuration.to_logger
+      expect(logger.inspect).to include("@skip_header=false")
+    end
+
+    it "excludes file header when using JSON formatter (symbol)" do
+      configuration = described_class[formatter: :json]
+      logger = configuration.to_logger
+
+      expect(logger.inspect).to include("@skip_header=true")
+    end
+
+    it "excludes file header when using JSON formatter (instance)" do
+      configuration = described_class[formatter: Cogger::Formatters::JSON.new]
+      logger = configuration.to_logger
+
+      expect(logger.inspect).to include("@skip_header=true")
+    end
+
+    it "excludes file header when header is false" do
+      configuration = described_class[header: false]
+      logger = configuration.to_logger
+
+      expect(logger.inspect).to include("@skip_header=true")
+    end
   end
 
   describe "#inspect" do
@@ -76,7 +103,7 @@ RSpec.describe Cogger::Configuration do
       expect(configuration.inspect).to match(
         /
           #<Cogger::Configuration @id=rspec, @io=IO, @level=1, @formatter=Cogger::Formatters::Emoji,
-          \s@datetime_format="#{Cogger::DATETIME_FORMAT}",\s@tags=\[\],\s@mode=false,
+          \s@datetime_format="#{Cogger::DATETIME_FORMAT}",\s@tags=\[\],\s@header=true,\s@mode=false,
           \s@age=,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@entry=Cogger::Entry,\s@logger=Logger>
         /xo
       )
