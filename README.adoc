@@ -115,6 +115,7 @@ When creating a new logger, you can configure behavior via the following attribu
 * `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Color`. See the _Formatters_ section for more info.
 * `tags`: The global tags used for all log entries. _Must_ be an array of objects you wish to use for tagging purposes. Default: `[]`.
 * `datetime_format`: The global date/time format used for all `Time`, `Date`, and/or `DateTime` values in your log entries. Default: `%Y-%m-%dT%H:%M:%S.%L%:z`.
+* `header`: Determines if your log files should start with a date/time header comment. Can be `true` or `false` and is identical to the `skip_header` functionality found in the {logger_link} class. Default: `true`. This is automatically disabled -- and can't be overwritten -- when using the JSON formatter since the JSON format doesn't support code comments.
 * `mode`: The binary mode which determines if your logs should be written in binary mode or not. Can be `true` or `false` and is identical to the `binmode` functionality found in the {logger_link} class. Default: `false`.
 * `age`: The rotation age of your log. This only applies when logging to a file. This is equivalent to the `shift_age` as found with the {logger_link} class. Default: `0`.
 * `size`: The rotation size of your log. This only applies when logging to a file. This is equivalent to the `shift_size` as found with the {logger_link} class. Default: `1,048,576` (i.e. 1 MB).
@@ -134,6 +135,7 @@ logger = Cogger.new id: :demo,
                     formatter: :json,
                     tags: %w[DEMO DB],
                     datetime_format: "%Y-%m-%d",
+                    header: false,
                     mode: false,
                     age: 5,
                     size: 1_000,
@@ -1183,8 +1185,9 @@ logger.inspect
 #                @formatter=Cogger::Formatters::Emoji,
 #                @datetime_format=\"%Y-%m-%dT%H:%M:%S.%L%:z\",
 #                @tags=[],
+#                @header=true,
 #                @mode=false,
-#                @age=0,
+#                @age=,
 #                @size=1048576,
 #                @suffix=\"%Y-%m-%d\",
 #                @entry=Cogger::Entry,
