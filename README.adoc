@@ -112,7 +112,7 @@ When creating a new logger, you can configure behavior via the following attribu
 * `id`: The program/process ID which shows up in the logs as your `id`. Default: `$PROGRAM_NAME`. For example, if run within a `demo.rb` script, the `id` would be `"demo"`,
 * `io`: The input/output stream. This can be `STDOUT/$stdout`, a file/path, or `nil`. Default: `$stdout`.
 * `level`: The log level you want to log at. Can be `:debug`, `:info`, `:warn`, `:error`, `:fatal`, or `:unknown`. Default: `:info`.
-* `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Color`. See the _Formatters_ section for more info.
+* `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Emoji`. See the _Formatters_ section for more info.
 * `tags`: The global tags used for all log entries. _Must_ be an array of objects you wish to use for tagging purposes. Default: `[]`.
 * `datetime_format`: The global date/time format used for all `Time`, `Date`, and/or `DateTime` values in your log entries. Default: `%Y-%m-%dT%H:%M:%S.%L%:z`.
 * `header`: Determines if your log files should start with a date/time header comment. Can be `true` or `false` and is identical to the `skip_header` functionality found in the {logger_link} class. Default: `true`. This is automatically disabled -- and can't be overwritten -- when using the JSON formatter since the JSON format doesn't support code comments.
