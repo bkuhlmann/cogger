@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pathname"
-
 # Computes default program name based on current file name.
 module Cogger
   Program = lambda do |name = $PROGRAM_NAME|
