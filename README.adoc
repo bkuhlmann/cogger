@@ -114,8 +114,8 @@ When creating a new logger, you can configure behavior via the following attribu
 * `level`: The log level you want to log at. Can be `:debug`, `:info`, `:warn`, `:error`, `:fatal`, or `:unknown`. Default: `:info`.
 * `formatter`: The formatter to use for formatting your log output. Default: `Cogger::Formatter::Emoji`. See the _Formatters_ section for more info.
 * `tags`: The global tags used for all log entries. _Must_ be an array of objects you wish to use for tagging purposes. Default: `[]`.
-* `datetime_format`: The global date/time format used for all `Time`, `Date`, and/or `DateTime` values in your log entries. Default: `%Y-%m-%dT%H:%M:%S.%L%:z`.
-* `header`: Determines if your log files should start with a date/time header comment. Can be `true` or `false` and is identical to the `skip_header` functionality found in the {logger_link} class. Default: `true`. This is automatically disabled -- and can't be overwritten -- when using the JSON formatter since the JSON format doesn't support code comments.
+* `datetime_format`: The global date/time format used for all `Time`, `Date`, and/or `DateTime` values in your log entries. Default: `%Y-%m-%dT%H:%M:%S%:z` ({rfc_3339_link}).
+* `header`: Determines if your log files should start with a date/time header comment. Can be `true` or `false` and is identical to the `skip_header` functionality found in the {logger_link} class. Default: `false`. This is automatically disabled -- and can't be overwritten -- when using the JSON formatter since the JSON format doesn't support code comments.
 * `mode`: The binary mode which determines if your logs should be written in binary mode or not. Can be `true` or `false` and is identical to the `binmode` functionality found in the {logger_link} class. Default: `false`.
 * `age`: The rotation age of your log. This only applies when logging to a file. This is equivalent to the `shift_age` as found with the {logger_link} class. Default: `0`.
 * `size`: The rotation size of your log. This only applies when logging to a file. This is equivalent to the `shift_size` as found with the {logger_link} class. Default: `1,048,576` (i.e. 1 MB).
@@ -158,8 +158,7 @@ The default date/time format used for _all_ log values can be viewed via the fol
 
 [source,ruby]
 ----
-Cogger::DATETIME_FORMAT
-# "%Y-%m-%dT%H:%M:%S.%L%:z
+Cogger::DATETIME_FORMAT  # "%Y-%m-%dT%H:%M:%S%:z"
 ----
 
 The above adheres to {rfc_3339_link} and can be customized -- as mentioned earlier -- when creating a new logger instance. Example:
@@ -822,7 +821,7 @@ require "logger"
 logger = Cogger.new formatter: Logger::Formatter.new
 logger.info "Demo"
 
-# I, [2024-08-28T15:57:31.930722 #69391]  INFO -- console: #<data Cogger::Entry id="console", level=:INFO, at=2024-08-28 15:57:31.930696 -0600, message="Demo", tags=[], datetime_format="%Y-%m-%dT%H:%M:%S.%L%:z", payload={}>
+# I, [2025-12-27T14:31:23.865252 #29621]  INFO -- console: #<data Cogger::Entry id="console", level=:INFO, at=2025-12-27 14:31:23.865216 -0700, message="Demo", tags=[], datetime_format="%Y-%m-%dT%H:%M:%S%:z", payload={}>
 ----
 
 While the above doesn't cause an error, you only get a dump of the `Cogger::Entry` which is not what you want. To replicate native {logger_link} functionality, you can use the `Simple` formatter as follows:
@@ -1009,7 +1008,7 @@ logger.info "Demo"
 
 === Abort
 
-Aborting a program is mostly syntax sugar for Command Line Interfaces (CLIs) which aids in situations where you need to log an error message _and_ exit the program at the same time with an exit code of `1` (similar to how `Kernel#abort` behaves). This allows your CLI to log an error and ensure the exit status is correct when displaying status, piping commands together, etc. All of the arguments, when messaging `#error` directly, are the same. Here's how it works:
+Aborting a program is syntactic sugar for Command Line Interfaces (CLIs) where you need to log an error message _and_ exit the program at the same time with an exit code of `1` (similar to how `Kernel#abort` behaves). This allows your CLI to log an error and ensure the exit status is correct when displaying status, piping commands together, etc. All of the arguments, when messaging `#error` directly, are the same. Here's how it works:
 
 [source,ruby]
 ----
@@ -1028,7 +1027,7 @@ logger.abort message: "Danger!"
 # Exits with status code: 1.
 ----
 
-You can use `#abort` without a message which will not log anything and immediately exit:
+Please _avoid_ using `#abort` without a message. Example:
 
 [source,ruby]
 ----
@@ -1036,7 +1035,38 @@ logger.abort
 # Logs no message and exits with status code: 1.
 ----
 
-This is _not recommended_ since using `Kernel#exit` directly is more performant.
+Use `Kernel#exit` instead since it's more performant.
+
+=== Panic
+
+This is syntactic sugar for Command Line Interfaces (CLIs) where you need to log a fatal message _and_ exit the program at the same time with an exit code of `1`. This allows your CLI to log a message and ensure the exit status is correct when displaying status, piping commands together, etc. All of the arguments, when messaging `#fatal` directly, are the same. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+
+logger.panic "Danger!"
+# 🔥 [console] Danger!
+# Exits with status code: 1.
+
+logger.panic { "Danger!" }
+# 🔥 [console] Danger!
+# Exits with status code: 1.
+
+logger.panic message: "Danger!"
+# 🔥 [console] Danger!
+# Exits with status code: 1.
+----
+
+Please _avoid_ using `#panic` without a message. Example:
+
+[source,ruby]
+----
+logger.panic
+# Logs no message and exits with status code: 1.
+----
+
+Use `Kernel#exit` instead since it's more performant.
 
 === Rack
 
@@ -1183,9 +1213,9 @@ logger.inspect
 #                @io=IO,
 #                @level=1,
 #                @formatter=Cogger::Formatters::Emoji,
-#                @datetime_format=\"%Y-%m-%dT%H:%M:%S.%L%:z\",
+#                @datetime_format=\"%Y-%m-%dT%H:%M:%S%:z\",
 #                @tags=[],
-#                @header=true,
+#                @header=false,
 #                @mode=false,
 #                @age=,
 #                @size=1048576,
