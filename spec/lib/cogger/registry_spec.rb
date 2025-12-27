@@ -102,29 +102,6 @@ RSpec.describe Cogger::Registry do
     end
   end
 
-  describe "#add_emoji" do
-    it "prints deprecation warning" do
-      expectation = proc { registry.add_emoji :test, "🧪" }
-      message = "`Class#add_emoji` is deprecated, use `#add_emojis` instead.\n"
-
-      expect(&expectation).to output(message).to_stderr
-    end
-
-    it "adds emoji (symbol)" do
-      registry.add_emoji :test, "🧪"
-      expect(registry.get_emoji(:test)).to eq("🧪")
-    end
-
-    it "adds emoji (string)" do
-      registry.add_emoji "test", "🧪"
-      expect(registry.get_emoji(:test)).to eq("🧪")
-    end
-
-    it "answers itself" do
-      expect(registry.add_emoji(:test, "🧪")).to be_a(described_class)
-    end
-  end
-
   describe "#add_emojis" do
     it "doesn't add anything when given no arguments" do
       registry.add_emojis
@@ -173,31 +150,6 @@ RSpec.describe Cogger::Registry do
     it "fails when not registered" do
       expectation = proc { registry.get_emoji :bogus }
       expect(&expectation).to raise_error(KeyError, "Unregistered emoji: bogus.")
-    end
-  end
-
-  describe "#add_filter" do
-    before { registry.filters.clear }
-
-    it "prints deprecation warning" do
-      expectation = proc { registry.add_filter :test }
-      message = "`Class#add_filter` is deprecated, use `#add_filters` instead.\n"
-
-      expect(&expectation).to output(message).to_stderr
-    end
-
-    it "adds filter (symbol)" do
-      registry.add_filter :test
-      expect(registry.filters).to eq(Set[:test])
-    end
-
-    it "adds filter (string)" do
-      registry.add_filter "test"
-      expect(registry.filters).to eq(Set[:test])
-    end
-
-    it "answers itself" do
-      expect(registry.add_filter(:test)).to be_a(described_class)
     end
   end
 

@@ -46,14 +46,6 @@ module Cogger
 
     def aliases = color.aliases
 
-    def add_emoji key, value
-      warn "`#{self.class}##{__method__}` is deprecated, use `#add_emojis` instead.",
-           category: :deprecated
-
-      emojis[key.to_sym] = value
-      self
-    end
-
     def add_emojis(**attributes)
       emojis.merge! attributes.symbolize_keys!
       self
@@ -64,14 +56,6 @@ module Cogger
     end
 
     def emojis = @emojis ||= {}
-
-    def add_filter key
-      warn "`#{self.class}##{__method__}` is deprecated, use `#add_filters` instead.",
-           category: :deprecated
-
-      filters.add key.to_sym
-      self
-    end
 
     def add_filters(*keys)
       filters.merge(keys.map(&:to_sym))
