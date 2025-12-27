@@ -13,7 +13,7 @@ end
 module Cogger
   extend Registry
 
-  DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%L%:z"
+  DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%:z"
   LEVELS = %w[debug info warn error fatal unknown].freeze
 
   def self.loader registry = Zeitwerk::Registry

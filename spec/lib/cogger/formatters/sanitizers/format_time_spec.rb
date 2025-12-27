@@ -7,17 +7,15 @@ RSpec.describe Cogger::Formatters::Sanitizers::FormatTime do
 
   describe "#call" do
     it "answer sanitized time" do
-      expect(sanitizer.call(Time.utc(2000, 1, 2, 3, 4, 5))).to eq("2000-01-02T03:04:05.000+00:00")
+      expect(sanitizer.call(Time.utc(2000, 1, 2, 3, 4, 5))).to eq("2000-01-02T03:04:05+00:00")
     end
 
     it "answer sanitized date" do
-      expect(sanitizer.call(Date.new(2000, 1, 2))).to eq("2000-01-02T00:00:00.000+00:00")
+      expect(sanitizer.call(Date.new(2000, 1, 2))).to eq("2000-01-02T00:00:00+00:00")
     end
 
     it "answer sanitized date/time" do
-      expect(sanitizer.call(DateTime.new(2000, 1, 2, 3, 4, 5))).to eq(
-        "2000-01-02T03:04:05.000+00:00"
-      )
+      expect(sanitizer.call(DateTime.new(2000, 1, 2, 3, 4, 5))).to eq("2000-01-02T03:04:05+00:00")
     end
 
     it "answers original value with nothing to sanitize" do

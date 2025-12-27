@@ -29,13 +29,13 @@ RSpec.describe Cogger::Formatters::Property do
     it "answers formatted time tags with default template" do
       other = Time.new 2000, 1, 1, 0, 0, 0, "+00:00"
       expect(formatter.call(Cogger::Entry.for(other:, at:))).to eq(
-        "id=rspec level=INFO at=#{at_format} other=2000-01-01T00:00:00.000+00:00\n"
+        "id=rspec level=INFO at=#{at_format} other=2000-01-01T00:00:00+00:00\n"
       )
     end
 
     it "answers no message with default template" do
       expect(formatter.call(Cogger::Entry.new(at:))).to eq(
-        %(id=rspec level=INFO at=#{at_format}\n)
+        "id=rspec level=INFO at=#{at_format}\n"
       )
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Cogger::Formatters::Property do
       formatter = described_class.new "%<one>s %<two>s %<three>s"
 
       expect(formatter.call(Cogger::Entry.for(at:, verb: "GET", path: "/"))).to eq(
-        %(id=rspec level=INFO at=#{at_format} verb=GET path=/\n)
+        "id=rspec level=INFO at=#{at_format} verb=GET path=/\n"
       )
     end
 

@@ -100,10 +100,12 @@ RSpec.describe Cogger::Configuration do
 
   describe "#inspect" do
     it "answers attributes" do
+      datetime_pattern = Regexp.escape Cogger::DATETIME_FORMAT
+
       expect(configuration.inspect).to match(
         /
           #<Cogger::Configuration @id=rspec, @io=IO, @level=1, @formatter=Cogger::Formatters::Emoji,
-          \s@datetime_format="#{Cogger::DATETIME_FORMAT}",\s@tags=\[\],\s@header=false,\s@mode=false,
+          \s@datetime_format="#{datetime_pattern}",\s@tags=\[\],\s@header=false,\s@mode=false,
           \s@age=,\s@size=1048576,\s@suffix="%Y-%m-%d",\s@entry=Cogger::Entry,\s@logger=Logger>
         /xo
       )
