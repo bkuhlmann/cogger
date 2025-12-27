@@ -30,7 +30,7 @@ module Cogger
                    formatter: Formatters::Emoji.new,
                    datetime_format: DATETIME_FORMAT,
                    tags: Core::EMPTY_ARRAY,
-                   header: true,
+                   header: false,
                    mode: false,
                    age: nil,
                    size: 1_048_576,
