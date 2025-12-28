@@ -353,6 +353,46 @@ RSpec.describe Cogger::Hub do
     end
   end
 
+  describe "#panic" do
+    it "panics with no message" do
+      logger.panic
+    rescue SystemExit
+      expect(io.reread).to eq("")
+    end
+
+    it "logs error with payload" do
+      logger.panic message: "Danger!"
+    rescue SystemExit
+      expect(io.reread).to have_color(
+        color,
+        ["🔥 "],
+        ["[rspec]", :bold, :white, :on_red],
+        [" "],
+        ["Danger!", :bold, :white, :on_red],
+        ["\n"]
+      )
+    end
+
+    it "logs error with message" do
+      logger.panic "Danger!"
+    rescue SystemExit
+      expect(io.reread).to have_color(
+        color,
+        ["🔥 "],
+        ["[rspec]", :bold, :white, :on_red],
+        [" "],
+        ["Danger!", :bold, :white, :on_red],
+        ["\n"]
+      )
+    end
+
+    it "panics with exit status 1" do
+      logger.panic { "Test." }
+    rescue SystemExit => error
+      expect(error).to have_attributes(message: "exit", status: 1)
+    end
+  end
+
   describe "#reread" do
     it "answers what was previously written" do
       logger.info "This is a test."

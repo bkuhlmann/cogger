@@ -64,6 +64,11 @@ module Cogger
       exit false
     end
 
+    def panic(message = nil, **payload, &block)
+      fatal(message, **payload, &block) if message || !payload.empty? || block
+      exit false
+    end
+
     def add(level, message = nil, **, &)
       log(Logger::SEV_LABEL.fetch(level, "ANY").downcase, message, **, &)
     end
