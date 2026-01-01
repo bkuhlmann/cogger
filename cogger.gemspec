@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 4.0"
   spec.add_dependency "core", "~> 3.0"
   spec.add_dependency "logger", "~> 1.7"
-  spec.add_dependency "refinements", "~> 13.5"
+  spec.add_dependency "refinements", "~> 14.0"
   spec.add_dependency "tone", "~> 2.0"
   spec.add_dependency "zeitwerk", "~> 2.7"
 
