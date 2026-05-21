@@ -5,18 +5,24 @@ require "refinements/hash"
 
 module Cogger
   # Models a tag which may consist of an array and/or hash.
-  Tag = Data.define :singles, :pairs do
+  Tag = Data.define :singles, :pairs, :exclusions do
     using Refinements::Hash
 
-    def self.for(*bag)
-      bag.each.with_object new do |item, tag|
+    def self.for(*bag) = new(**reduce(bag))
+
+    def self.reduce bag
+      bag.each.with_object({singles: [], pairs: {}}) do |item, all|
         value = item.is_a?(Proc) ? item.call : item
-        value.is_a?(Hash) ? tag.pairs.merge!(value) : tag.singles.append(value)
+        value.is_a?(Hash) ? all[:pairs].merge!(value) : all[:singles].append(value)
       end
     end
 
-    def initialize singles: [], pairs: {}
-      super
+    private_class_method :reduce
+
+    def initialize singles: [], pairs: {}, exclusions: %w[id level at message]
+      filtered_pairs = pairs.reject { |key, _| exclusions.include? key.to_s }
+
+      super singles:, pairs: filtered_pairs, exclusions:
     end
 
     def empty? = singles.empty? && pairs.empty?

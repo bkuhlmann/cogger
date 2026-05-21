@@ -29,8 +29,28 @@ RSpec.describe Cogger::Tag do
       )
     end
 
+    it "answers rejects reserved keys" do
+      tag = described_class.for({id: :bad, level: :bad, at: Time.new, message: :bad})
+      expect(tag).to eq(described_class.new)
+    end
+
     it "answers empty tag when given nothing" do
       expect(described_class.for).to eq(described_class.new)
+    end
+  end
+
+  describe "#initialize" do
+    it "excludes reserved id, level, and at symbol keys for pairs" do
+      tag = described_class[pairs: {id: :bad, level: :bad, at: Time.now, message: :bad}]
+      expect(tag).to eq(described_class.new)
+    end
+
+    it "excludes reserved id, level, and at string keys for pairs" do
+      tag = described_class[
+        pairs: {"id" => :bad, "level" => :bad, "at" => Time.now, "message" => :bad}
+      ]
+
+      expect(tag).to eq(described_class.new)
     end
   end
 
