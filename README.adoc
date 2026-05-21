@@ -182,7 +182,7 @@ export LOG_LEVEL=fatal
 export LOG_LEVEL=unknown
 ----
 
-While downcase is preferred for each log level value, you can use upcased values as well. If the `LOG_LEVEL` environment variable is not set, `Cogger` will fall back to `"info"` unless overwritten during initialization. Example: `Cogger.new level: :debug`. Otherwise, an invalid log level will result in an `ArgumentError`.
+While lower case is preferred for each log level value, you can use upper case values as well. If the `LOG_LEVEL` environment variable is not set, `Cogger` will fall back to `"info"` unless overwritten during initialization. Example: `Cogger.new level: :debug`. Otherwise, an invalid log level will result in an `ArgumentError`.
 
 === Mutations
 
@@ -457,7 +457,7 @@ Additional keys as provided by your message hash and/or tags can be customized a
 Template keys, emojis, and elements do have a few restrictions:
 
 * Use the special `emoji` key to provide dynamic or specific emoji logging.
-* Use the special `tags` key to provide tagged logging. More information on tags can be found later in this document.
+* Use the special `tags` key to provide tagged logging. For more information, the _Tags_ section below.
 * Avoid supplying the same keys as the default keys. Example: `logger.info id: :bad, at: Time.now, level: :bogus`. This is because these keys will be ignored. In other words, you can't _override_ the default keys.
 * Avoid wrapping keys and/or emojis in elements because nesting isn't supported and can lead to strange output. Example: `<green>%<emoji:error>s %<id:dynamic>s</green>`.
 * Avoid wrapping elements within elements because nesting isn't supported and can lead to strange output. Example: `<dynamic><cyan>%<message>s</cyan></dynamic>`.
@@ -757,8 +757,7 @@ logger.info "Demo", tags: ["WEB", "PRIMARY", {service: :api, demo: true}]
 #   "level":"INFO",
 #   "at":"2023-12-10T18:44:32.723+00:00",
 #   "message":"Demo",
-#   "tags":["WEB",
-#   "PRIMARY"],
+#   "tags":["WEB", "PRIMARY"],
 #   "service":"api",
 #   "demo":true
 # }
@@ -929,6 +928,7 @@ As you can see, tags are highly versatile. That said, the following guidelines a
 * Prefer consistent tag names by using tags that are not synonymous or ambiguous.
 * Prefer using tags by feature rather than things like environments. Examples: API, DB, MAILER.
 * Prefer the JSON formatter for structured metadata instead of tags. Logging JSON formatted messages with tags will work but sticking with a traditional hash, instead of tags, will probably serve you better.
+* Avoid using `id`, `level`, `at`, and/or `message` as hash keys since those are reserved keys and will be rejected if supplied.
 
 === Filters
 
@@ -970,14 +970,25 @@ You can add multiple log streams (outputs) by using:
 
 [source,ruby]
 ----
+require "stringio"
+
+buffer = StringIO.new
 logger = Cogger.new
+               .add_stream(io: buffer)
                .add_stream(io: "tmp/demo.log")
                .add_stream(io: nil)
 
 logger.info "Demo."
 ----
 
-The above would log the `"Demo."` message to `$stdout` -- the default stream -- to the `tmp/demo.log` file, and to `/dev/null`. All attributes used to construct your default logger apply to all additional streams unless customized further. This means any custom template/formatter can be applied to your streams. Example:
+The above would log `"Demo."` to:
+
+* To `$stdout` (the default stream which is your console).
+* To the StringIO `buffer` where you can use `buffer.string` to view content.
+* To the `tmp/demo.log` file where you can use `cat tmp/demo.log` to view content.
+* To `/dev/null` which immediately ignores all writes.
+
+All attributes used to construct your default logger apply to all additional streams unless customized further. This means any custom template/formatter can be applied to your streams. Example:
 
 [source,ruby]
 ----
