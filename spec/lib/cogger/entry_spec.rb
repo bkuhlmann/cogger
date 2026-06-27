@@ -199,13 +199,13 @@ RSpec.describe Cogger::Entry do
     let(:at) { Time.now }
 
     it "answers tagged message" do
-      entry = described_class.new at:, message: "test", tags: %w[ONE TWO THREE]
+      entry = described_class.new at:, message: "test", tags: [nil, 1, "TWO", :THREE]
 
       expect(entry.tagged).to eq(
         id: "rspec",
         level: "INFO",
         at:,
-        message: "[ONE] [TWO] [THREE] test"
+        message: %([nil] [1] ["TWO"] [:THREE] test)
       )
     end
 

@@ -27,19 +27,23 @@ module Cogger
 
     def empty? = singles.empty? && pairs.empty?
 
-    def to_h = empty? ? Core::EMPTY_HASH : {tags: singles.to_a, **pairs}.tap(&:compress!)
+    def to_h
+      return Core::EMPTY_HASH if empty?
+
+      singles.empty? ? pairs : {tags: singles.to_a, **pairs}
+    end
 
     def to_s = empty? ? Core::EMPTY_STRING : "#{format_singles} #{format_pairs}".tap(&:strip!)
 
     private
 
     def format_singles
-      singles.map { |value| "[#{value}]" }
+      singles.map { |value| "[#{value.inspect}]" }
              .join " "
     end
 
     def format_pairs
-      pairs.map { |key, value| "[#{key}=#{value}]" }
+      pairs.map { |key, value| "[#{key}=#{value.inspect}]" }
            .join(" ")
     end
   end

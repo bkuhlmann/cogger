@@ -3,7 +3,12 @@
 require "spec_helper"
 
 RSpec.describe Cogger::Tag do
-  subject(:tag) { described_class[singles: ["ONE", :TWO], pairs: {x: 1, y: 2}] }
+  subject :tag do
+    described_class[
+      singles: [nil, 1, "TWO", :THREE],
+      pairs: {four: nil, five: 5, six: "six", seven: :seven}
+    ]
+  end
 
   describe ".for" do
     it "answers simple singles" do
@@ -77,17 +82,19 @@ RSpec.describe Cogger::Tag do
 
   describe "#to_h" do
     it "answers tags for singles and pairs" do
-      expect(tag.to_h).to eq(tags: ["ONE", :TWO], x: 1, y: 2)
+      expect(tag.to_h).to eq(
+        four: nil, five: 5, six: "six", seven: :seven, tags: [nil, 1, "TWO", :THREE]
+      )
     end
 
     it "answers only pairs" do
       modification = tag.with singles: []
-      expect(modification.to_h).to eq(x: 1, y: 2)
+      expect(modification.to_h).to eq(four: nil, five: 5, six: "six", seven: :seven)
     end
 
     it "answers only singles" do
       modification = tag.with pairs: {}
-      expect(modification.to_h).to eq(tags: ["ONE", :TWO])
+      expect(modification.to_h).to eq(tags: [nil, 1, "TWO", :THREE])
     end
 
     it "answers empty hash for empty singles and pairs" do
@@ -98,17 +105,19 @@ RSpec.describe Cogger::Tag do
 
   describe "#to_s" do
     it "answers tags for singles and pairs" do
-      expect(tag.to_s).to eq("[ONE] [TWO] [x=1] [y=2]")
+      expect(tag.to_s).to eq(
+        %([nil] [1] ["TWO"] [:THREE] [four=nil] [five=5] [six="six"] [seven=:seven])
+      )
     end
 
     it "answers only pairs" do
       modification = tag.with singles: []
-      expect(modification.to_s).to eq("[x=1] [y=2]")
+      expect(modification.to_s).to eq(%([four=nil] [five=5] [six="six"] [seven=:seven]))
     end
 
     it "answers only singles" do
       modification = tag.with pairs: {}
-      expect(modification.to_s).to eq("[ONE] [TWO]")
+      expect(modification.to_s).to eq(%([nil] [1] ["TWO"] [:THREE]))
     end
 
     it "answers empty string for empty singles and pairs" do
