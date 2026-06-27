@@ -24,16 +24,24 @@ RSpec.describe Cogger::Formatters::JSON do
       entry = Cogger::Entry.for at:,
                                 message: "test",
                                 path: "/",
-                                tags: ["ONE", :TWO, {three: 3, four: 4}]
+                                tags: [
+                                  nil,
+                                  1,
+                                  "TWO",
+                                  :THREE,
+                                  {four: nil, five: 5, six: "six", seven: :seven}
+                                ]
 
       proof = {
         id: "rspec",
         level: "INFO",
         at: at_format,
         message: "test",
-        tags: %w[ONE TWO],
-        three: 3,
-        four: 4,
+        tags: [nil, 1, "TWO", :THREE],
+        four: nil,
+        five: 5,
+        six: "six",
+        seven: :seven,
         path: "/"
       }
 

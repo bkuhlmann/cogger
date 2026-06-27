@@ -67,11 +67,17 @@ RSpec.describe Cogger::Formatters::Property do
       entry = Cogger::Entry.for at:,
                                 message: "test",
                                 path: "/",
-                                tags: ["ONE", :TWO, {three: 3, four: 4}]
+                                tags: [
+                                  nil,
+                                  1,
+                                  "TWO",
+                                  :THREE,
+                                  {four: nil, five: 5, six: "six", seven: :seven}
+                                ]
 
       expect(formatter.call(entry)).to eq(
-        %(id=rspec level=INFO at=#{at_format} message=test tags="[ONE, TWO]" ) +
-        %(three=3 four=4 path=/\n)
+        %(id=rspec level=INFO at=#{at_format} message=test tags="[nil, 1, TWO, THREE]" ) +
+        %(four=nil five=5 six=six seven=seven path=/\n)
       )
     end
   end

@@ -17,7 +17,8 @@ module Cogger
 
       def call(*input)
         *, entry = input
-        attributes = sanitize(entry, :tagged_attributes).tap(&:compact!)
+        attributes = sanitize entry, :tagged_attributes
+        attributes.delete :message unless attributes[:message]
 
         parser.call(template, attributes).to_json << NEW_LINE
       end
