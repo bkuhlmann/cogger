@@ -142,6 +142,34 @@ logger = Cogger.new id: :demo,
                     suffix: "%Y"
 ----
 
+=== Identity
+
+Your logger's identity defaults to `$PROGRAM_NAME` -- as mentioned earlier -- but can be customized during initialization. Example:
+
+[source,ruby]
+----
+logger = Cogger.new id: :demo
+logger.info "A demonstration."
+
+# 🟢 [demo] A demonstration.
+----
+
+You can also customize the identity by passing in an ID per log entry. Example:
+
+[source,ruby]
+----
+logger = Cogger.new
+
+logger.info "A demonstration.", id: :other
+# 🟢 [other] A demonstration.
+
+logger.info(id: :other) { "A demonstration." }
+# 🟢 [other] A demonstration.
+
+logger.info { {id: :other, message: "A demonstration."} }
+# 🟢 [other] A demonstration.
+----
+
 === Levels
 
 Supported levels can be obtained via `Cogger::LEVELS`. Example:
@@ -165,7 +193,26 @@ The above adheres to {rfc_3339_link} and can be customized -- as mentioned earli
 
 [source,ruby]
 ----
-Cogger.new datetime_format: "%Y-%m-%d"
+logger = Cogger.new formatter: :json, datetime_format: "%Y-%m-%d"
+logger.info "A demonstration."
+
+# {"id":"console","level":"INFO","at":"2026-06-28","message":"A demonstration."}
+----
+
+You can also customize the date/time format by passing in an date/time format per log entry. Example:
+
+[source,ruby]
+----
+logger = Cogger.new formatter: :json
+
+logger.info "A demonstration.", datetime_format: "%Y-%m-%d"
+# {"id":"console","level":"INFO","at":"2026-06-28","message":"A demonstration."}
+
+logger.info(datetime_format: "%Y-%m-%d") { "A demonstration." }
+# {"id":"console","level":"INFO","at":"2026-06-28","message":"A demonstration."}
+
+logger.info { {datetime_format: "%Y-%m-%d", message: "A demonstration."} }
+# {"id":"console","level":"INFO","at":"2026-06-28","message":"A demonstration."}
 ----
 
 === Environment
@@ -876,7 +923,7 @@ Tags allow you to tag your messages at both a global and local (i.e. per message
 logger = Cogger.new tags: %w[WEB]
 logger.info "Demo"
 
-# 🟢 [console] [WEB] Demo
+# 🟢 [console] ["WEB"] Demo
 ----
 
 You can use multiple tags as well:
@@ -886,7 +933,7 @@ You can use multiple tags as well:
 logger = Cogger.new tags: %w[WEB EXAMPLE]
 logger.info "Demo"
 
-# 🟢 [console] [WEB] [EXAMPLE] Demo
+# 🟢 [console] ["WEB"] ["EXAMPLE"] Demo
 ----
 
 You are not limited to string-based tags. Any object will work:
@@ -896,7 +943,7 @@ You are not limited to string-based tags. Any object will work:
 logger = Cogger.new tags: ["ONE", :two, 3, {four: "FOUR"}, proc { "FIVE" }]
 logger.info "Demo"
 
-# 🟢 [console] [ONE] [two] [3] [FIVE] [four=FOUR] Demo
+# 🟢 [console] ["ONE"] [:two] [3] ["FIVE"] [four="FOUR"] Demo
 ----
 
 With the above, we have string, symbol, integer, hash, and proc tags. With hashes, you'll always get a the key/value pair formatted as: `key=value`. Procs/lambdas allow you to lazy evaluate your tag at time of logging which provides a powerful way to acquire the current process ID, thread ID, and so forth.
@@ -908,7 +955,7 @@ In addition to global tags, you can use local tags per log message. Example:
 logger = Cogger.new
 logger.info "Demo", tags: ["ONE", :two, 3, {four: "FOUR"}, proc { "FIVE" }]
 
-# 🟢 [console] [ONE] [two] [3] [FIVE] [four=FOUR] Demo
+# 🟢 [console] ["ONE"] [:two] [3] ["FIVE"] [four="FOUR"] Demo
 ----
 
 You can also combine global and local tags:
@@ -918,16 +965,33 @@ You can also combine global and local tags:
 logger = Cogger.new tags: ["ONE", :two]
 logger.info "Demo", tags: [3, proc { "FOUR" }]
 
-# 🟢 [console] [ONE] [two] [3] [FOUR] Demo
+# 🟢 [console] ["ONE"] [:two] [3] ["FOUR"] Demo
 ----
+
+When using blocks, use a hash inside the block instead of supplying the tags before using the block. Example:
+
+[source,ruby]
+----
+logger = Cogger.new level: :debug
+
+# No
+logger.debug(tags: ["ONE", :TWO]) { "Demo" }
+🔎 [console] ["ONE"] [:TWO] Demo
+
+# Yes
+logger.debug { {tags: ["ONE", :TWO], message: "Demo"} }
+🔎 [console] ["ONE"] [:TWO] Demo
+----
+
+This ensures your tags and associated message are only evaluated when the correct log level is accepted. This is especially important when dealing with tags that need additional evaluation like procs because you'll improve performance when the debug log level, in this example, isn't set.
 
 As you can see, tags are highly versatile. That said, the following guidelines are worth consideration when using them:
 
-* Prefer uppercase tag names to make them visually stand out.
-* Prefer short names, ideally 1-4 characters since long tags defeat the purpose of brevity.
-* Prefer consistent tag names by using tags that are not synonymous or ambiguous.
-* Prefer using tags by feature rather than things like environments. Examples: API, DB, MAILER.
-* Prefer the JSON formatter for structured metadata instead of tags. Logging JSON formatted messages with tags will work but sticking with a traditional hash, instead of tags, will probably serve you better.
+* Prefer uppercase tags to make them visually stand out.
+* Prefer short tags, ideally 1-4 characters since long tags defeat the purpose of brevity.
+* Prefer consistent tags by using tags that are not synonymous or ambiguous.
+* Prefer feature tags instead of environment tags. Examples: API, DB, MAILER.
+* Prefer the JSON formatter for structured metadata instead of tags. Logging JSON formatted messages with tags will work but sticking with a traditional hash, instead of tags, will serve you better.
 * Avoid using `id`, `level`, `at`, and/or `message` as hash keys since those are reserved keys and will be rejected if supplied.
 
 === Filters
