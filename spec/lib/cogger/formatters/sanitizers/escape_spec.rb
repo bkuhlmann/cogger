@@ -6,6 +6,10 @@ RSpec.describe Cogger::Formatters::Sanitizers::Escape do
   subject(:sanitizer) { described_class.new }
 
   describe "#call" do
+    it "answers nil as string" do
+      expect(sanitizer.call(nil)).to eq("nil")
+    end
+
     it "answers integer as string" do
       expect(sanitizer.call(1)).to eq("1")
     end

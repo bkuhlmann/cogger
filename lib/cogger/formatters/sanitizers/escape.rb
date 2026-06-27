@@ -35,7 +35,7 @@ module Cogger
 
         attr_reader :pattern
 
-        def dump(value) = value.to_s.gsub(pattern, &:dump)
+        def dump(value) = value ? value.to_s.gsub(pattern, &:dump) : value.inspect
       end
     end
   end

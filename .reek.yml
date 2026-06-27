@@ -12,6 +12,9 @@ detectors:
   DataClump:
     exclude:
       - "Cogger::Hub"
+  FeatureEnvy:
+    exclude:
+      - "Cogger::Formatters::Sanitizers::Escape#dump"
   LongParameterList:
     enabled: false
   ModuleInitialize:
