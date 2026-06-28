@@ -311,6 +311,16 @@ RSpec.describe Cogger::Hub do
         ["\n"]
       )
     end
+
+    it "excludes level and at without block" do
+      logger = described_class.new io:, formatter: :json
+      logger.add Logger::INFO, level: :bogus, at: :bogus
+
+      expect(JSON(io.reread)).to include(
+        "level" => "INFO",
+        "at" => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(-|\+)\d{2}:\d{2}/
+      )
+    end
   end
 
   describe "#abort" do

@@ -101,22 +101,23 @@ module Cogger
       crash message, error
     end
 
-    # rubocop:todo Metrics/MethodLength
     def dispatch(level, message, **payload, &)
-      entry = configuration.entry.for(
-        message,
-        id: configuration.id,
-        level:,
-        tags: configuration.entag(payload.delete(:tags)),
-        datetime_format: configuration.datetime_format,
-        **payload,
-        &
-      )
-
+      entry = build_entry(level, message, payload, &)
       configuration.mutex.synchronize { streams.each { |logger| logger.public_send level, entry } }
       true
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def build_entry(level, message, payload, &)
+      configuration.entry.for(
+        message,
+        id: configuration.id,
+        level:,
+        tags: configuration.entag(payload[:tags]),
+        datetime_format: configuration.datetime_format,
+        **payload.except(:level, :at, :tags),
+        &
+      )
+    end
 
     def crash message, error
       configuration.with(id: :cogger, io: $stdout, formatter: Formatters::Crash.new)
