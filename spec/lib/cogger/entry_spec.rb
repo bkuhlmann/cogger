@@ -42,6 +42,11 @@ RSpec.describe Cogger::Entry do
       expect(entry).to have_attributes(message: "test")
     end
 
+    it "answers entry payload for block where level and at are excluded" do
+      entry = described_class.for { {level: :bogus, at: :bogus} }
+      expect(entry).to have_attributes(payload: {})
+    end
+
     it "answers entry for block with string with replaced invalid characters" do
       entry = described_class.for { bad_encoding }
       expect(entry).to have_attributes(message: "b?d")

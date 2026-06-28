@@ -30,7 +30,7 @@ module Cogger
 
     def self.sanitize! content, payload
       body = if content.is_a? Hash
-               content.delete(:message).tap { payload.merge! content }
+               content.delete(:message).tap { payload.merge! content.except(:level, :at) }
              else
                content
              end
