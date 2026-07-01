@@ -39,14 +39,14 @@ module Cogger
                                "%<duration>s %<ip>s %<path>s %<length>s %<params>s"
     end
 
-    def add_alias(key, *styles)
+    def add_alias key, *styles
       color.add_alias(key, *styles)
       self
     end
 
     def aliases = color.aliases
 
-    def add_emojis(**attributes)
+    def add_emojis **attributes
       emojis.merge! attributes.symbolize_keys!
       self
     end
@@ -57,7 +57,7 @@ module Cogger
 
     def emojis = @emojis ||= {}
 
-    def add_filters(*keys)
+    def add_filters *keys
       filters.merge(keys.map(&:to_sym))
       self
     end

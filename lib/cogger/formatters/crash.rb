@@ -17,7 +17,7 @@ module Cogger
         @parser = parser
       end
 
-      def call(*input)
+      def call *input
         *, entry = input
         attributes = sanitize entry, :tagged
         attributes[:backtrace] = %(  #{attributes[:backtrace].join "\n  "})

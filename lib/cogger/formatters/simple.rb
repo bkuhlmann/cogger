@@ -11,7 +11,7 @@ module Cogger
         @template = template
       end
 
-      def call(*input)
+      def call *input
         *, entry = input
         attributes = sanitize entry, :tagged
 

@@ -12,7 +12,7 @@ module Cogger
         @parser = parser
       end
 
-      def call(*input)
+      def call *input
         *, entry = input
         attributes = sanitize entry, :tagged
 

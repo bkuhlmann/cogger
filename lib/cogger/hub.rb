@@ -34,7 +34,7 @@ module Cogger
 
     delegate %i[id io tags mode age size suffix] => :configuration
 
-    def initialize(registry: Cogger, model: Configuration, **attributes)
+    def initialize registry: Cogger, model: Configuration, **attributes
       @registry = registry
       @configuration = model[**find_formatter(attributes)]
       @primary = configuration.to_logger
@@ -59,12 +59,12 @@ module Cogger
 
     def any(message = nil, **, &) = log(__method__, message, **, &)
 
-    def abort(message = nil, **payload, &block)
+    def abort message = nil, **payload, &block
       error(message, **payload, &block) if message || !payload.empty? || block
       exit false
     end
 
-    def panic(message = nil, **payload, &block)
+    def panic message = nil, **payload, &block
       fatal(message, **payload, &block) if message || !payload.empty? || block
       exit false
     end
