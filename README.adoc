@@ -239,18 +239,25 @@ Each instance can be mutated using the following messages:
 ----
 logger = Cogger.new io: StringIO.new
 
-logger.close                                       # nil
-logger.reopen                                      # Logger
-logger.debug!                                      # 0
-logger.info!                                       # 1
-logger.warn!                                       # 2
-logger.error!                                      # 3
-logger.fatal!                                      # 4
-logger.formatter = Cogger::Formatters::Simple.new  # Cogger::Formatters::Simple
-logger.level = Logger::WARN                        # 2
+logger.close                 # nil
+logger.reopen                # Logger
+logger.debug!                # 0
+logger.info!                 # 1
+logger.warn!                 # 2
+logger.error!                # 3
+logger.fatal!                # 4
+logger.formatter = :simple   # :simple
+logger.level = Logger::WARN  # 2
 ----
 
-Please see the {logger_link} documentation for more information.
+When setting the formatter, you can use a string, symbol, or instance. For example, the following are identical:
+
+[source,ruby]
+----
+logger.formatter = "simple"
+logger.formatter = :simple
+logger.formatter = Cogger::Formatters::Simple.new
+----
 
 === Emojis
 
