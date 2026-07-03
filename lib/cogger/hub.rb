@@ -6,7 +6,6 @@ require "refinements/hash"
 
 module Cogger
   # Loads configuration and simultaneously sends messages to multiple streams.
-  # :reek:TooManyMethods
   class Hub
     extend Forwardable
 
@@ -27,7 +26,6 @@ module Cogger
       fatal!
       fatal?
       formatter
-      formatter=
       level
       level=
     ] => :primary
@@ -36,14 +34,14 @@ module Cogger
 
     def initialize registry: Cogger, model: Configuration, **attributes
       @registry = registry
-      @configuration = model[**find_formatter(attributes)]
+      @configuration = model[**resolve_formatter(attributes)]
       @primary = configuration.to_logger
       @streams = [@primary]
     end
 
     def add_stream **attributes
       attributes[:id] = configuration.id
-      streams.append configuration.with(**find_formatter(attributes)).to_logger
+      streams.append configuration.with(**resolve_formatter(attributes)).to_logger
       self
     end
 
@@ -69,6 +67,10 @@ module Cogger
       exit false
     end
 
+    def formatter= value
+      primary.formatter = find_or_use_formatter value
+    end
+
     def add(level, message = nil, **, &)
       log(Logger::SEV_LABEL.fetch(level, "ANY").downcase, message, **, &)
     end
@@ -85,13 +87,19 @@ module Cogger
 
     attr_reader :registry, :configuration, :primary, :streams
 
-    # :reek:FeatureEnvy
-    def find_formatter attributes
-      attributes.transform_value! :formatter do |value|
-        next value unless value.is_a?(Symbol) || value.is_a?(String)
+    def resolve_formatter attributes
+      attributes.transform_value!(:formatter) { |value| find_or_use_formatter value }
+    end
 
-        formatter, template = registry.get_formatter value
-        template ? formatter.new(template) : formatter.new
+    def find_or_use_formatter value
+      case value
+        when String, Symbol
+          formatter, template = registry.get_formatter value
+          template ? formatter.new(template) : formatter.new
+        when Formatters::Abstract then value
+        else fail TypeError,
+                  "Invalid formatter. Must be a string, symbol, or " \
+                  "subclass of Cogger::Formatters::Abstract."
       end
     end
 

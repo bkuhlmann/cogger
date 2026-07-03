@@ -403,6 +403,28 @@ RSpec.describe Cogger::Hub do
     end
   end
 
+  describe "#formatter=" do
+    it "sets formatter via string" do
+      logger.formatter = "simple"
+      expect(logger.formatter).to be_a(Cogger::Formatters::Simple)
+    end
+
+    it "sets formatter via symbol" do
+      logger.formatter = :simple
+      expect(logger.formatter).to be_a(Cogger::Formatters::Simple)
+    end
+
+    it "sets formatter via instance" do
+      logger.formatter = Cogger::Formatters::Simple.new
+      expect(logger.formatter).to be_a(Cogger::Formatters::Simple)
+    end
+
+    it "fails when not a valid formatter" do
+      expectation = proc { logger.formatter = Object.new }
+      expect(&expectation).to raise_error(TypeError, /Invalid formatter/)
+    end
+  end
+
   describe "#reread" do
     it "answers what was previously written" do
       logger.info "This is a test."

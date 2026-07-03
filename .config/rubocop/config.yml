@@ -5,6 +5,9 @@ Metrics/AbcSize:
   Exclude:
     - "lib/cogger/configuration.rb"
     - "lib/cogger/registry.rb"
+Metrics/ClassLength:
+  Exclude:
+    - "lib/cogger/hub.rb"
 Metrics/MethodLength:
   Exclude:
     - "lib/cogger/registry.rb"

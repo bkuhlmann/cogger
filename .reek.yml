@@ -20,3 +20,6 @@ detectors:
   ModuleInitialize:
     exclude:
       - "Cogger"
+  TooManyMethods:
+    exclude:
+      - "Cogger::Hub"
