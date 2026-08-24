@@ -35,7 +35,7 @@ RSpec.describe Cogger::Tag do
     end
 
     it "answers rejects reserved keys" do
-      tag = described_class.for({id: :bad, level: :bad, at: Time.new, message: :bad})
+      tag = described_class.for({id: :bad, level: :bad, at: Time.now, message: :bad})
       expect(tag).to eq(described_class.new)
     end
 
