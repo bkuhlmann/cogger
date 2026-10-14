@@ -23,3 +23,5 @@ detectors:
   TooManyMethods:
     exclude:
       - "Cogger::Hub"
+  UnusedParameters:
+    enabled: false
